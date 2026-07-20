@@ -1,20 +1,29 @@
 // 排盘纯函数
-// 单一测试 seam：输入钟表时出生时刻，返回年柱 + 月柱 + 日柱 + 时柱
+// 单一测试 seam：输入钟表时出生时刻（可选出生地），返回年柱 + 月柱 + 日柱 + 时柱
 // 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正、早晚子时）
+// 经度修正作为输入预处理（CONTEXT.md）：给出出生地时把钟表时平移为真太阳时，
+// 所有柱从修正后的时刻算起。
 
 import { 六十甲子, 天干, 地支 } from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
+import { 应用经度修正 } from "./solar-time.js";
+import { 查找经度, type 出生地 } from "./birthplace.js";
 
-/** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8） */
+/** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地。 */
 export interface 排盘Input {
   year: number;
   month: number;
   day: number;
   hour: number;
   minute: number;
+  /**
+   * 可选出生地。给出时按经度修正为真太阳时再排盘；未给出时走钟表时。
+   * 查不到省/市时抛 RangeError（CLI 应捕获并提示用户）。
+   */
+  birthplace?: 出生地;
 }
 
-/** 排盘输出 - T4 阶段含年柱 + 月柱 + 日柱 + 时柱 */
+/** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。 */
 export interface 排盘Result {
   年柱: string;
   月柱: string;
@@ -22,6 +31,11 @@ export interface 排盘Result {
   时柱: string;
   /** 出生时刻近子正（00:00）时为 true，CLI 据此打印跨界提示 */
   近子正: boolean;
+  /**
+   * 是否对出生时刻做了经度修正（即是否提供了有效出生地）。
+   * CLI 据此决定是否打印"未做经度修正，真太阳时可能偏移"提示。
+   */
+  经度修正: boolean;
 }
 
 // 锚点：2000-01-01 日柱为戊午，六十甲子序号 54（甲子=0）
@@ -83,6 +97,61 @@ function inputToUtcMs(input: 排盘Input): number {
     input.hour,
     input.minute,
   );
+}
+
+/** 把 UTC 毫秒时间戳分解为北京时间（UTC+8）的年月日时分。clockTimeToUtcMs 的逆运算。 */
+function utcMsToBeijingFields(utcMs: number): {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+} {
+  const d = new Date(utcMs + BEIJING_OFFSET_MS);
+  return {
+    year: d.getUTCFullYear(),
+    month: d.getUTCMonth() + 1,
+    day: d.getUTCDate(),
+    hour: d.getUTCHours(),
+    minute: d.getUTCMinutes(),
+  };
+}
+
+/**
+ * 解析实际用于排盘的时刻（输入预处理）。
+ * - 给出出生地且查到经度：把钟表时按经度修正为真太阳时，返回修正后的排盘输入 + 经度修正=true。
+ * - 未给出生地：返回原输入（birthplace 去掉，避免下游再处理）+ 经度修正=false。
+ * - 给出出生地但查不到省/市：抛 RangeError。
+ *
+ * 真太阳时是本地太阳时，但排盘的所有切换点（立春、节、子正）都按钟表时日期分解
+ * 来对比，故这里只做时间戳平移后重新按钟表时分解，不改时区。
+ */
+function resolveEffectiveInput(input: 排盘Input): {
+  effective: 排盘Input;
+  经度修正: boolean;
+} {
+  if (!input.birthplace) {
+    return { effective: stripBirthplace(input), 经度修正: false };
+  }
+  const r = 查找经度(input.birthplace);
+  if (!r.找到) {
+    const where = r.原因 === "未知省份"
+      ? `省份"${input.birthplace.province}"`
+      : `省份"${input.birthplace.province}"下的城市"${input.birthplace.city}"`;
+    throw new RangeError(`未知出生地：${where}，无法做经度修正`);
+  }
+  const clockUtc = inputToUtcMs(input);
+  const solarUtc = 应用经度修正(clockUtc, r.经度);
+  return {
+    effective: { ...utcMsToBeijingFields(solarUtc) },
+    经度修正: true,
+  };
+}
+
+/** 去掉 birthplace，返回纯钟表时排盘输入。 */
+function stripBirthplace(input: 排盘Input): 排盘Input {
+  const { birthplace: _bp, ...rest } = input;
+  return rest;
 }
 
 /**
@@ -173,24 +242,29 @@ function isNearZiZheng(hour: number, minute: number): boolean {
 
 /**
  * 排盘纯函数。
- * T4：返回年柱 + 月柱 + 日柱 + 时柱。
+ * T5：返回年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
+ * - 真太阳时作为输入预处理：给出出生地时按经度修正为真太阳时，所有柱从修正后
+ *   的时刻算起（CONTEXT.md 经度修正）。未给出生地走钟表时。
  * - 年柱按立春切换、月柱按节切换（ADR-0001）
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
+ * - 近子正判定基于实际排盘所用时刻（已做经度修正）
  */
 export function 排盘(input: 排盘Input): 排盘Result {
-  const offset = daysSinceAnchor(input.year, input.month, input.day);
-  const birthUtc = inputToUtcMs(input);
-  const [年柱, yearGanIndex] = computeYearPillar(input, birthUtc);
+  const { effective, 经度修正 } = resolveEffectiveInput(input);
+  const offset = daysSinceAnchor(effective.year, effective.month, effective.day);
+  const birthUtc = inputToUtcMs(effective);
+  const [年柱, yearGanIndex] = computeYearPillar(effective, birthUtc);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
   // 不包装会让天干/地支取到 undefined。dayGanIndex 与 日柱 复用同一归一化结果。
   const dayIndex = (((DAY_PILLAR_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayGanIndex = dayIndex % 10;
   return {
     年柱,
-    月柱: computeMonthPillar(input, birthUtc, yearGanIndex),
+    月柱: computeMonthPillar(effective, birthUtc, yearGanIndex),
     日柱: 六十甲子(dayIndex),
-    时柱: computeHourPillar(input.hour, dayGanIndex),
-    近子正: isNearZiZheng(input.hour, input.minute),
+    时柱: computeHourPillar(effective.hour, dayGanIndex),
+    近子正: isNearZiZheng(effective.hour, effective.minute),
+    经度修正,
   };
 }

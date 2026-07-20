@@ -198,3 +198,84 @@ describe("排盘 - 子正跨界提示 (T4)", () => {
     expect(result.近子正).toBe(false);
   });
 });
+
+describe("排盘 - 真太阳时经度修正 (T5)", () => {
+  // ADR：经度修正作为输入预处理，作用于所有柱。
+  // 真太阳时 = 钟表时 + (经度 − 120°) × 4 分钟/度（CONTEXT.md）。
+  // 喀什地区 ~75.99°E，偏移 ≈ −176 分钟（约 −2h56m），显著西偏。
+  // 双鸭山市 ~131.17°E，偏移 ≈ +44.7 分钟，显著东偏。
+
+  it("未给出生地 -> 经度修正 false", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
+    expect(result.经度修正).toBe(false);
+  });
+
+  it("给出出生地 -> 经度修正 true", () => {
+    const result = 排盘({
+      year: 2000, month: 1, day: 1, hour: 12, minute: 0,
+      birthplace: { province: "四川省", city: "成都市" },
+    });
+    expect(result.经度修正).toBe(true);
+  });
+
+  // 同一钟表时刻给/不给地名 -> 时柱不同。
+  // 2000-01-01 12:00 钟表时：日柱 戊午、午时 -> 时柱 戊午（见 T4 已知命例）。
+  // 经喀什经度修正后真太阳时 ≈ 09:04，落入巳时；日柱不变（仍 1 日戊午），
+  // 时柱由戊日五鼠遁（壬子起）顺推至巳 -> 丁巳。时柱 戊午 -> 丁巳，不同。
+  it("给/不给喀什地名 -> 时柱不同：钟表 12:00 戊午 vs 真太阳时 丁巳", () => {
+    const 钟表 = 排盘({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
+    const 真太阳 = 排盘({
+      year: 2000, month: 1, day: 1, hour: 12, minute: 0,
+      birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
+    });
+    expect(钟表.时柱).toBe("戊午");
+    expect(真太阳.时柱).toBe("丁巳");
+    expect(钟表.时柱).not.toBe(真太阳.时柱);
+    // 经度修正不影响日柱（真太阳时仍属同一历法日）
+    expect(真太阳.日柱).toBe("戊午");
+    expect(真太阳.经度修正).toBe(true);
+  });
+
+  // 跨子正用例：经度修正使真太阳时跨越子正（00:00），日柱与时柱同时变化，
+  // 体现"时间平移作用于所有柱"。
+  // 2000-01-01 23:20 钟表时（晚子时）：日柱 戊午、时柱 壬子（戊日壬子起）。
+  // 双鸭山 +44.7 分 -> 真太阳时 2000-01-02 00:04（早子时）：日柱 己未、时柱 甲子
+  // （己日甲子起）；近子正由 false 变 true。
+  it("双鸭山经度修正跨子正 -> 日柱/时柱/近子正同时变化", () => {
+    const 钟表 = 排盘({ year: 2000, month: 1, day: 1, hour: 23, minute: 20 });
+    const 真太阳 = 排盘({
+      year: 2000, month: 1, day: 1, hour: 23, minute: 20,
+      birthplace: { province: "黑龙江省", city: "双鸭山市" },
+    });
+    expect(钟表.日柱).toBe("戊午");
+    expect(钟表.时柱).toBe("壬子");
+    expect(钟表.近子正).toBe(false);
+    expect(钟表.经度修正).toBe(false);
+
+    expect(真太阳.日柱).toBe("己未");
+    expect(真太阳.时柱).toBe("甲子");
+    expect(真太阳.近子正).toBe(true);
+    expect(真太阳.经度修正).toBe(true);
+  });
+
+  // 中央经线附近（北京 ~116.41°E）经度修正幅度小（约 −14.3 分），通常不跨时辰界，
+  // 时柱不变；但仍标记为做了经度修正。
+  it("北京出生：经度修正幅度小，时柱不变但经度修正 true", () => {
+    const 钟表 = 排盘({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
+    const 真太阳 = 排盘({
+      year: 2000, month: 1, day: 1, hour: 12, minute: 0,
+      birthplace: { province: "北京市", city: "市辖区" },
+    });
+    expect(真太阳.时柱).toBe(钟表.时柱);
+    expect(真太阳.经度修正).toBe(true);
+  });
+
+  it("给出未知省/市 -> 抛 RangeError（输入非法，CLI 应提示）", () => {
+    expect(() =>
+      排盘({
+        year: 2000, month: 1, day: 1, hour: 12, minute: 0,
+        birthplace: { province: "火星省", city: "某市" },
+      }),
+    ).toThrow(RangeError);
+  });
+});
