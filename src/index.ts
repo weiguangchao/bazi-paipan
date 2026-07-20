@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // 八字排盘 CLI 入口
-// T3：接收公历年月日 + 时分，打印年柱 + 月柱 + 日柱
+// T4：接收公历年月日 + 时分，打印年柱 + 月柱 + 日柱 + 时柱，近子正时打印跨界提示
 
 import { Command } from "commander";
 import { 排盘 } from "./paipan.js";
@@ -48,6 +48,11 @@ program
     console.log(`年柱：${result.年柱}`);
     console.log(`月柱：${result.月柱}`);
     console.log(`日柱：${result.日柱}`);
+    console.log(`时柱：${result.时柱}`);
+    if (result.近子正) {
+      // 早晚子时跨界提示：子正（00:00）为日柱切换点，近子正时刻稍有出入即影响四柱
+      console.log("提示：出生时刻近子正（00:00），已按早晚子时归属日柱与时柱；若实际时刻略有出入，排盘结果可能不同。");
+    }
   });
 
 program.parse(process.argv);

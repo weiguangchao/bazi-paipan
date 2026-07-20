@@ -1,6 +1,6 @@
 // 排盘纯函数
-// 单一测试 seam：输入钟表时出生时刻，返回年柱 + 月柱 + 日柱
-// 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正）
+// 单一测试 seam：输入钟表时出生时刻，返回年柱 + 月柱 + 日柱 + 时柱
+// 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正、早晚子时）
 
 import { 六十甲子, 天干, 地支 } from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
@@ -14,11 +14,14 @@ export interface 排盘Input {
   minute: number;
 }
 
-/** 排盘输出 - T3 阶段含年柱 + 月柱 + 日柱 */
+/** 排盘输出 - T4 阶段含年柱 + 月柱 + 日柱 + 时柱 */
 export interface 排盘Result {
   年柱: string;
   月柱: string;
   日柱: string;
+  时柱: string;
+  /** 出生时刻近子正（00:00）时为 true，CLI 据此打印跨界提示 */
+  近子正: boolean;
 }
 
 // 锚点：2000-01-01 日柱为戊午，六十甲子序号 54（甲子=0）
@@ -130,18 +133,64 @@ function computeMonthPillar(
 }
 
 /**
+ * 时柱地支序号：按时辰取。子时 23:00-01:00（地支子=0），每两小时推进一支。
+ * hour=23 或 0 -> 子(0)、hour=1/2 -> 丑(1)……hour=21/22 -> 亥(11)。
+ */
+function hourZhiIndex(hour: number): number {
+  return Math.floor((hour + 1) / 2) % 12;
+}
+
+/**
+ * 五鼠遁：由日干推出子时天干（起时诀）。
+ * 甲己还加甲、乙庚丙作初、丙辛从戊起、丁壬庚子居、戊癸壬子真。
+ * 返回子时天干序号（0=甲…9=癸）。
+ */
+function ziHourGanIndex(dayGanIndex: number): number {
+  // 日干序号 mod 5 决定起点：甲/己->甲(0)、乙/庚->丙(2)、丙/辛->戊(4)、丁/壬->庚(6)、戊/癸->壬(8)
+  return [0, 2, 4, 6, 8][dayGanIndex % 5]!;
+}
+
+/**
+ * 时柱计算：地支按时辰取，天干由日干按五鼠遁推出。
+ * 子时依早晚子时（ADR-0002）--日柱已按公历日对齐子正（00:00），故日干随历法日
+ * 自然切换：23:00-00:00 晚子时用当日日干、00:00-01:00 早子时用次日（历法当日）日干。
+ */
+function computeHourPillar(hour: number, dayGanIndex: number): string {
+  const zhiIdx = hourZhiIndex(hour);
+  const ganIdx = (ziHourGanIndex(dayGanIndex) + zhiIdx) % 10;
+  return `${天干[ganIdx]}${地支[zhiIdx]}`;
+}
+
+/** 子正跨界提示阈值（分钟）：出生时刻距最近子正（00:00）在此范围内时判定为近子正 */
+const ZI_ZHENG_WARN_MINUTES = 15;
+
+/** 出生时刻是否近子正（00:00）。子正为早晚子时分界，近子正时刻几分出入即影响日柱/时柱。 */
+function isNearZiZheng(hour: number, minute: number): boolean {
+  const minutesOfDay = hour * 60 + minute;
+  const distToMidnight = Math.min(minutesOfDay, 1440 - minutesOfDay);
+  return distToMidnight <= ZI_ZHENG_WARN_MINUTES;
+}
+
+/**
  * 排盘纯函数。
- * T3：返回年柱 + 月柱 + 日柱。
+ * T4：返回年柱 + 月柱 + 日柱 + 时柱。
  * - 年柱按立春切换、月柱按节切换（ADR-0001）
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
+ * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
  */
 export function 排盘(input: 排盘Input): 排盘Result {
   const offset = daysSinceAnchor(input.year, input.month, input.day);
   const birthUtc = inputToUtcMs(input);
   const [年柱, yearGanIndex] = computeYearPillar(input, birthUtc);
+  // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
+  // 不包装会让天干/地支取到 undefined。dayGanIndex 与 日柱 复用同一归一化结果。
+  const dayIndex = (((DAY_PILLAR_ANCHOR_INDEX + offset) % 60) + 60) % 60;
+  const dayGanIndex = dayIndex % 10;
   return {
     年柱,
     月柱: computeMonthPillar(input, birthUtc, yearGanIndex),
-    日柱: 六十甲子(DAY_PILLAR_ANCHOR_INDEX + offset),
+    日柱: 六十甲子(dayIndex),
+    时柱: computeHourPillar(input.hour, dayGanIndex),
+    近子正: isNearZiZheng(input.hour, input.minute),
   };
 }

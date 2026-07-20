@@ -122,3 +122,79 @@ describe("排盘 - 月柱 (T3)", () => {
     expect(result.月柱).toBe("己卯");
   });
 });
+
+describe("排盘 - 时柱 (T4)", () => {
+  // 五鼠遁（起时诀）：甲己还加甲、乙庚丙作初、丙辛从戊起、丁壬庚子居、戊癸壬子真。
+  // 时柱地支按时辰取（子 23-1、丑 1-3……），天干由日干经五鼠遁推出。
+  // 子时依早晚子时（ADR-0002）：晚子时 23:00-00:00 日柱属当日、用当日子时干支；
+  //   早子时 00:00-01:00 日柱属次日（历法当日）、用该日子时干支。
+  // 日柱真值：2000-01-01 戊午（日干戊）、2000-01-02 己未（日干己），见 T1 测试。
+
+  it("晚子时：2000-01-01 23:30 -> 日柱 戊午、时柱 壬子（戊日壬子起）", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 23, minute: 30 });
+    expect(result.日柱).toBe("戊午");
+    expect(result.时柱).toBe("壬子");
+  });
+
+  it("早子时：2000-01-02 00:30 -> 日柱 己未、时柱 甲子（己日甲子起）", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 2, hour: 0, minute: 30 });
+    expect(result.日柱).toBe("己未");
+    expect(result.时柱).toBe("甲子");
+  });
+
+  it("午时：2000-01-01 12:00 -> 时柱 戊午（壬子起顺推至午时为戊）", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
+    expect(result.时柱).toBe("戊午");
+  });
+
+  it("卯时：2000-01-01 06:00 -> 时柱 乙卯", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 6, minute: 0 });
+    expect(result.时柱).toBe("乙卯");
+  });
+
+  it("完整四柱：2000-01-01 12:00 -> 年柱 己卯、月柱 丙子、日柱 戊午、时柱 戊午", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
+    expect(result.年柱).toBe("己卯");
+    expect(result.月柱).toBe("丙子");
+    expect(result.日柱).toBe("戊午");
+    expect(result.时柱).toBe("戊午");
+  });
+
+  // 锚点前日期：1990-01-01 距锚点 2000-01-01 为 3652 天（offset=-3652，负值），
+  // 验证日柱/时柱天干在负 offset 下仍正确归一化。
+  // dayIndex = ((54-3652) mod 60 + 60) mod 60 = 2 -> 丙寅；日干丙 -> 五鼠遁戊子起，
+  // 午时顺推至甲午。
+  it("锚点前日期：1990-01-01 12:00 -> 日柱 丙寅、时柱 甲午", () => {
+    const result = 排盘({ year: 1990, month: 1, day: 1, hour: 12, minute: 0 });
+    expect(result.日柱).toBe("丙寅");
+    expect(result.时柱).toBe("甲午");
+  });
+});
+
+describe("排盘 - 子正跨界提示 (T4)", () => {
+  // 近子正：出生时刻距最近子正（00:00）≤ 15 分钟时判定为近子正，CLI 据此打印跨界提示。
+  it("近子正（前夜 23:50，距 10 分钟）-> 近子正 true", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 23, minute: 50 });
+    expect(result.近子正).toBe(true);
+  });
+
+  it("近子正（当日 00:10，距 10 分钟）-> 近子正 true", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 2, hour: 0, minute: 10 });
+    expect(result.近子正).toBe(true);
+  });
+
+  it("非近子正（23:30，距子正 30 分钟）-> 近子正 false", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 23, minute: 30 });
+    expect(result.近子正).toBe(false);
+  });
+
+  it("非近子正（00:30，距子正 30 分钟）-> 近子正 false", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 2, hour: 0, minute: 30 });
+    expect(result.近子正).toBe(false);
+  });
+
+  it("非近子正（12:00，远离子正）-> 近子正 false", () => {
+    const result = 排盘({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
+    expect(result.近子正).toBe(false);
+  });
+});
