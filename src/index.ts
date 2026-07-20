@@ -45,6 +45,7 @@ program
     }
 
     const result = 排盘(opts);
+    console.log(`年柱：${result.年柱}`);
     console.log(`日柱：${result.日柱}`);
   });
 
