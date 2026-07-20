@@ -18,5 +18,5 @@
 
 - 提交信息：`<type>(<scope>): <description>`
 - type：常量，feat / fix / docs / test / chore / refactor / perf / build / ci / revert
-- scope：模块名，英文
+- scope：模块名（可选），英文
 - description：中文，精简、技术名词保留英文，禁止模糊描述
