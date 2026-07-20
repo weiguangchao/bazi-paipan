@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // 八字排盘 CLI 入口
-// T1：接收公历年月日 + 时分，打印日柱
+// T3：接收公历年月日 + 时分，打印年柱 + 月柱 + 日柱
 
 import { Command } from "commander";
 import { 排盘 } from "./paipan.js";
@@ -46,6 +46,7 @@ program
 
     const result = 排盘(opts);
     console.log(`年柱：${result.年柱}`);
+    console.log(`月柱：${result.月柱}`);
     console.log(`日柱：${result.日柱}`);
   });
 
