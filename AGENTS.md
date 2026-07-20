@@ -20,5 +20,3 @@
 - type：常量，feat / fix / docs / test / chore / refactor / perf / build / ci / revert
 - scope：模块名，英文
 - description：中文，精简、技术名词保留英文，禁止模糊描述
-- pr 编号保留在 subject 末尾：`(#60)`
-- issue 编号保留在 scope：`feat(#60)`
