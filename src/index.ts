@@ -5,6 +5,7 @@
 
 import { Command } from "commander";
 import { 排盘 } from "./paipan.js";
+import type { 性别 } from "./dayun.js";
 
 const program = new Command();
 
@@ -19,9 +20,10 @@ program
   .requiredOption("-M, --minute <minute>", "出生分（0-59）", (v) => parseInt(v, 10))
   .option("-p, --province <province>", "出生省（全名，如 四川省；与 --city 同时给出时按经度修正为真太阳时）")
   .option("-c, --city <city>", "出生地级市（全名，如 成都市；与 --province 同时给出）")
+  .option("-g, --gender <gender>", "性别（男/女）；给出时排大运（8 柱）")
   .action((opts: {
     year: number; month: number; day: number; hour: number; minute: number;
-    province?: string; city?: string;
+    province?: string; city?: string; gender?: string;
   }) => {
     // 输入合法性校验
     if (Number.isNaN(opts.year) || Number.isNaN(opts.month) ||
@@ -59,9 +61,19 @@ program
       ? { province: opts.province!, city: opts.city! }
       : undefined;
 
+    // 性别：仅接受 男/女。给出时排大运，省略时不算大运。
+    let gender: 性别 | undefined;
+    if (opts.gender !== undefined) {
+      if (opts.gender !== "男" && opts.gender !== "女") {
+        console.error(`错误：--gender 须为 男 或 女，收到 ${opts.gender}`);
+        process.exit(1);
+      }
+      gender = opts.gender;
+    }
+
     let result;
     try {
-      result = 排盘({ ...opts, birthplace });
+      result = 排盘({ year: opts.year, month: opts.month, day: opts.day, hour: opts.hour, minute: opts.minute, birthplace, gender });
     } catch (e) {
       // 经度修正查不到出生地时，排盘抛 RangeError，转友好提示。
       if (e instanceof RangeError) {
@@ -82,6 +94,16 @@ program
     if (!result.经度修正) {
       // 未做经度修正：真太阳时与钟表时可能存在数分钟到数十分钟偏差，影响时柱乃至日柱。
       console.log("提示：未做经度修正，真太阳时可能偏移。给出 --province/--city 可按出生地经度修正为真太阳时。");
+    }
+    if (result.大运) {
+      // 大运：方向 + 起运岁 + 8 柱。每柱管 10 年，干支从月柱顺/逆推出。
+      const { 方向, 起运岁, 柱 } = result.大运;
+      console.log(`大运（${方向}行；起运 ${起运岁.岁}岁${起运岁.月}月）：`);
+      for (const p of 柱) {
+        console.log(
+          `  第${p.序号 + 1}柱 ${p.干支}（${p.起运岁.岁}岁${p.起运岁.月}月起；${p.起年月.year}年${p.起年月.month}月）`,
+        );
+      }
     }
   });
 

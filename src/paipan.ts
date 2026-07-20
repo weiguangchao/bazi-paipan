@@ -4,12 +4,13 @@
 // 经度修正作为输入预处理（CONTEXT.md）：给出出生地时把钟表时平移为真太阳时，
 // 所有柱从修正后的时刻算起。
 
-import { 六十甲子, 天干, 地支 } from "./ganzhi.js";
+import { 六十甲子, 天干, 地支, JIE_TERM_INDEXES } from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
 import { 应用经度修正 } from "./solar-time.js";
 import { 查找经度, type 出生地 } from "./birthplace.js";
+import { 大运, type 性别, type 大运Result } from "./dayun.js";
 
-/** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地。 */
+/** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
 export interface 排盘Input {
   year: number;
   month: number;
@@ -21,9 +22,15 @@ export interface 排盘Input {
    * 查不到省/市时抛 RangeError（CLI 应捕获并提示用户）。
    */
   birthplace?: 出生地;
+  /**
+   * 可选性别。给出时计算大运（8 柱）并附在返回结果中；未给出时不计算大运。
+   * 大运方向按阳男阴女顺、阴男阳女逆，起运岁与每柱干支依赖性别。
+   */
+  gender?: 性别;
 }
 
-/** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。 */
+/** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
+ *  T6 阶段增附大运（仅当输入带 gender 时）。 */
 export interface 排盘Result {
   年柱: string;
   月柱: string;
@@ -36,6 +43,11 @@ export interface 排盘Result {
    * CLI 据此决定是否打印"未做经度修正，真太阳时可能偏移"提示。
    */
   经度修正: boolean;
+  /**
+   * 大运（8 柱）。仅当输入带 gender 时给出，否则为 undefined。
+   * CLI 据此打印 8 柱大运。
+   */
+  大运?: 大运Result;
 }
 
 // 锚点：2000-01-01 日柱为戊午，六十甲子序号 54（甲子=0）
@@ -48,11 +60,8 @@ const DAY_PILLAR_ANCHOR_INDEX = 54;
 /** 北京时间 UTC+8 偏移（毫秒） */
 const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
-// 节（非中气）交节后对应的月地支序：从立春起为寅月，顺排到小寒为丑月。
-// 节序号采用 SOLAR_TERM_NAMES 顺序：3=立春、5=惊蛰、7=清明、9=立夏、11=芒种、
-// 13=小暑、15=立秋、17=白露、19=寒露、21=立冬、23=大雪、1=小寒。
-const JIE_TERM_INDEXES = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 1] as const;
-// 对应月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)、惊蛰->卯(3)…小寒->丑(1)
+// 月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)、惊蛰->卯(3)…小寒->丑(1)
+// 与 JIE_TERM_INDEXES 一一对应（节序号见 ganzhi.ts）。
 const JIE_MONTH_ZHI_INDEX = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1] as const;
 
 /**
@@ -243,12 +252,15 @@ function isNearZiZheng(hour: number, minute: number): boolean {
 /**
  * 排盘纯函数。
  * T5：返回年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
+ * T6：输入带 gender 时附大运（8 柱）。
  * - 真太阳时作为输入预处理：给出出生地时按经度修正为真太阳时，所有柱从修正后
  *   的时刻算起（CONTEXT.md 经度修正）。未给出生地走钟表时。
  * - 年柱按立春切换、月柱按节切换（ADR-0001）
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
  * - 近子正判定基于实际排盘所用时刻（已做经度修正）
+ * - 大运从月柱出发排 8 柱，方向按阳男阴女顺/阴男阳女逆；起运岁按出生时刻到
+ *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
 export function 排盘(input: 排盘Input): 排盘Result {
   const { effective, 经度修正 } = resolveEffectiveInput(input);
@@ -259,12 +271,24 @@ export function 排盘(input: 排盘Input): 排盘Result {
   // 不包装会让天干/地支取到 undefined。dayGanIndex 与 日柱 复用同一归一化结果。
   const dayIndex = (((DAY_PILLAR_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayGanIndex = dayIndex % 10;
-  return {
+  const 月柱 = computeMonthPillar(effective, birthUtc, yearGanIndex);
+  const result: 排盘Result = {
     年柱,
-    月柱: computeMonthPillar(effective, birthUtc, yearGanIndex),
+    月柱,
     日柱: 六十甲子(dayIndex),
     时柱: computeHourPillar(effective.hour, dayGanIndex),
     近子正: isNearZiZheng(effective.hour, effective.minute),
     经度修正,
   };
+  if (input.gender !== undefined) {
+    result.大运 = 大运(
+      月柱,
+      yearGanIndex,
+      input.gender,
+      birthUtc,
+      effective.year,
+      effective.month,
+    );
+  }
+  return result;
 }
