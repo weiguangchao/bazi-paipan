@@ -16,7 +16,7 @@
 
 ## Git commit
 
-- 提交信息：`<type>(<scope>): <description>`
+- subject：`<type>: <description>`
 - type：常量，feat / fix / docs / test / chore / refactor / perf / build / ci / revert
-- scope：英文。在实现 issue 时，用 issue 编号，如 `feat(#1): ...`
+- 在实现 issue 时，在 subject 末尾使用 issue 编号，如 `feat: demo commit (#1)`
 - description：中文，精简、技术名词保留英文，禁止模糊描述
