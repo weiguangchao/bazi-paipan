@@ -115,3 +115,37 @@ describe("CLI - 大运 (T6)", () => {
     expect(stderr).toMatch(/--gender 须为 男 或 女/);
   });
 });
+
+describe("CLI - 流年 (T9)", () => {
+  // 流年块为必选输出，无 flag 触发。具体干支由 liunian.test.ts 纯函数测保证；
+  // CLI 测试只用正则断言占位行 + 10 行格式，避免写死具体干支造成的跨年时间炸弹。
+  it("默认打印流年块：标题行 + 10 行 '<year> <干支>'", () => {
+    const { stdout, exit } = runCli(["-y", "2000", "-m", "1", "-d", "1", "-H", "12", "-M", "0"]);
+    expect(exit).toBe(0);
+    // 标题行：流年（今年 <year> 起，10 柱）：
+    expect(stdout).toMatch(/^流年（今年 \d+ 起，10 柱）：$/m);
+    // 10 行：两空格缩进 + 年份 + 空格 + 两字干支
+    const 流年行 = stdout
+      .split("\n")
+      .filter((l) => /^\s+\d+ [甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]$/.test(l));
+    expect(流年行).toHaveLength(10);
+    // 第一行的年份与标题行的"今年"一致
+    const titleYear = /流年（今年 (\d+) 起/.exec(stdout)?.[1];
+    const firstYear = /^\s+(\d+) /.exec(流年行[0]!)?.[1];
+    expect(firstYear).toBe(titleYear);
+    // 10 行年份依次 +1
+    const years = 流年行.map((l) => Number(/^\s+(\d+) /.exec(l)?.[1]));
+    for (let i = 1; i < years.length; i++) {
+      expect(years[i]).toBe(years[i - 1]! + 1);
+    }
+  });
+
+  // 给 --gender 也应打印流年（流年不依赖大运/性别，始终输出）。
+  it("给出 --gender 时仍打印流年块", () => {
+    const { stdout, exit } = runCli([
+      "-y", "2000", "-m", "3", "-d", "10", "-H", "12", "-M", "0", "-g", "男",
+    ]);
+    expect(exit).toBe(0);
+    expect(stdout).toMatch(/流年（今年 \d+ 起，10 柱）：/);
+  });
+});

@@ -1,0 +1,17 @@
+// 北京时间（UTC+8）边缘工具
+// "今天"只活在 CLI 边缘（ADR-0003）：按北京时间读机器时钟算出今年公历年，
+// 再传入流年纯函数。排盘核心不读时钟。
+// 独立成模块以便定点测试跨时区/跨年归年逻辑，不触发 CLI 入口副作用。
+
+/** 北京时间 UTC+8 偏移（毫秒）。用于在 CLI 边缘按中国历法判断"今年"。 */
+export const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
+
+/**
+ * 按北京时间（UTC+8）读取机器时钟，返回今年公历年。
+ * 跨时区/跨年仍按中国历法判断今年--例如 UTC 凌晨 16:00（北京次日 00:00）
+ * 已切到北京新年。
+ */
+export function getBeijingYear(): number {
+  const now = Date.now();
+  return new Date(now + BEIJING_OFFSET_MS).getUTCFullYear();
+}

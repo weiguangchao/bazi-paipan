@@ -5,6 +5,8 @@
 
 import { Command } from "commander";
 import { 排盘 } from "./paipan.js";
+import { 流年 } from "./liunian.js";
+import { getBeijingYear } from "./beijing-time.js";
 import type { 性别 } from "./dayun.js";
 
 const program = new Command();
@@ -104,6 +106,15 @@ program
           `  第${p.序号 + 1}柱 ${p.干支}（${p.起运岁.岁}岁${p.起运岁.月}月起；${p.起年月.year}年${p.起年月.month}月）`,
         );
       }
+    }
+
+    // 流年：必选输出。今年公历年由 CLI 边缘按北京时间（UTC+8）读机器时钟算出，
+    // 再调流年纯函数（ADR-0003）--排盘核心不读时钟。
+    const 今年 = getBeijingYear();
+    const 流年柱 = 流年(今年);
+    console.log(`流年（今年 ${今年} 起，10 柱）：`);
+    for (const p of 流年柱) {
+      console.log(`  ${p.年} ${p.干支}`);
     }
   });
 
