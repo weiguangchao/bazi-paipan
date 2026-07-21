@@ -89,8 +89,9 @@ const 已知差异抖动度 = 0.1;
 // 但出现在此清单本身即被断言——若某市经度差超阈值却不在清单中，视为回归。
 // 清单来源：实测 scripts/data-src/wenzhen-338.json 全 337 市经度差分布。
 //
-// 注：文件名沿用 #17 的"338"（cities.generated.ts 理论 338 市），实际抓取
-// 成功 337 市（1 市失败，#17 已结），故 meta.cityCount 与用例数均为 337。
+// 注：文件名沿用 #17 的"338"（cities.generated.ts 理论 338 市）。抓取脚本
+// buildCityList 跳过重庆市"县"（与"市辖区"经度相同、属重复项），故实际抓取
+// 337 市、0 失败（#17 已结），meta.cityCount 与用例数均为 337。
 const 已知地理编码差异: Readonly<Record<string, ReadonlyArray<{ city: string; 差值度: number }>>> = {
   新疆维吾尔自治区: [
     { city: "哈密市", 差值度: 8.6345 },
