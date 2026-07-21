@@ -34,3 +34,5 @@ pnpm-debug.log*
 
 # cities.generated.ts 生成数据源（体积大，按需重新下载，见 scripts/build-cities-data.cjs 顶部说明）
 scripts/data-src/
+
+.playwright-mcp
