@@ -1,12 +1,12 @@
 // 排盘纯函数
 // 单一测试 seam：输入钟表时出生时刻（可选出生地），返回年柱 + 月柱 + 日柱 + 时柱
 // 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正、早晚子时）
-// 经度修正作为输入预处理（CONTEXT.md）：给出出生地时把钟表时平移为真太阳时，
-// 所有柱从修正后的时刻算起。
+// 真太阳时合成（经度修正 + 均时差）作为输入预处理（CONTEXT.md）：给出出生地时把
+// 钟表时合成为真太阳时（视太阳时），所有柱从修正后的时刻算起。
 
 import { 六十甲子, 天干, 地支, JIE_TERM_INDEXES } from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
-import { 应用经度修正 } from "./solar-time.js";
+import { 应用真太阳时 } from "./solar-time.js";
 import { 查找经度, type 出生地 } from "./birthplace.js";
 import { 大运, type 性别, type 大运Result } from "./dayun.js";
 
@@ -128,7 +128,8 @@ function utcMsToBeijingFields(utcMs: number): {
 
 /**
  * 解析实际用于排盘的时刻（输入预处理）。
- * - 给出出生地且查到经度：把钟表时按经度修正为真太阳时，返回修正后的排盘输入 + 经度修正=true。
+ * - 给出出生地且查到经度：把钟表时按经度修正 + 均时差合成为真太阳时（视太阳时），
+ *   返回修正后的排盘输入 + 经度修正=true。所有柱从真太阳时算起。
  * - 未给出生地：返回原输入（birthplace 去掉，避免下游再处理）+ 经度修正=false。
  * - 给出出生地但查不到省/市：抛 RangeError。
  *
@@ -150,7 +151,7 @@ function resolveEffectiveInput(input: 排盘Input): {
     throw new RangeError(`未知出生地：${where}，无法做经度修正`);
   }
   const clockUtc = inputToUtcMs(input);
-  const solarUtc = 应用经度修正(clockUtc, r.经度);
+  const solarUtc = 应用真太阳时(clockUtc, r.经度);
   return {
     effective: { ...utcMsToBeijingFields(solarUtc) },
     经度修正: true,
@@ -253,8 +254,8 @@ function isNearZiZheng(hour: number, minute: number): boolean {
  * 排盘纯函数。
  * T5：返回年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
  * T6：输入带 gender 时附大运（8 柱）。
- * - 真太阳时作为输入预处理：给出出生地时按经度修正为真太阳时，所有柱从修正后
- *   的时刻算起（CONTEXT.md 经度修正）。未给出生地走钟表时。
+ * - 真太阳时作为输入预处理：给出出生地时按经度修正 + 均时差合成为真太阳时
+ *   （视太阳时），所有柱从修正后的时刻算起（CONTEXT.md）。未给出生地走钟表时。
  * - 年柱按立春切换、月柱按节切换（ADR-0001）
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）

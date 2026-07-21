@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // 八字排盘 CLI 入口
 // T5：接收公历年月日 + 时分（钟表时），可选出生地（省/地级市）。
-// 给出出生地时按经度修正为真太阳时排盘；未给出时走钟表时并打印真太阳时偏移提示。
+// 给出出生地时按经度修正 + 均时差合成为真太阳时排盘；未给出时走钟表时并打印真太阳时偏移提示。
 
 import { Command } from "commander";
 import { 排盘 } from "./paipan.js";
@@ -21,7 +21,7 @@ program
   .requiredOption("-d, --day <day>", "出生日（公历）", (v) => parseInt(v, 10))
   .requiredOption("-H, --hour <hour>", "出生时（0-23）", (v) => parseInt(v, 10))
   .requiredOption("-M, --minute <minute>", "出生分（0-59）", (v) => parseInt(v, 10))
-  .option("-p, --province <province>", "出生省（全名，如 四川省；与 --city 同时给出时按经度修正为真太阳时）")
+  .option("-p, --province <province>", "出生省（全名，如 四川省；与 --city 同时给出时按经度修正 + 均时差合成为真太阳时）")
   .option("-c, --city <city>", "出生地级市（全名，如 成都市；与 --province 同时给出）")
   .option("-g, --gender <gender>", "性别（男/女）；给出时排大运（8 柱）")
   .action((opts: {
