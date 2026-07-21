@@ -6,6 +6,7 @@
 import { Command } from "commander";
 import { 排盘 } from "./paipan.js";
 import { 流年 } from "./liunian.js";
+import { 十神, 藏干表 } from "./shishen.js";
 import { getBeijingYear } from "./beijing-time.js";
 import type { 性别 } from "./dayun.js";
 
@@ -85,10 +86,13 @@ program
       throw e;
     }
 
-    console.log(`年柱：${result.年柱}`);
-    console.log(`月柱：${result.月柱}`);
-    console.log(`日柱：${result.日柱}`);
-    console.log(`时柱：${result.时柱}`);
+    // 日主取日柱天干（CONTEXT.md：日主不计十神，日干位标"日主"由 CLI 层叠加）。
+    const 日主天干 = result.日柱.charAt(0);
+
+    console.log(formatPillar("年柱", result.年柱, 日主天干, false));
+    console.log(formatPillar("月柱", result.月柱, 日主天干, false));
+    console.log(formatPillar("日柱", result.日柱, 日主天干, true));
+    console.log(formatPillar("时柱", result.时柱, 日主天干, false));
     if (result.近子正) {
       // 早晚子时跨界提示：子正（00:00）为日柱切换点，近子正时刻稍有出入即影响四柱
       console.log("提示：出生时刻近子正（00:00），已按早晚子时归属日柱与时柱；若实际时刻略有出入，排盘结果可能不同。");
@@ -117,5 +121,26 @@ program
       console.log(`  ${p.年} ${p.干支}`);
     }
   });
+
+/**
+ * 格式化单柱为带十神的内联紧凑格式：
+ *   年柱：庚辰（庚·食神；辰·戊比肩 乙正官 癸正财）
+ * 天干位为 `干·十神`；地支位为 `支·藏干十神 …`（藏干与十神拼接，空格分隔）。
+ * 日柱天干位标 `日主`，不调十神规则。
+ */
+function formatPillar(
+  name: string,
+  pillar: string,
+  日主天干: string,
+  is日柱: boolean,
+): string {
+  const { 天干十神, 藏干十神 } = 十神(日主天干, pillar);
+  const gan = pillar.charAt(0);
+  const zhi = pillar.charAt(1);
+  const ganLabel = is日柱 ? "日主" : 天干十神;
+  const 藏干 = 藏干表[zhi]!;
+  const 藏干Part = 藏干.map((g, i) => `${g}${藏干十神[i]}`).join(" ");
+  return `${name}：${pillar}（${gan}·${ganLabel}；${zhi}·${藏干Part}）`;
+}
 
 program.parse(process.argv);
