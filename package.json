@@ -11,7 +11,8 @@
     "dev": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "scrape:wenzhen": "tsx scripts/scrape-wenzhen.ts"
   },
   "engines": {
     "node": ">=20"
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "playwright": "^1.61.1",
     "tsup": "^8.5.1",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2",
