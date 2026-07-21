@@ -103,11 +103,13 @@ program
     }
     if (result.大运) {
       // 大运：方向 + 起运岁 + 8 柱。每柱管 10 年，干支从月柱顺/逆推出。
+      // T11 起每柱干支后括注十神（天干十神 + 藏干十神），再括注起运岁与起运年月。
+      // 十神由 #10 的 十神() 用同一日主叠加；大运柱结构不动（CONTEXT.md）。
       const { 方向, 起运岁, 柱 } = result.大运;
       console.log(`大运（${方向}行；起运 ${起运岁.岁}岁${起运岁.月}月）：`);
       for (const p of 柱) {
         console.log(
-          `  第${p.序号 + 1}柱 ${p.干支}（${p.起运岁.岁}岁${p.起运岁.月}月起；${p.起年月.year}年${p.起年月.month}月）`,
+          `  第${p.序号 + 1}柱 ${p.干支}${十神括注(p.干支, 日主天干, false)}（${p.起运岁.岁}岁${p.起运岁.月}月起；${p.起年月.year}年${p.起年月.month}月）`,
         );
       }
     }
@@ -123,10 +125,24 @@ program
   });
 
 /**
+ * 格式化十神括注：(干·十神；支·藏干十神 …)。
+ * 天干位为 `干·十神`；地支位为 `支·藏干十神 …`（藏干与十神拼接，空格分隔）。
+ * 日柱天干位标 `日主`，不调十神规则（CONTEXT.md：日主不计十神）。
+ * 四柱与大运柱共用此格式（大运柱恒非日柱，传 is日柱=false）。
+ */
+function 十神括注(pillar: string, 日主天干: string, is日柱: boolean): string {
+  const { 天干十神, 藏干十神 } = 十神(日主天干, pillar);
+  const gan = pillar.charAt(0);
+  const zhi = pillar.charAt(1);
+  const ganLabel = is日柱 ? "日主" : 天干十神;
+  const 藏干 = 藏干表[zhi]!;
+  const 藏干Part = 藏干.map((g, i) => `${g}${藏干十神[i]}`).join(" ");
+  return `（${gan}·${ganLabel}；${zhi}·${藏干Part}）`;
+}
+
+/**
  * 格式化单柱为带十神的内联紧凑格式：
  *   年柱：庚辰（庚·食神；辰·戊比肩 乙正官 癸正财）
- * 天干位为 `干·十神`；地支位为 `支·藏干十神 …`（藏干与十神拼接，空格分隔）。
- * 日柱天干位标 `日主`，不调十神规则。
  */
 function formatPillar(
   name: string,
@@ -134,13 +150,7 @@ function formatPillar(
   日主天干: string,
   is日柱: boolean,
 ): string {
-  const { 天干十神, 藏干十神 } = 十神(日主天干, pillar);
-  const gan = pillar.charAt(0);
-  const zhi = pillar.charAt(1);
-  const ganLabel = is日柱 ? "日主" : 天干十神;
-  const 藏干 = 藏干表[zhi]!;
-  const 藏干Part = 藏干.map((g, i) => `${g}${藏干十神[i]}`).join(" ");
-  return `${name}：${pillar}（${gan}·${ganLabel}；${zhi}·${藏干Part}）`;
+  return `${name}：${pillar}${十神括注(pillar, 日主天干, is日柱)}`;
 }
 
 program.parse(process.argv);

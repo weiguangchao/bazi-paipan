@@ -83,9 +83,9 @@ describe("CLI - 大运 (T6)", () => {
     ]);
     expect(exit).toBe(0);
     expect(stdout).toMatch(/大运（顺行；起运 8岁6月）：/);
-    // 8 柱干支
-    expect(stdout).toMatch(/第1柱 庚辰（8岁6月起；2008年9月）/);
-    expect(stdout).toMatch(/第8柱 丁亥（78岁6月起；2078年9月）/);
+    // 8 柱干支 + 十神括注 + 起运岁/年月（T11 起大运柱带十神括注）
+    expect(stdout).toMatch(/第1柱 庚辰（庚·正财；辰·戊伤官 乙偏印 癸七杀）（8岁6月起；2008年9月）/);
+    expect(stdout).toMatch(/第8柱 丁亥（丁·比肩；亥·壬正官 甲正印）（78岁6月起；2078年9月）/);
     // 共 8 行
     const 柱行 = stdout.split("\n").filter((l) => /第\d柱/.test(l));
     expect(柱行).toHaveLength(8);
@@ -97,7 +97,7 @@ describe("CLI - 大运 (T6)", () => {
     ]);
     expect(exit).toBe(0);
     expect(stdout).toMatch(/大运（逆行；起运 1岁6月）：/);
-    expect(stdout).toMatch(/第1柱 戊寅（1岁6月起；2001年9月）/);
+    expect(stdout).toMatch(/第1柱 戊寅（戊·伤官；寅·甲正印 丙劫财 戊伤官）（1岁6月起；2001年9月）/);
   });
 
   it("未给 --gender -> 不打印大运", () => {
@@ -182,5 +182,54 @@ describe("CLI - 四柱带十神 (T10)", () => {
     ]);
     expect(exit).toBe(0);
     expect(stdout).toContain("时柱：丁巳（丁·正印；巳·丙偏印 戊比肩 庚食神）");
+  });
+});
+
+describe("CLI - 大运带十神 (T11)", () => {
+  // 定点出生时刻 2000-03-10 12:00 钟表时：日柱 丁卯，日主 丁。
+  // 大运柱天干十神与地支藏干十神都相对同一日主丁（CONTEXT.md：日主）。
+  // 大运柱结构不变；十神由组合层用 #10 的 十神() 叠加（src/shishen.ts）。
+  // 顺行 8 柱：庚辰、辛巳、壬午、癸未、甲申、乙酉、丙戌、丁亥。
+  it("顺行男命大运 8 柱每柱带十神括注（天干十神 + 藏干十神）", () => {
+    const { stdout, exit } = runCli([
+      "-y", "2000", "-m", "3", "-d", "10", "-H", "12", "-M", "0", "-g", "男",
+    ]);
+    expect(exit).toBe(0);
+    expect(stdout).toContain("第1柱 庚辰（庚·正财；辰·戊伤官 乙偏印 癸七杀）（8岁6月起；2008年9月）");
+    expect(stdout).toContain("第2柱 辛巳（辛·偏财；巳·丙劫财 戊伤官 庚正财）（18岁6月起；2018年9月）");
+    expect(stdout).toContain("第3柱 壬午（壬·正官；午·丁比肩 己食神）（28岁6月起；2028年9月）");
+    expect(stdout).toContain("第4柱 癸未（癸·七杀；未·己食神 丁比肩 乙偏印）（38岁6月起；2038年9月）");
+    expect(stdout).toContain("第5柱 甲申（甲·正印；申·庚正财 壬正官 戊伤官）（48岁6月起；2048年9月）");
+    expect(stdout).toContain("第6柱 乙酉（乙·偏印；酉·辛偏财）（58岁6月起；2058年9月）");
+    expect(stdout).toContain("第7柱 丙戌（丙·劫财；戌·戊伤官 辛偏财 丁比肩）（68岁6月起；2068年9月）");
+    expect(stdout).toContain("第8柱 丁亥（丁·比肩；亥·壬正官 甲正印）（78岁6月起；2078年9月）");
+  });
+
+  // 逆行 8 柱：戊寅、丁丑、丙子、乙亥、甲戌、癸酉、壬申、辛未。
+  it("逆行女命大运 8 柱每柱带十神括注（天干十神 + 藏干十神）", () => {
+    const { stdout, exit } = runCli([
+      "-y", "2000", "-m", "3", "-d", "10", "-H", "12", "-M", "0", "-g", "女",
+    ]);
+    expect(exit).toBe(0);
+    expect(stdout).toContain("第1柱 戊寅（戊·伤官；寅·甲正印 丙劫财 戊伤官）（1岁6月起；2001年9月）");
+    expect(stdout).toContain("第2柱 丁丑（丁·比肩；丑·己食神 癸七杀 辛偏财）（11岁6月起；2011年9月）");
+    expect(stdout).toContain("第3柱 丙子（丙·劫财；子·癸七杀）（21岁6月起；2021年9月）");
+    expect(stdout).toContain("第4柱 乙亥（乙·偏印；亥·壬正官 甲正印）（31岁6月起；2031年9月）");
+    expect(stdout).toContain("第5柱 甲戌（甲·正印；戌·戊伤官 辛偏财 丁比肩）（41岁6月起；2041年9月）");
+    expect(stdout).toContain("第6柱 癸酉（癸·七杀；酉·辛偏财）（51岁6月起；2051年9月）");
+    expect(stdout).toContain("第7柱 壬申（壬·正官；申·庚正财 壬正官 戊伤官）（61岁6月起；2061年9月）");
+    expect(stdout).toContain("第8柱 辛未（辛·偏财；未·己食神 丁比肩 乙偏印）（71岁6月起；2071年9月）");
+  });
+
+  // 起运岁、起运年月信息保留不丢：十神括注插入后，起运岁与起运年月仍完整可读。
+  it("大运柱十神括注不破坏起运岁与起运年月信息", () => {
+    const { stdout, exit } = runCli([
+      "-y", "2000", "-m", "3", "-d", "10", "-H", "12", "-M", "0", "-g", "男",
+    ]);
+    expect(exit).toBe(0);
+    // 起运岁行标题保留
+    expect(stdout).toMatch(/大运（顺行；起运 8岁6月）：/);
+    // 末柱起运岁与起运年月仍完整
+    expect(stdout).toMatch(/丁·比肩；亥·壬正官 甲正印）（78岁6月起；2078年9月）/);
   });
 });
