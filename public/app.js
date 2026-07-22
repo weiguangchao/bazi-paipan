@@ -172,10 +172,72 @@
       { label: "日柱", data: siZhu.day },
       { label: "时柱", data: siZhu.hour },
     ];
-    pillars.forEach(function (p) {
-      grid.appendChild(createPillarCard(p.label, p.data));
-    });
+
+    grid.className = "sizhu-table";
+    grid.appendChild(createSiZhuRow("日期", pillars, function (pillar) {
+      return createTextCell("sizhu-column-label", pillar.label);
+    }));
+    grid.appendChild(createSiZhuRow("主星", pillars, function (pillar) {
+      return createTextCell("sizhu-shishen", pillar.data.shiShen);
+    }));
+    grid.appendChild(createSiZhuRow("天干", pillars, function (pillar) {
+      return createWuXingCell("sizhu-gan", pillar.data.ganZhi.charAt(0));
+    }));
+    grid.appendChild(createSiZhuRow("地支", pillars, function (pillar) {
+      return createWuXingCell("sizhu-zhi", pillar.data.ganZhi.charAt(1));
+    }));
+    grid.appendChild(createSiZhuRow("藏干", pillars, function (pillar) {
+      return createCangGanCell("sizhu-canggan", pillar.data.cangGan, "gan");
+    }));
+    grid.appendChild(createSiZhuRow("副星", pillars, function (pillar) {
+      return createCangGanCell("sizhu-fuxing", pillar.data.cangGan, "shiShen");
+    }));
     document.getElementById("result-sizhu").hidden = false;
+  }
+
+  function createSiZhuRow(label, pillars, createValueCell) {
+    var row = document.createElement("div");
+    row.className = "sizhu-row";
+    row.appendChild(createTextCell("sizhu-row-label", label));
+    pillars.forEach(function (pillar) {
+      row.appendChild(createValueCell(pillar));
+    });
+    return row;
+  }
+
+  function createTextCell(className, value) {
+    var cell = document.createElement("div");
+    cell.className = "sizhu-cell " + className;
+    cell.textContent = value;
+    return cell;
+  }
+
+  function createWuXingCell(className, character) {
+    var cell = createTextCell(className, character);
+    cell.classList.add("element-" + getWuXing(character));
+    return cell;
+  }
+
+  function createCangGanCell(className, cangGan, field) {
+    var cell = document.createElement("div");
+    cell.className = "sizhu-cell " + className;
+    cangGan.forEach(function (item) {
+      var line = document.createElement("div");
+      if (field === "gan") {
+        line.className = "element-" + getWuXing(item.gan);
+      }
+      line.textContent = item[field];
+      cell.appendChild(line);
+    });
+    return cell;
+  }
+
+  function getWuXing(character) {
+    if ("甲乙寅卯".indexOf(character) !== -1) return "wood";
+    if ("丙丁巳午".indexOf(character) !== -1) return "fire";
+    if ("戊己辰戌丑未".indexOf(character) !== -1) return "earth";
+    if ("庚辛申酉".indexOf(character) !== -1) return "metal";
+    return "water";
   }
 
   function createPillarCard(label, pillar) {

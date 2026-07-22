@@ -55,8 +55,8 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.siZhu.day.shiShen).toBe("日主");
     // 年柱天干十神：己相对戊日主为劫财
     expect(data.siZhu.year.shiShen).toBe("劫财");
-    // 藏干：卯藏乙 -> 乙正官
-    expect(data.siZhu.year.cangGan).toEqual(["乙正官"]);
+    // 藏干与副星由 API 分字段返回：卯藏乙，乙相对戊日主为正官
+    expect(data.siZhu.year.cangGan).toEqual([{ gan: "乙", shiShen: "正官" }]);
 
     // tips：给出出生地 -> TRUE_SOLAR_TIME 提示
     expect(data.tips).toBeInstanceOf(Array);

@@ -149,6 +149,65 @@ button[type="submit"]:hover { opacity: 0.9; }
   line-height: 1.4;
 }
 
+.sizhu-table {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.sizhu-row {
+  display: grid;
+  grid-template-columns: 16% repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+}
+.sizhu-row:nth-child(even) { background: #f7f7f7; }
+.sizhu-cell {
+  min-width: 0;
+  padding: 10px 8px;
+  text-align: center;
+}
+.sizhu-row-label,
+.sizhu-column-label {
+  color: #9b9b9b;
+  font-size: 0.9rem;
+}
+.sizhu-row-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sizhu-shishen,
+.sizhu-fuxing {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.sizhu-gan,
+.sizhu-zhi {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.sizhu-canggan {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.element-wood { color: #11a63a; }
+.element-fire { color: #d80505; }
+.element-earth { color: #9b7600; }
+.element-metal { color: #c27b00; }
+.element-water { color: #337cf1; }
+.sizhu-gan::after,
+.sizhu-zhi::after {
+  display: inline-block;
+  margin-left: 2px;
+  font-size: 0.62em;
+  vertical-align: 0.05em;
+}
+.element-wood::after { content: "🪵"; }
+.element-fire::after { content: "🔥"; }
+.element-earth::after { content: "⛰"; }
+.element-metal::after { content: "⚙"; }
+.element-water::after { content: "💧"; }
+
 #tips-list { list-style: none; }
 #tips-list li {
   padding: 6px 0;
@@ -182,4 +241,8 @@ button[type="submit"]:hover { opacity: 0.9; }
   .pillar-grid { gap: 8px; }
   .pillar-card { min-width: 60px; padding: 8px; }
   .pillar-gan, .pillar-zhi { font-size: 1.2rem; }
+  .sizhu-cell { padding: 8px 3px; }
+  .sizhu-row-label, .sizhu-column-label { font-size: 0.78rem; }
+  .sizhu-shishen, .sizhu-fuxing, .sizhu-canggan { font-size: 0.82rem; }
+  .sizhu-gan, .sizhu-zhi { font-size: 1.45rem; }
 }

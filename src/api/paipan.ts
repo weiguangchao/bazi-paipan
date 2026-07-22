@@ -25,11 +25,17 @@ export interface PaipanError {
   fields: Record<string, string>;
 }
 
+/** 藏干及其相对日主的十神。两者同属 API 计算结果，前端不推导命理语义。 */
+export interface CangGanOut {
+  gan: string;
+  shiShen: string;
+}
+
 /** 单柱 API 结构。 */
 export interface PillarOut {
   ganZhi: string;
   shiShen: string; // 天干十神；日柱天干位为 "日主"
-  cangGan: string[]; // 地支藏干十神（与藏干顺序一致）
+  cangGan: CangGanOut[]; // 藏干及其副星（与藏干顺序一致）
 }
 
 export interface SiZhuOut {
@@ -86,7 +92,7 @@ function pillarToOut(ganZhi: string, 日主天干: string, isDayPillar: boolean)
   return {
     ganZhi,
     shiShen: isDayPillar ? "日主" : 天干十神,
-    cangGan: 藏干.map((g, i) => g + 藏干十神[i]),
+    cangGan: 藏干.map((gan, i) => ({ gan, shiShen: 藏干十神[i]! })),
   };
 }
 

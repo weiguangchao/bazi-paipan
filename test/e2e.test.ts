@@ -32,10 +32,15 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.click('button[type="submit"]');
     await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
 
-    const pillarLabels = await page.$$eval("#sizhu-grid .pillar-card .pillar-label", els =>
+    const pillarLabels = await page.$$eval("#sizhu-grid .sizhu-column-label", els =>
       els.map(e => e.textContent)
     );
     expect(pillarLabels).toEqual(["年柱", "月柱", "日柱", "时柱"]);
+
+    const rowLabels = await page.$$eval("#sizhu-grid .sizhu-row-label", els =>
+      els.map(e => e.textContent)
+    );
+    expect(rowLabels).toEqual(["日期", "主星", "天干", "地支", "藏干", "副星"]);
 
     expect(await page.isVisible("#result-tips:not([hidden])")).toBe(true);
     expect(await page.locator("#dayun-grid .pillar-card").count()).toBe(8);
@@ -122,7 +127,7 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
     await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
 
     // 四柱可见
-    expect(await page.locator("#sizhu-grid .pillar-card").count()).toBe(4);
+    expect(await page.locator("#sizhu-grid .sizhu-column-label").count()).toBe(4);
 
     // 无横向溢出
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
