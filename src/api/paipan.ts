@@ -97,6 +97,14 @@ function pillarToOut(ganzhi: string, dayMasterTiangan: string, isDayPillar: bool
   };
 }
 
+function pillarShishenToOut(
+  ganzhi: string,
+  dayMasterTiangan: string,
+): { tianganShishen: string; dizhiShishen: string } {
+  const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
+  return { tianganShishen, dizhiShishen: cangganShishen[0]! };
+}
+
 function dayunzhuToOut(
   ganzhi: string,
   dayMasterTiangan: string,
@@ -104,11 +112,10 @@ function dayunzhuToOut(
   startYearMonth: { year: number; month: number },
   currentYear: number,
 ): DayunzhuOut {
-  const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
+  const pillarShishen = pillarShishenToOut(ganzhi, dayMasterTiangan);
   return {
     ganzhi,
-    tianganShishen,
-    dizhiShishen: cangganShishen[0]!,
+    ...pillarShishen,
     qiyun: { ageYears: qiyun.ageYears, ageMonths: qiyun.ageMonths },
     startYear: startYearMonth.year,
     startMonth: startYearMonth.month,
@@ -121,12 +128,11 @@ function liunianzhuToOut(
   dayMasterTiangan: string,
   currentYear: number,
 ): LiunianItemOut {
-  const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, item.ganzhi);
+  const pillarShishen = pillarShishenToOut(item.ganzhi, dayMasterTiangan);
   return {
     year: item.year,
     ganzhi: item.ganzhi,
-    tianganShishen,
-    dizhiShishen: cangganShishen[0]!,
+    ...pillarShishen,
     isCurrentYear: item.year === currentYear,
   };
 }

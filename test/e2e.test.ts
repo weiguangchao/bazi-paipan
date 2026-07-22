@@ -223,10 +223,37 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
     await page.close();
   });
 
-  it("窄屏大运与流年各自保持单行横向滚动", async () => {
+  it("窄屏覆盖卡片数量、切换、键盘、信息层级与横向滚动", async () => {
     const page = await newPage({ width: 375, height: 812 });
     await page.click('button[type="submit"]');
     await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
+
+    const buttons = page.locator("#dayun-grid .dayun-card");
+    expect(await buttons.count()).toBe(10);
+    expect(await page.locator("#liunian-grid .liunian-card").count()).toBe(10);
+    expect(await buttons.first().locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
+    expect(await buttons.first().locator(":scope > .pillar-age").textContent()).toMatch(/^年龄：\d+岁\d+月$/);
+    expect(await buttons.first().locator(".pillar-row").count()).toBe(2);
+    expect(await page.locator("#liunian-grid .liunian-card .pillar-row").count()).toBe(20);
+    const narrowAbbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
+    expect(narrowAbbreviations).toHaveLength(40);
+    expect(narrowAbbreviations.every((value) => ["比", "劫", "食", "伤", "才", "财", "杀", "官", "枭", "印"].includes(value))).toBe(true);
+
+    async function expectNarrowSelection(index: number) {
+      const button = buttons.nth(index);
+      const startYear = await button.getAttribute("data-start-year");
+      expect(await button.getAttribute("aria-pressed")).toBe("true");
+      expect(await page.locator("#liunian-grid .pillar-year").first().evaluate((el) => el.firstChild!.textContent!.trim())).toBe(startYear);
+    }
+
+    await buttons.nth(1).click();
+    await expectNarrowSelection(1);
+    await buttons.nth(2).focus();
+    await page.keyboard.press("Enter");
+    await expectNarrowSelection(2);
+    await buttons.nth(3).focus();
+    await page.keyboard.press("Space");
+    await expectNarrowSelection(3);
 
     for (const selector of ["#dayun-grid", "#liunian-grid"]) {
       const layout = await page.locator(selector).evaluate((element) => {

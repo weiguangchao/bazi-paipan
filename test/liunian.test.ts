@@ -59,7 +59,7 @@ describe("流年 - 纯函数定点 (T9)", () => {
   });
 });
 
-// getBeijingYear：CLI 边缘按北京时间（UTC+8）读机器时钟算"今年"。
+// getBeijingYear：Web API 边缘按北京时间（UTC+8）读机器时钟算"今年"。
 // 跨时区/跨年仍按中国历法判断今年（ADR-0003）--用例注入固定时钟避免跨年时间炸弹。
 describe("getBeijingYear - 北京时间跨年 (T9)", () => {
   afterEach(() => {
