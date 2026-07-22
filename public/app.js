@@ -158,7 +158,6 @@
   function renderResult(data) {
     emptyState.hidden = true;
     renderSizhu(data.sizhu);
-    renderTips(data.tips);
     renderDayun(data.dayun);
     renderLiunian(data.liunian);
   }
@@ -253,17 +252,6 @@
       '<div class="pillar-zhi">' + dizhiCharacter + "</div>" +
       '<div class="pillar-canggan">' + cangganString + "</div>";
     return card;
-  }
-
-  function renderTips(tips) {
-    var list = document.getElementById("tips-list");
-    list.innerHTML = "";
-    tips.forEach(function (tip) {
-      var li = document.createElement("li");
-      li.textContent = tip.message;
-      list.appendChild(li);
-    });
-    document.getElementById("result-tips").hidden = tips.length === 0;
   }
 
   function renderDayun(dayun) {

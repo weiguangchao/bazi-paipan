@@ -208,15 +208,6 @@ button[type="submit"]:hover { opacity: 0.9; }
 .element-metal::after { content: "⚙"; }
 .element-water::after { content: "💧"; }
 
-#tips-list { list-style: none; }
-#tips-list li {
-  padding: 6px 0;
-  font-size: 0.85rem;
-  color: var(--muted);
-  border-bottom: 1px dashed var(--border);
-}
-#tips-list li:last-child { border-bottom: none; }
-
 #dayun-info {
   font-size: 0.85rem;
   color: var(--muted);

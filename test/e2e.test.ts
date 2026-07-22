@@ -27,7 +27,7 @@ async function newPage(viewport: { width: number; height: number }) {
 }
 
 describe("E2E - 桌面 viewport (1280x900)", () => {
-  it("默认成功排盘显示四柱/提示/大运/流年", async () => {
+  it("默认成功排盘显示四柱/大运/流年", async () => {
     const page = await newPage({ width: 1280, height: 900 });
     await page.click('button[type="submit"]');
     await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
@@ -44,7 +44,7 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     expect(await page.locator("#sizhu-grid .sizhu-canggan").first().textContent()).toContain("乙");
     expect(await page.locator("#sizhu-grid .sizhu-fuxing").first().textContent()).toContain("正官");
 
-    expect(await page.isVisible("#result-tips:not([hidden])")).toBe(true);
+    expect(await page.locator("#result-tips").count()).toBe(0);
     expect(await page.locator("#dayun-grid .pillar-card").count()).toBe(8);
     expect(await page.locator("#liunian-grid .pillar-card").count()).toBe(10);
 
