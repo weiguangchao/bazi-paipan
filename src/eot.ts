@@ -25,7 +25,7 @@ const PHASE_OFFSET_DAYS = 81;
  *
  * 锚点：2 月中 ≈ −14 分、11 月初 ≈ +16 分；零点约 4 月中、6 月中、9 月初、12 月底。
  */
-export function 均时差分钟数(utcMs: number): number {
+export function equationOfTimeMinutes(utcMs: number): number {
   const { dayOfYear, fractionOfDay } = toUtcDayOfYear(utcMs);
   const n = dayOfYear + fractionOfDay;
   const b = (2 * Math.PI / DAYS_PER_YEAR) * (n - PHASE_OFFSET_DAYS);

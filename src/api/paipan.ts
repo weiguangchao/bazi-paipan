@@ -5,7 +5,7 @@
 import { 排盘, type 排盘Input } from "../paipan.js";
 import { 流年 } from "../liunian.js";
 import { 十神, 藏干表 } from "../shishen.js";
-import { 查找经度, type 出生地 } from "../birthplace.js";
+import { findLongitude, type Birthplace } from "../birthplace.js";
 import { getBeijingYear } from "../beijing-time.js";
 import type { 性别 } from "../dayun.js";
 
@@ -182,9 +182,9 @@ export function computePaipan(
     fields.province = "省份与城市须同时给出或同时清空";
     fields.city = "省份与城市须同时给出或同时清空";
   } else if (hasProv && hasCity) {
-    const lookup = 查找经度({ province: input.province!, city: input.city! });
-    if (!lookup.找到) {
-      if (lookup.原因 === "未知省份") {
+    const lookup = findLongitude({ province: input.province!, city: input.city! });
+    if (!lookup.found) {
+      if (lookup.reason === "未知省份") {
         fields.province = "未知省份：" + input.province;
       } else {
         fields.city = "省份" + input.province + "下无城市" + input.city;
@@ -203,7 +203,7 @@ export function computePaipan(
     };
   }
 
-  const birthplace: 出生地 | undefined =
+  const birthplace: Birthplace | undefined =
     hasProv && hasCity ? { province: input.province!, city: input.city! } : undefined;
   const domainInput: 排盘Input = { year, month, day, hour, minute, birthplace, gender: input.gender as 性别 };
 

@@ -4,10 +4,10 @@
 // 真太阳时合成（经度修正 + 均时差）作为输入预处理（CONTEXT.md）：给出出生地时把
 // 钟表时合成为真太阳时（视太阳时），所有柱从修正后的时刻算起。
 
-import { 六十甲子, 天干, 地支, JIE_TERM_INDEXES } from "./ganzhi.js";
+import { liushijiazi, tiangan, dizhi, JIE_TERM_INDEXES } from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
-import { 应用真太阳时 } from "./solar-time.js";
-import { 查找经度, type 出生地 } from "./birthplace.js";
+import { applyTrueSolarTime } from "./solar-time.js";
+import { findLongitude, type Birthplace } from "./birthplace.js";
 import { 大运, type 性别, type 大运Result } from "./dayun.js";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
@@ -21,7 +21,7 @@ export interface 排盘Input {
    * 可选出生地。给出时按经度修正为真太阳时再排盘；未给出时走钟表时。
    * 查不到省/市时抛 RangeError（CLI 应捕获并提示用户）。
    */
-  birthplace?: 出生地;
+  birthplace?: Birthplace;
   /**
    * 可选性别。给出时计算大运（8 柱）并附在返回结果中；未给出时不计算大运。
    * 大运方向按阳男阴女顺、阴男阳女逆，起运岁与每柱干支依赖性别。
@@ -143,15 +143,15 @@ function resolveEffectiveInput(input: 排盘Input): {
   if (!input.birthplace) {
     return { effective: stripBirthplace(input), 经度修正: false };
   }
-  const r = 查找经度(input.birthplace);
-  if (!r.找到) {
-    const where = r.原因 === "未知省份"
+  const r = findLongitude(input.birthplace);
+  if (!r.found) {
+    const where = r.reason === "未知省份"
       ? `省份"${input.birthplace.province}"`
       : `省份"${input.birthplace.province}"下的城市"${input.birthplace.city}"`;
     throw new RangeError(`未知出生地：${where}，无法做经度修正`);
   }
   const clockUtc = inputToUtcMs(input);
-  const solarUtc = 应用真太阳时(clockUtc, r.经度);
+  const solarUtc = applyTrueSolarTime(clockUtc, r.longitude);
   return {
     effective: { ...utcMsToBeijingFields(solarUtc) },
     经度修正: true,
@@ -175,7 +175,7 @@ function computeYearPillar(input: 排盘Input, birthUtc: number): [string, numbe
   // 出生在立春之前 -> 归上一公历年
   const ganzhiYear = birthUtc < lichunUtc ? input.year - 1 : input.year;
   const index = (((ganzhiYear - 4) % 60) + 60) % 60;
-  return [六十甲子(index), index % 10];
+  return [liushijiazi(index), index % 10];
 }
 
 /**
@@ -208,7 +208,7 @@ function computeMonthPillar(
   const yinGan = yinMonthGanIndex(yearGanIndex);
   const step = ((monthZhiIndex - 2) + 12) % 12;
   const monthGanIndex = (yinGan + step) % 10;
-  return `${天干[monthGanIndex]}${地支[monthZhiIndex]}`;
+  return `${tiangan[monthGanIndex]}${dizhi[monthZhiIndex]}`;
 }
 
 /**
@@ -237,7 +237,7 @@ function ziHourGanIndex(dayGanIndex: number): number {
 function computeHourPillar(hour: number, dayGanIndex: number): string {
   const zhiIdx = hourZhiIndex(hour);
   const ganIdx = (ziHourGanIndex(dayGanIndex) + zhiIdx) % 10;
-  return `${天干[ganIdx]}${地支[zhiIdx]}`;
+  return `${tiangan[ganIdx]}${dizhi[zhiIdx]}`;
 }
 
 /** 子正跨界提示阈值（分钟）：出生时刻距最近子正（00:00）在此范围内时判定为近子正 */
@@ -276,7 +276,7 @@ export function 排盘(input: 排盘Input): 排盘Result {
   const result: 排盘Result = {
     年柱,
     月柱,
-    日柱: 六十甲子(dayIndex),
+    日柱: liushijiazi(dayIndex),
     时柱: computeHourPillar(effective.hour, dayGanIndex),
     近子正: isNearZiZheng(effective.hour, effective.minute),
     经度修正,

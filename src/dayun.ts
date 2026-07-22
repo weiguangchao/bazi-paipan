@@ -7,7 +7,7 @@
 // 顺行从出生时刻向前数到下一节，逆行向后数到上一节。每柱天干地支从月柱
 // 顺行 +1 或逆行 −1 推出。
 
-import { 六十甲子, 天干, 地支, JIE_TERM_INDEXES } from "./ganzhi.js";
+import { tiangan, dizhi, JIE_TERM_INDEXES } from "./ganzhi.js";
 import { getSolarTermMoment } from "./jieqi.js";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
@@ -117,8 +117,8 @@ function computeStartYearMonth(
 function splitPillar(pillar: string): { ganIdx: number; zhiIdx: number } {
   const gan = pillar.charAt(0);
   const zhi = pillar.charAt(1);
-  const ganIdx = (天干 as readonly string[]).indexOf(gan);
-  const zhiIdx = (地支 as readonly string[]).indexOf(zhi);
+  const ganIdx = (tiangan as readonly string[]).indexOf(gan);
+  const zhiIdx = (dizhi as readonly string[]).indexOf(zhi);
   if (ganIdx < 0 || zhiIdx < 0) {
     throw new Error(`非法干支柱：${pillar}`);
   }
@@ -161,7 +161,7 @@ export function 大运(
     const 起年月 = computeStartYearMonth(birthYear, birthMonth, 起运岁, i);
     柱.push({
       序号: i,
-      干支: `${天干[ganIdx]}${地支[zhiIdx]}`,
+      干支: `${tiangan[ganIdx]}${dizhi[zhiIdx]}`,
       起运岁: { 岁: 起运岁.岁 + i * 10, 月: 起运岁.月 },
       起年月,
     });

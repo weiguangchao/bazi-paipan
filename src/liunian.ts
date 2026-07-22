@@ -6,7 +6,7 @@
 // 每柱 = 六十甲子((公历年 - 4) mod 60)（甲子=0，2000 -> 庚辰）。
 // 不查立春时刻，纯按公历年 mod 60（CONTEXT.md 流年术语）。
 
-import { 六十甲子 } from "./ganzhi.js";
+import { liushijiazi } from "./ganzhi.js";
 
 /** 流年柱：年（公历）+ 该年干支。 */
 export interface 流年柱 {
@@ -29,7 +29,7 @@ export function 流年(今年公历年: number): 流年柱[] {
   for (let i = 0; i < 流年柱数; i++) {
     const 年 = 今年公历年 + i;
     const 序号 = (((年 - 4) % 60) + 60) % 60;
-    柱.push({ 年, 干支: 六十甲子(序号) });
+    柱.push({ 年, 干支: liushijiazi(序号) });
   }
   return 柱;
 }

@@ -9,11 +9,11 @@
 // 日主位标 "日主" 是 CLI 层叠加（见 src/index.ts），纯函数始终返回十神规则结果。
 // 排盘核心与排盘Result 不动：日主从 日柱 天干读，十神作为 CLI/组合层后置步骤。
 
-import { 天干, 地支 } from "./ganzhi.js";
+import { tiangan, dizhi } from "./ganzhi.js";
 
 /** 天干五行序号：0=木、1=火、2=土、3=金、4=水。甲乙木、丙丁火、戊己土、庚辛金、壬癸水。 */
 function ganWuxingIndex(gan: string): number {
-  const idx = (天干 as readonly string[]).indexOf(gan);
+  const idx = (tiangan as readonly string[]).indexOf(gan);
   if (idx < 0) {
     throw new Error(`非法天干：${gan}`);
   }
@@ -23,7 +23,7 @@ function ganWuxingIndex(gan: string): number {
 
 /** 天干阴阳：序号偶为阳(0)、奇为阴(1)。 */
 function ganYinYang(gan: string): 0 | 1 {
-  const idx = (天干 as readonly string[]).indexOf(gan);
+  const idx = (tiangan as readonly string[]).indexOf(gan);
   if (idx < 0) {
     throw new Error(`非法天干：${gan}`);
   }
@@ -108,10 +108,10 @@ export function 十神(日主天干: string, 干支: string): 十神Result {
   }
   const gan = 干支.charAt(0);
   const zhi = 干支.charAt(1);
-  if (!(天干 as readonly string[]).includes(gan)) {
+  if (!(tiangan as readonly string[]).includes(gan)) {
     throw new Error(`非法天干：${gan}`);
   }
-  if (!(地支 as readonly string[]).includes(zhi)) {
+  if (!(dizhi as readonly string[]).includes(zhi)) {
     throw new Error(`非法地支：${zhi}`);
   }
   const 藏干 = 藏干表[zhi]!;

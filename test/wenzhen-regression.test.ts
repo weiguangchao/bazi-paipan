@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { 查找经度 } from "../src/birthplace.js";
-import { 真太阳时偏移分钟数 } from "../src/solar-time.js";
+import { findLongitude } from "../src/birthplace.js";
+import { trueSolarTimeOffsetMinutes } from "../src/solar-time.js";
 
 // 问真对照回归测试集（issue #18）。
 //
@@ -172,11 +172,11 @@ describe("问真对照回归测试集（数据驱动 338 市）(#18)", () => {
 
     it.each(cases)("%s：经度吻合 + 真太阳时吻合", (_cityName: string, c: WenzhenCity) => {
       // ── 经度吻合：city-geo 经度 vs 问真经度 ──────────────────────────
-      const 查找 = 查找经度({ province: c.province, city: c.city });
-      expect(查找).toEqual({ 找到: true, 经度: expect.any(Number) });
-      if (!查找.找到) return; // 类型收窄（上方 expect 已保证）
+      const 查找 = findLongitude({ province: c.province, city: c.city });
+      expect(查找).toEqual({ found: true, longitude: expect.any(Number) });
+      if (!查找.found) return; // 类型收窄（上方 expect 已保证）
 
-      const 经度差 = Math.abs(查找.经度 - c.longitude);
+      const 经度差 = Math.abs(查找.longitude - c.longitude);
       if (经度差 >= 经度微小差异阈值度) {
         // 超阈值：必须出现在已知地理编码差异清单中，否则视为 city-geo 回归。
         const 已知 = 查已知差异(c.province, c.city);
@@ -194,7 +194,7 @@ describe("问真对照回归测试集（数据驱动 338 市）(#18)", () => {
       // ── 真太阳时吻合：用问真经度算我们的偏移，与问真整分偏移比 ─────────
       // 去除地理编码差异后，残差只剩 EoT 公式差（常数）+ 取整/经度小数舍入，
       // 容差 ≤ 2 分吸收之。
-      const 我们的偏移 = 真太阳时偏移分钟数(SAMPLING_UTC_MS, c.longitude);
+      const 我们的偏移 = trueSolarTimeOffsetMinutes(SAMPLING_UTC_MS, c.longitude);
       const 问真偏移 = 解析分钟(c.trueSolarTime) - CLOCK_NOON_MIN;
       const 残差 = Math.abs(我们的偏移 - 问真偏移);
       expect(残差).toBeLessThanOrEqual(真太阳时容差分);
