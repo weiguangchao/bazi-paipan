@@ -103,10 +103,10 @@ function computeStartYearMonth(
   birthYear: number,
   birthMonth: number,
   Qiyunsui: Qiyunsui,
-  柱序号: number,
+  zhuIndex: number,
 ): { year: number; month: number } {
   const totalStartMonths = (birthYear * 12 + (birthMonth - 1)) + Qiyunsui.ageYears * 12 + Qiyunsui.ageMonths;
-  const startMonths = totalStartMonths + 柱序号 * 120; // 每柱 10 年 = 120 月
+  const startMonths = totalStartMonths + zhuIndex * 120; // 每柱 10 年 = 120 月
   return {
     year: Math.floor(startMonths / 12),
     month: (startMonths % 12) + 1,
@@ -137,7 +137,7 @@ function splitPillar(pillar: string): { ganIdx: number; zhiIdx: number } {
  * @returns 大运完整结果（方向 + 起运岁 + 8 柱）
  */
 export function dayun(
-  月柱: string,
+  yuezhu: string,
   yearGanIndex: number,
   gender: Gender,
   birthUtc: number,
@@ -150,7 +150,7 @@ export function dayun(
   const diffMs = forward ? jieMs - birthUtc : birthUtc - jieMs;
   const Qiyunsui = calculateQiyunsui(diffMs);
 
-  const { ganIdx: monthGan, zhiIdx: monthZhi } = splitPillar(月柱);
+  const { ganIdx: monthGan, zhiIdx: monthZhi } = splitPillar(yuezhu);
   const step = forward ? 1 : -1;
   const zhu: DayunZhu[] = [];
   for (let i = 0; i < 8; i++) {
