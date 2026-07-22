@@ -1,3 +1,5 @@
+import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
+
 (function () {
   "use strict";
 
@@ -7,18 +9,57 @@
   var genderSelect = document.getElementById("gender");
   var provinceSelect = document.getElementById("province");
   var citySelect = document.getElementById("city");
+  var submitButton = form.querySelector('button[type="submit"]');
   var generalError = document.getElementById("general-error");
   var emptyState = document.getElementById("empty-state");
 
-  // 默认值
-  dateInput.value = "2000-01-01";
-  timeInput.value = "12:00";
+  var queryParams = new URLSearchParams(window.location.search);
+
+  function getLastQueryValue(name) {
+    var values = queryParams.getAll(name);
+    return values.length > 0 ? values[values.length - 1] : null;
+  }
+
+  function isValidQueryDate(value) {
+    var parsed = parseBirthDate(value);
+    return parsed !== null && !isAfterBirthDateLimit(parsed, Date.now());
+  }
+
+  function isValidQueryTime(value) {
+    return typeof value === "string" && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
+  }
+
+  // 默认值与命盘链接中的基础出生资料
+  var queryDate = getLastQueryValue("date");
+  var queryTime = getLastQueryValue("time");
+  var queryGender = getLastQueryValue("gender");
+  dateInput.value = isValidQueryDate(queryDate) ? queryDate : "2000-01-01";
+  timeInput.value = isValidQueryTime(queryTime) ? queryTime : "00:00";
+  genderSelect.value = queryGender === "男" || queryGender === "女" ? queryGender : "男";
+  var queryProvince = getLastQueryValue("province");
+  var queryCity = getLastQueryValue("city");
+  var shouldRestoreQueryBirthplace = Boolean(queryProvince && queryCity);
 
   var provinceCitiesCache = {};
   var shishenAbbreviations = {
     "比肩": "比", "劫财": "劫", "食神": "食", "伤官": "伤", "偏财": "才",
     "正财": "财", "七杀": "杀", "正官": "官", "偏印": "枭", "正印": "印",
   };
+
+  function resetBirthplaceSelection() {
+    provinceSelect.value = "";
+    citySelect.disabled = true;
+    citySelect.innerHTML = "";
+    var opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "请先选择省份";
+    citySelect.appendChild(opt);
+  }
+
+  if (shouldRestoreQueryBirthplace) {
+    provinceSelect.disabled = true;
+    submitButton.disabled = true;
+  }
 
   // 加载省份索引
   fetch("/cities/provinces.json")
@@ -30,6 +71,26 @@
         opt.textContent = p;
         provinceSelect.appendChild(opt);
       });
+      if (queryProvince && queryCity && provinces.indexOf(queryProvince) !== -1) {
+        provinceSelect.value = queryProvince;
+        return loadCities(queryProvince).then(function () {
+          citySelect.value = queryCity;
+          if (citySelect.value !== queryCity) {
+            resetBirthplaceSelection();
+          } else {
+            citySelect.disabled = false;
+          }
+        });
+      }
+    })
+    .catch(function () {
+      resetBirthplaceSelection();
+    })
+    .then(function () {
+      if (shouldRestoreQueryBirthplace) {
+        provinceSelect.disabled = false;
+        submitButton.disabled = false;
+      }
     });
 
   // 省份变化 -> 加载对应城市
@@ -41,13 +102,7 @@
         citySelect.value = citySelect.options[0] ? citySelect.options[0].value : "";
       });
     } else {
-      citySelect.disabled = true;
-      citySelect.innerHTML = "";
-      var opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = "请先选择省份";
-      citySelect.appendChild(opt);
-      citySelect.value = "";
+      resetBirthplaceSelection();
     }
     clearFieldError("province");
     clearFieldError("city");
@@ -139,6 +194,7 @@
       .then(function (result) {
         if (result.ok) {
           renderResult(result.body.data);
+          updateChartLink(result.body.data.input);
         } else {
           renderError(result.body.error);
         }
@@ -147,6 +203,21 @@
         showGeneralError("网络错误，请重试");
       });
   });
+
+  function updateChartLink(input) {
+    var url = new URL(window.location.href);
+    url.searchParams.set("date", input.date);
+    url.searchParams.set("time", input.time);
+    url.searchParams.set("gender", input.gender);
+    if (input.province && input.city) {
+      url.searchParams.set("province", input.province);
+      url.searchParams.set("city", input.city);
+    } else {
+      url.searchParams.delete("province");
+      url.searchParams.delete("city");
+    }
+    window.history.replaceState(null, "", url.toString());
+  }
 
   function renderError(error) {
     var fields = error.fields || {};

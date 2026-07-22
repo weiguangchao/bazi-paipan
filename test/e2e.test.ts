@@ -38,6 +38,236 @@ async function expectCityUnselected(page: Page) {
 }
 
 describe("E2E - 桌面 viewport (1280x900)", () => {
+  it("命盘链接恢复基础出生资料但不自动排盘", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    let paipanRequests = 0;
+    page.on("request", (request) => {
+      if (request.url().endsWith("/api/paipan") && request.method() === "POST") {
+        paipanRequests += 1;
+      }
+    });
+
+    await page.goto(baseUrl + "/?date=1990-05-15&time=08%3A30&gender=" + encodeURIComponent("女"));
+    await page.waitForLoadState("networkidle");
+
+    expect(await page.inputValue("#date")).toBe("1990-05-15");
+    expect(await page.inputValue("#time")).toBe("08:30");
+    expect(await page.inputValue("#gender")).toBe("女");
+    expect(paipanRequests).toBe(0);
+    expect(await page.isVisible("#empty-state")).toBe(true);
+
+    await page.close();
+  });
+
+  it("首页使用统一的出生资料默认值", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+
+    expect(await page.inputValue("#date")).toBe("2000-01-01");
+    expect(await page.inputValue("#time")).toBe("00:00");
+    expect(await page.inputValue("#gender")).toBe("男");
+    await expectCityUnselected(page);
+
+    await page.close();
+  });
+
+  it("命盘链接等待城市数据后恢复完整出生地", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const query = new URLSearchParams({
+      date: "1990-05-15",
+      province: "四川省",
+      city: "绵阳市",
+    });
+
+    await page.goto(baseUrl + "/?" + query.toString());
+    await page.waitForLoadState("networkidle");
+
+    expect(await page.inputValue("#province")).toBe("四川省");
+    expect(await page.isEnabled("#city")).toBe(true);
+    expect(await page.inputValue("#city")).toBe("绵阳市");
+
+    await page.close();
+  });
+
+  it("命盘链接恢复出生地期间阻止提前排盘", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    var releaseCityRequest = function () {};
+    var cityRequestReleased = new Promise(function (resolve) { releaseCityRequest = resolve; });
+    var markCityRequestStarted = function () {};
+    var cityRequestStarted = new Promise(function (resolve) { markCityRequestStarted = resolve; });
+    await page.route("**/cities/*", async function (route) {
+      var pathname = decodeURIComponent(new URL(route.request().url()).pathname);
+      if (!pathname.endsWith("/cities/四川省.json")) {
+        await route.continue();
+        return;
+      }
+      markCityRequestStarted();
+      await cityRequestReleased;
+      await route.continue();
+    });
+
+    const query = new URLSearchParams({
+      date: "1990-05-15",
+      province: "四川省",
+      city: "绵阳市",
+    });
+    await page.goto(baseUrl + "/?" + query.toString());
+    await cityRequestStarted;
+
+    expect(await page.isDisabled("#province")).toBe(true);
+    expect(await page.isDisabled('button[type="submit"]')).toBe(true);
+
+    releaseCityRequest();
+    await page.waitForLoadState("networkidle");
+    expect(await page.isEnabled("#province")).toBe(true);
+    expect(await page.isEnabled('button[type="submit"]')).toBe(true);
+    expect(await page.inputValue("#city")).toBe("绵阳市");
+
+    await page.close();
+  });
+
+  it("重复基础参数采用最后一个值并将非法值静默兜底", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const url = baseUrl
+      + "/?date=1990-05-15&date=9999-12-31"
+      + "&time=08%3A30&time=24%3A01"
+      + "&gender=" + encodeURIComponent("女")
+      + "&gender=unknown";
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    expect(await page.inputValue("#date")).toBe("2000-01-01");
+    expect(await page.inputValue("#time")).toBe("00:00");
+    expect(await page.inputValue("#gender")).toBe("男");
+    expect(new URL(page.url()).searchParams.getAll("date")).toEqual(["1990-05-15", "9999-12-31"]);
+
+    await page.close();
+  });
+
+  it("命盘链接按北京日期精确执行未来一百年边界", async () => {
+    const fixedNowMs = Date.UTC(2026, 6, 22, 0, 0, 0);
+    const scenarios = [
+      { queryDate: "2126-07-22", expectedDate: "2126-07-22" },
+      { queryDate: "2126-07-23", expectedDate: "2000-01-01" },
+    ];
+
+    for (const scenario of scenarios) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.addInitScript((nowMs) => {
+        Date.now = () => nowMs;
+      }, fixedNowMs);
+      await page.goto(baseUrl + "/?date=" + scenario.queryDate);
+      await page.waitForLoadState("networkidle");
+
+      expect(await page.inputValue("#date")).toBe(scenario.expectedDate);
+      await page.close();
+    }
+  });
+
+  it("命盘链接参数名区分大小写", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(baseUrl + "/?Date=1990-05-15&Time=08%3A30&Gender=" + encodeURIComponent("女"));
+    await page.waitForLoadState("networkidle");
+
+    expect(await page.inputValue("#date")).toBe("2000-01-01");
+    expect(await page.inputValue("#time")).toBe("00:00");
+    expect(await page.inputValue("#gender")).toBe("男");
+
+    await page.close();
+  });
+
+  it("命盘链接中的出生地非法或不成对时整体兜底", async () => {
+    const scenarios = [
+      { province: "四川省", city: "不存在的市" },
+      { province: "四川省" },
+      { city: "绵阳市" },
+      { province: "不存在的省", city: "绵阳市" },
+    ];
+
+    for (const birthplace of scenarios) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      const query = new URLSearchParams({ date: "1990-05-15", ...birthplace });
+      await page.goto(baseUrl + "/?" + query.toString());
+      await page.waitForLoadState("networkidle");
+
+      expect(await page.inputValue("#province")).toBe("");
+      await expectCityUnselected(page);
+      await page.close();
+    }
+  });
+
+  it("排盘成功后规范化命盘链接且不新增历史项", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const url = baseUrl
+      + "/?source=campaign"
+      + "&date=1980-01-01&date=1990-05-15"
+      + "&time=08%3A30"
+      + "&gender=" + encodeURIComponent("女")
+      + "&province=" + encodeURIComponent("四川省")
+      + "&city=" + encodeURIComponent("绵阳市")
+      + "#details";
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+    const historyLengthBefore = await page.evaluate(() => window.history.length);
+    const responsePromise = page.waitForResponse((response) =>
+      response.url().endsWith("/api/paipan") && response.request().method() === "POST",
+    );
+
+    await page.click('button[type="submit"]');
+    expect((await responsePromise).ok()).toBe(true);
+    await page.waitForSelector("#result-sizhu:not([hidden])");
+
+    const normalizedUrl = new URL(page.url());
+    expect(normalizedUrl.searchParams.get("source")).toBe("campaign");
+    expect(normalizedUrl.searchParams.getAll("date")).toEqual(["1990-05-15"]);
+    expect(normalizedUrl.searchParams.getAll("time")).toEqual(["08:30"]);
+    expect(normalizedUrl.searchParams.getAll("gender")).toEqual(["女"]);
+    expect(normalizedUrl.searchParams.getAll("province")).toEqual(["四川省"]);
+    expect(normalizedUrl.searchParams.getAll("city")).toEqual(["绵阳市"]);
+    expect(normalizedUrl.hash).toBe("#details");
+    expect(await page.evaluate(() => window.history.length)).toBe(historyLengthBefore);
+
+    await page.close();
+  });
+
+  it("按默认出生资料排盘成功后移除无效出生地参数", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(baseUrl + "/?source=campaign&date=invalid&province=" + encodeURIComponent("四川省"));
+    await page.waitForLoadState("networkidle");
+
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#result-sizhu:not([hidden])");
+
+    const normalizedUrl = new URL(page.url());
+    expect(normalizedUrl.searchParams.get("source")).toBe("campaign");
+    expect(normalizedUrl.searchParams.get("date")).toBe("2000-01-01");
+    expect(normalizedUrl.searchParams.get("time")).toBe("00:00");
+    expect(normalizedUrl.searchParams.get("gender")).toBe("男");
+    expect(normalizedUrl.searchParams.has("province")).toBe(false);
+    expect(normalizedUrl.searchParams.has("city")).toBe(false);
+
+    await page.close();
+  });
+
+  it("排盘失败时保持命盘链接不变", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(baseUrl + "/?source=campaign&date=1990-05-15");
+    await page.waitForLoadState("networkidle");
+    await page.evaluate(() => { document.getElementById("date")!.value = ""; });
+    const urlBefore = page.url();
+    const responsePromise = page.waitForResponse((response) =>
+      response.url().endsWith("/api/paipan") && response.request().method() === "POST",
+    );
+
+    await page.click('button[type="submit"]');
+    expect((await responsePromise).status()).toBe(400);
+
+    expect(page.url()).toBe(urlBefore);
+    expect(await page.isVisible("#general-error:not([hidden])")).toBe(true);
+
+    await page.close();
+  });
+
   it("默认成功排盘显示四柱/大运/流年", async () => {
     const page = await newPage({ width: 1280, height: 900 });
     await page.click('button[type="submit"]');
@@ -155,6 +385,7 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
   it("大运与流年卡片遵循文字层级、十神简写与只读语义", async () => {
     const page = await newPage({ width: 1280, height: 900 });
     await selectBeijingBirthplace(page);
+    await page.fill("#time", "12:00");
     const responsePromise = page.waitForResponse((response) =>
       response.url().endsWith("/api/paipan") && response.request().method() === "POST",
     );
@@ -329,6 +560,7 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
   it("窄屏覆盖卡片数量、切换、键盘、信息层级与横向滚动", async () => {
     const page = await newPage({ width: 375, height: 812 });
     await selectBeijingBirthplace(page);
+    await page.fill("#time", "12:00");
     await page.click('button[type="submit"]');
     await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
 

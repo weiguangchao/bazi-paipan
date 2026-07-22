@@ -8,6 +8,7 @@ import { shishen, cangganTable } from "../shishen.js";
 import { findLongitude, type Birthplace } from "../birthplace.js";
 import { getBeijingYearMonth } from "../beijing-time.js";
 import type { Gender } from "../dayun.js";
+import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../../public/birth-date.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
 export interface PaipanInput {
@@ -85,8 +86,6 @@ export interface PaipanData {
 export const DEFAULT_PROVINCE = "北京市";
 export const DEFAULT_CITY = "市辖区";
 
-const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
-
 function pillarToOut(ganzhi: string, dayMasterTiangan: string, isDayPillar: boolean): PillarOut {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
   const dizhiCharacter = ganzhi.charAt(1);
@@ -142,22 +141,6 @@ function liunianzhuToOut(
   };
 }
 
-function isValidGregorianDate(year: number, month: number, day: number): boolean {
-  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return false;
-  if (month < 1 || month > 12) return false;
-  if (day < 1) return false;
-  const d = new Date(Date.UTC(year, month - 1, day));
-  return d.getUTCFullYear() === year && d.getUTCMonth() === month - 1 && d.getUTCDate() === day;
-}
-
-function isAfterLimit(y: number, m: number, d: number, limitYear: number, limitMonth: number, limitDay: number): boolean {
-  if (y < limitYear) return false;
-  if (y > limitYear) return true;
-  if (m < limitMonth) return false;
-  if (m > limitMonth) return true;
-  return d > limitDay;
-}
-
 export function computePaipan(
   input: PaipanInput,
 ): { ok: true; data: PaipanData } | { ok: false; error: PaipanError } {
@@ -167,16 +150,15 @@ export function computePaipan(
     fields.gender = "性别须为 男 或 女";
   }
 
-  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input.date);
+  const parsedDate = parseBirthDate(input.date);
   let year = 0, month = 0, day = 0;
-  let dateValid = false;
-  if (dateMatch) {
-    year = parseInt(dateMatch[1]!, 10);
-    month = parseInt(dateMatch[2]!, 10);
-    day = parseInt(dateMatch[3]!, 10);
-    dateValid = isValidGregorianDate(year, month, day);
+  const dateValid = parsedDate !== null;
+  if (parsedDate) {
+    year = parsedDate.year;
+    month = parsedDate.month;
+    day = parsedDate.day;
   }
-  if (!dateMatch || !dateValid) {
+  if (!dateValid) {
     fields.date = "出生日期须为有效公历 YYYY-MM-DD";
   }
 
@@ -193,13 +175,10 @@ export function computePaipan(
   }
 
   if (dateValid && timeValid) {
-    const now = new Date(Date.now() + BEIJING_OFFSET_MS);
-    const beijingYear = now.getUTCFullYear();
-    const beijingMonth = now.getUTCMonth() + 1;
-    const beijingDay = now.getUTCDate();
-    const limitYear = beijingYear + 100;
-    if (isAfterLimit(year, month, day, limitYear, beijingMonth, beijingDay)) {
-      fields.date = "出生日期不得晚于服务当前北京日期后 100 个日历年（" + limitYear + "-" + String(beijingMonth).padStart(2, "0") + "-" + String(beijingDay).padStart(2, "0") + "）";
+    const nowMs = Date.now();
+    const limit = getBirthDateLimit(nowMs);
+    if (isAfterBirthDateLimit(parsedDate!, nowMs)) {
+      fields.date = "出生日期不得晚于服务当前北京日期后 100 个日历年（" + limit.year + "-" + String(limit.month).padStart(2, "0") + "-" + String(limit.day).padStart(2, "0") + "）";
     }
   }
 
