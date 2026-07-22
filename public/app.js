@@ -303,7 +303,7 @@
 
   function renderDayun(dayun) {
     var info = document.getElementById("dayun-info");
-    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiyun.ageYears + "岁";
+    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiyun.ageYears + "岁" + dayun.qiyun.ageMonths + "月";
     var grid = document.getElementById("dayun-grid");
     grid.innerHTML = "";
     var selectedIndex = dayun.zhu.findIndex(function (zhu) { return zhu.isCurrent; });

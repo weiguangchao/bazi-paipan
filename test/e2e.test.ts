@@ -153,8 +153,8 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     const firstDayun = page.locator("#dayun-grid .dayun-card").first();
     expect(await firstDayun.locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
     expect(await firstDayun.locator(":scope > .pillar-age").textContent()).toBe("8~17岁");
-    expect(await page.locator("#dayun-info").textContent()).toBe("方向：逆行；起运 8岁");
-    expect(await page.locator("#result-dayun").textContent()).not.toMatch(/\d+月/);
+    expect(await page.locator("#dayun-info").textContent()).toBe("方向：逆行；起运 8岁0月");
+    expect(await page.locator("#dayun-grid").textContent()).not.toMatch(/\d+月/);
     expect(await firstDayun.textContent()).not.toMatch(/第\s*\d+|起运：|藏干|副星|\d{4}年\d+月/);
     expect(await firstDayun.locator(".pillar-row").count()).toBe(2);
 
