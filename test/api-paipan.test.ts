@@ -45,7 +45,7 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.input.province).toBe("北京市");
     expect(data.input.city).toBe("市辖区");
 
-    // siZhu：四柱干支与known命例一致
+    // sizhu：四柱干支与既有命例一致
     expect(data.sizhu.year.ganzhi).toBe("己卯");
     expect(data.sizhu.month.ganzhi).toBe("丙子");
     expect(data.sizhu.day.ganzhi).toBe("戊午");
@@ -56,7 +56,7 @@ describe("POST /api/paipan - 成功响应", () => {
     // 年柱天干十神：己相对戊日主为劫财
     expect(data.sizhu.year.shishen).toBe("劫财");
     // 藏干与副星由 API 分字段返回：卯藏乙，乙相对戊日主为正官
-    expect(data.sizhu.year.canggan).toEqual([{ gan: "乙", shishen: "正官" }]);
+    expect(data.sizhu.year.canggan).toEqual([{ tiangan: "乙", shishen: "正官" }]);
 
     // tips：给出出生地 -> TRUE_SOLAR_TIME 提示
     expect(data.tips).toBeInstanceOf(Array);
@@ -66,7 +66,7 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.dayun.direction).toBe("逆"); // 1999己卯阴年男 -> 逆
     expect(data.dayun.qiyun.ageYears).toBeTypeOf("number");
     expect(data.dayun.zhu).toHaveLength(8);
-    // 每柱含 ganZhi、shiShen、cangGan、qiYun、startYear、startMonth
+    // 每柱含 ganzhi、shishen、canggan、qiyun、startYear、startMonth
     const z0 = data.dayun.zhu[0];
     expect(z0.ganzhi).toBeTypeOf("string");
     expect(z0.shishen).toBeTypeOf("string");
@@ -76,7 +76,7 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(z0.startYear).toBeTypeOf("number");
     expect(z0.startMonth).toBeTypeOf("number");
 
-    // liunian：10 项，从当before北京年起
+    // liunian：10 项，从当前北京年起
     expect(data.liunian).toHaveLength(10);
     expect(data.liunian[0].ganzhi).toBeTypeOf("string");
     expect(data.liunian[0].shishen).toBeTypeOf("string");
@@ -88,7 +88,7 @@ describe("POST /api/paipan - 成功响应", () => {
     }
   });
 
-  it("空省市 -> clock时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
+  it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
     const { status, body } = await postPaipan({
       date: "2000-01-01",
       time: "12:00",
@@ -97,7 +97,7 @@ describe("POST /api/paipan - 成功响应", () => {
       city: "",
     });
     expect(status).toBe(200);
-    // 时柱戊午（clock时，未做经度修正）
+    // 时柱戊午（钟表时，未做经度修正）
     expect(body.data.sizhu.hour.ganzhi).toBe("戊午");
     expect(body.data.tips.some((t: any) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
   });

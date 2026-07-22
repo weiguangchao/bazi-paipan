@@ -93,17 +93,17 @@ describe("藏干表 - 12 地支全量覆盖", () => {
     "亥": ["壬", "甲"],
   };
 
-  for (const [zhi, expectedGans] of Object.entries(expected)) {
-    it(`${zhi} -> ${expectedGans.join("")}（${expectedGans.length} 个藏干）`, () => {
-      expect(cangganTable[zhi]).toEqual(expectedGans);
+  for (const [dizhi, expectedTiangan] of Object.entries(expected)) {
+    it(`${dizhi} -> ${expectedTiangan.join("")}（${expectedTiangan.length} 个藏干）`, () => {
+      expect(cangganTable[dizhi]).toEqual(expectedTiangan);
     });
   }
 
   it("12 地支全量覆盖（藏干数在 1-3）", () => {
     expect(Object.keys(cangganTable)).toHaveLength(12);
-    for (const gans of Object.values(cangganTable)) {
-      expect(gans.length).toBeGreaterThanOrEqual(1);
-      expect(gans.length).toBeLessThanOrEqual(3);
+    for (const tiangan of Object.values(cangganTable)) {
+      expect(tiangan.length).toBeGreaterThanOrEqual(1);
+      expect(tiangan.length).toBeLessThanOrEqual(3);
     }
   });
 });

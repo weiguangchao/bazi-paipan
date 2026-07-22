@@ -157,13 +157,13 @@
 
   function renderResult(data) {
     emptyState.hidden = true;
-    renderSiZhu(data.sizhu);
+    renderSizhu(data.sizhu);
     renderTips(data.tips);
     renderDayun(data.dayun);
     renderLiunian(data.liunian);
   }
 
-  function renderSiZhu(sizhu) {
+  function renderSizhu(sizhu) {
     var grid = document.getElementById("sizhu-grid");
     grid.innerHTML = "";
     var pillars = [
@@ -174,28 +174,28 @@
     ];
 
     grid.className = "sizhu-table";
-    grid.appendChild(createSiZhuRow("日期", pillars, function (pillar) {
+    grid.appendChild(createSizhuRow("日期", pillars, function (pillar) {
       return createTextCell("sizhu-column-label", pillar.label);
     }));
-    grid.appendChild(createSiZhuRow("主星", pillars, function (pillar) {
+    grid.appendChild(createSizhuRow("主星", pillars, function (pillar) {
       return createTextCell("sizhu-shishen", pillar.data.shishen);
     }));
-    grid.appendChild(createSiZhuRow("天干", pillars, function (pillar) {
-      return createWuXingCell("sizhu-gan", pillar.data.ganzhi.charAt(0));
+    grid.appendChild(createSizhuRow("天干", pillars, function (pillar) {
+      return createWuxingCell("sizhu-gan", pillar.data.ganzhi.charAt(0));
     }));
-    grid.appendChild(createSiZhuRow("地支", pillars, function (pillar) {
-      return createWuXingCell("sizhu-zhi", pillar.data.ganzhi.charAt(1));
+    grid.appendChild(createSizhuRow("地支", pillars, function (pillar) {
+      return createWuxingCell("sizhu-zhi", pillar.data.ganzhi.charAt(1));
     }));
-    grid.appendChild(createSiZhuRow("藏干", pillars, function (pillar) {
-      return createCangGanCell("sizhu-canggan", pillar.data.canggan, "gan");
+    grid.appendChild(createSizhuRow("藏干", pillars, function (pillar) {
+      return createCangganCell("sizhu-canggan", pillar.data.canggan, "tiangan");
     }));
-    grid.appendChild(createSiZhuRow("副星", pillars, function (pillar) {
-      return createCangGanCell("sizhu-fuxing", pillar.data.canggan, "shiShen");
+    grid.appendChild(createSizhuRow("副星", pillars, function (pillar) {
+      return createCangganCell("sizhu-fuxing", pillar.data.canggan, "shishen");
     }));
     document.getElementById("result-sizhu").hidden = false;
   }
 
-  function createSiZhuRow(label, pillars, createValueCell) {
+  function createSizhuRow(label, pillars, createValueCell) {
     var row = document.createElement("div");
     row.className = "sizhu-row";
     row.appendChild(createTextCell("sizhu-row-label", label));
@@ -212,19 +212,19 @@
     return cell;
   }
 
-  function createWuXingCell(className, character) {
+  function createWuxingCell(className, character) {
     var cell = createTextCell(className, character);
-    cell.classList.add("element-" + getWuXing(character));
+    cell.classList.add("element-" + getWuxing(character));
     return cell;
   }
 
-  function createCangGanCell(className, canggan, field) {
+  function createCangganCell(className, canggan, field) {
     var cell = document.createElement("div");
     cell.className = "sizhu-cell " + className;
     canggan.forEach(function (item) {
       var line = document.createElement("div");
-      if (field === "gan") {
-        line.className = "element-" + getWuXing(item.gan);
+      if (field === "tiangan") {
+        line.className = "element-" + getWuxing(item.tiangan);
       }
       line.textContent = item[field];
       cell.appendChild(line);
@@ -232,7 +232,7 @@
     return cell;
   }
 
-  function getWuXing(character) {
+  function getWuxing(character) {
     if ("甲乙寅卯".indexOf(character) !== -1) return "wood";
     if ("丙丁巳午".indexOf(character) !== -1) return "fire";
     if ("戊己辰戌丑未".indexOf(character) !== -1) return "earth";
@@ -243,15 +243,15 @@
   function createPillarCard(label, pillar) {
     var card = document.createElement("div");
     card.className = "pillar-card";
-    var gan = pillar.ganzhi.charAt(0);
-    var zhi = pillar.ganzhi.charAt(1);
-    var cangGanStr = pillar.canggan.join(" ");
+    var tianganCharacter = pillar.ganzhi.charAt(0);
+    var dizhiCharacter = pillar.ganzhi.charAt(1);
+    var cangganString = pillar.canggan.join(" ");
     card.innerHTML =
       '<div class="pillar-label">' + label + "</div>" +
-      '<div class="pillar-gan">' + gan + "</div>" +
+      '<div class="pillar-gan">' + tianganCharacter + "</div>" +
       '<div class="pillar-shishen">' + pillar.shishen + "</div>" +
-      '<div class="pillar-zhi">' + zhi + "</div>" +
-      '<div class="pillar-canggan">' + cangGanStr + "</div>";
+      '<div class="pillar-zhi">' + dizhiCharacter + "</div>" +
+      '<div class="pillar-canggan">' + cangganString + "</div>";
     return card;
   }
 

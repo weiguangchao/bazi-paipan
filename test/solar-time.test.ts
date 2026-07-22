@@ -21,13 +21,13 @@ describe("经度修正 - 偏移量计算 (T5)", () => {
     expect(longitudeCorrectionMinutes(119)).toBe(-4);
   });
 
-  // 成都约 104.08°E，trueSolarTime时比clock时late约 63.7 分钟。
+  // 成都约 104.08°E，真太阳时比钟表时早约 63.7 分钟。
   it("成都 ~104.08° -> 约 −63.7 分钟", () => {
     const m = longitudeCorrectionMinutes(104.081534);
     expect(m).toBeCloseTo(-63.673864, 4);
   });
 
-  // 上海约 121.48°E，trueSolarTime时比clock时early约 5.9 分钟（即 +5.9）。
+  // 上海约 121.48°E，真太阳时比钟表时晚约 5.9 分钟（即 +5.9）。
   it("上海 ~121.48° -> 约 +5.9 分钟", () => {
     const m = longitudeCorrectionMinutes(121.480539);
     expect(m).toBeCloseTo(5.922156, 4);
@@ -35,7 +35,7 @@ describe("经度修正 - 偏移量计算 (T5)", () => {
 });
 
 describe("经度修正 - 时间戳平移 (T5)", () => {
-  // 2000-01-01 12:00 clock时（北京时间）= UTC 2000-01-01 04:00
+  // 2000-01-01 12:00 钟表时（北京时间）= UTC 2000-01-01 04:00
   const base = Date.UTC(2000, 0, 1, 4, 0);
 
   it("120° 中央经线 -> 时间戳不变", () => {
@@ -55,10 +55,10 @@ describe("经度修正 - 时间戳平移 (T5)", () => {
   });
 });
 
-describe("trueSolarTime时合成（经度修正 + 均时差）(#15)", () => {
-  // trueSolarTime时 = clock时 + 经度修正 + 均时差（CONTEXT.md）。
-  // 经度修正代表meanSolarTime时层级（既有函数保留）；均时差在出生 UTC 时刻求值，与经度无关。
-  // 应用trueSolarTime时 = clock时时间戳 + (经度修正 + 均时差) × 60_000 ms。
+describe("真太阳时合成（经度修正 + 均时差）(#15)", () => {
+  // 真太阳时 = 钟表时 + 经度修正 + 均时差（CONTEXT.md）。
+  // 经度修正代表平太阳时层级（既有函数保留）；均时差在出生 UTC 时刻求值，与经度无关。
+  // 应用真太阳时 = 钟表时时间戳 + (经度修正 + 均时差) × 60_000 ms。
 
   // 中央经线 + 均时差零点日期 -> 总偏移 ≈ 0，时间戳不变。
   // 4 月 15 日均时差 ≈ 0（eot.test.ts 锚点），120° 经度修正 = 0。
@@ -107,16 +107,16 @@ describe("trueSolarTime时合成（经度修正 + 均时差）(#15)", () => {
     expect(o2 - longitudeCorrectionMinutes(131.165)).toBeCloseTo(eot, 4);
   });
 
-  // 应用trueSolarTime时 = 时间戳 + 总偏移 × 60_000 ms。
-  it("应用trueSolarTime时 = clock时时间戳 + 总偏移分钟数 × 60_000 ms", () => {
+  // 应用真太阳时 = 时间戳 + 总偏移 × 60_000 ms。
+  it("应用真太阳时 = 钟表时时间戳 + 总偏移分钟数 × 60_000 ms", () => {
     const t = Date.UTC(2000, 0, 1, 4, 0); // 北京时间 2000-01-01 12:00
     const lng = 104.081534; // 成都
     const offset = trueSolarTimeOffsetMinutes(t, lng);
     expect(applyTrueSolarTime(t, lng)).toBe(t + offset * 60_000);
   });
 
-  // meanSolarTime时（既有应用经度修正）与trueSolarTime时（应用trueSolarTime时）之差 = 均时差。
-  it("trueSolarTime时 − meanSolarTime时 = 均时差（验证两层关系）", () => {
+  // 平太阳时（既有应用经度修正）与真太阳时（应用真太阳时）之差 = 均时差。
+  it("真太阳时 − 平太阳时 = 均时差（验证两层关系）", () => {
     const t = Date.UTC(2026, 10, 3, 4, 0); // 11 月初，均时差 ≈ +16
     const lng = 116.413; // 北京
     const meanSolarTime = applyLongitudeCorrection(t, lng);

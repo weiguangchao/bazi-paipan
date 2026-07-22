@@ -61,7 +61,7 @@ describe("serve - command自动化", () => {
     }
   });
 
-  // 验收：服务成功启动after触发浏览器打开意图并输出本机地址（mock 验证）
+  // 验收：服务成功启动后触发浏览器打开意图并输出本机地址（mock 验证）
   it("onReady 回调触发浏览器打开意图并输出地址", async () => {
     let openedUrl = "";
     const s = await serve({ port: 3777, onReady: (url) => { openedUrl = url; } });
@@ -74,7 +74,7 @@ describe("serve - command自动化", () => {
   it("close() 干净关闭监听器", async () => {
     const s = await serve({ port: 3666, onReady: () => {} });
     await s.close();
-    // 关闭after端口应可复用
+    // 关闭后端口应可复用
     const s2 = await serve({ port: 3666, onReady: () => {} });
     servers.push(s2);
     expect(s2.port).toBe(3666);

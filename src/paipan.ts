@@ -62,16 +62,16 @@ const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
 // 月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)、惊蛰->卯(3)…小寒->丑(1)
 // 与 JIE_TERM_INDEXES 一一对应（节序号见 ganzhi.ts）。
-const JIE_MONTH_ZHI_INDEX = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1] as const;
+const JIE_MONTH_DIZHI_INDEX = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1] as const;
 
 /**
  * 五虎遁：由年干推出寅月天干（起月诀）。
  * 甲己丙作首、乙庚戊为头、丙辛庚起、丁壬壬起、戊癸甲起。
  * 返回寅月天干序号（0=甲…9=癸）。
  */
-function yinMonthGanIndex(yearGanIndex: number): number {
+function firstMonthTianganIndex(yearTianganIndex: number): number {
   // 起点偏移：甲/己->丙(2)、乙/庚->戊(4)、丙/辛->庚(6)、丁/壬->壬(8)、戊/癸->甲(0)
-  return [2, 4, 6, 8, 0][yearGanIndex % 5]!;
+  return [2, 4, 6, 8, 0][yearTianganIndex % 5]!;
 }
 
 /** 计算从锚点日期到目标日期的天数差（目标 - 锚点） */
@@ -187,7 +187,7 @@ function computeYearPillar(input: PaipanInput, birthUtc: number): [string, numbe
 function computeMonthPillar(
   input: PaipanInput,
   birthUtc: number,
-  yearGanIndex: number,
+  yearTianganIndex: number,
 ): string {
   // 候选：本公历年与上一公历年的所有"节"交节时刻。取 <= birth 的最近一个。
   let bestJieIdx = -1;
@@ -203,19 +203,19 @@ function computeMonthPillar(
   }
 
   // 命理上出生时刻必落在某个节月内（不存在最早的节），bestJieIdx 必有解。
-  const monthZhiIndex = JIE_MONTH_ZHI_INDEX[bestJieIdx]!;
+  const monthDizhiIndex = JIE_MONTH_DIZHI_INDEX[bestJieIdx]!;
   // 寅月天干 + 从寅月起算的步数（寅=0、卯=1…子=10、丑=11），10 天干循环
-  const yinGan = yinMonthGanIndex(yearGanIndex);
-  const step = ((monthZhiIndex - 2) + 12) % 12;
-  const monthGanIndex = (yinGan + step) % 10;
-  return `${tiangan[monthGanIndex]}${dizhi[monthZhiIndex]}`;
+  const firstMonthTiangan = firstMonthTianganIndex(yearTianganIndex);
+  const step = ((monthDizhiIndex - 2) + 12) % 12;
+  const monthTianganIndex = (firstMonthTiangan + step) % 10;
+  return `${tiangan[monthTianganIndex]}${dizhi[monthDizhiIndex]}`;
 }
 
 /**
  * 时柱地支序号：按时辰取。子时 23:00-01:00（地支子=0），每两小时推进一支。
  * hour=23 或 0 -> 子(0)、hour=1/2 -> 丑(1)……hour=21/22 -> 亥(11)。
  */
-function hourZhiIndex(hour: number): number {
+function hourDizhiIndex(hour: number): number {
   return Math.floor((hour + 1) / 2) % 12;
 }
 
@@ -224,9 +224,9 @@ function hourZhiIndex(hour: number): number {
  * 甲己还加甲、乙庚丙作初、丙辛从戊起、丁壬庚子居、戊癸壬子真。
  * 返回子时天干序号（0=甲…9=癸）。
  */
-function ziHourGanIndex(dayGanIndex: number): number {
+function zishiTianganIndex(dayTianganIndex: number): number {
   // 日干序号 mod 5 决定起点：甲/己->甲(0)、乙/庚->丙(2)、丙/辛->戊(4)、丁/壬->庚(6)、戊/癸->壬(8)
-  return [0, 2, 4, 6, 8][dayGanIndex % 5]!;
+  return [0, 2, 4, 6, 8][dayTianganIndex % 5]!;
 }
 
 /**
@@ -234,20 +234,20 @@ function ziHourGanIndex(dayGanIndex: number): number {
  * 子时依早晚子时（ADR-0002）--日柱已按公历日对齐子正（00:00），故日干随历法日
  * 自然切换：23:00-00:00 晚子时用当日日干、00:00-01:00 早子时用次日（历法当日）日干。
  */
-function computeHourPillar(hour: number, dayGanIndex: number): string {
-  const zhiIdx = hourZhiIndex(hour);
-  const ganIdx = (ziHourGanIndex(dayGanIndex) + zhiIdx) % 10;
-  return `${tiangan[ganIdx]}${dizhi[zhiIdx]}`;
+function computeHourPillar(hour: number, dayTianganIndex: number): string {
+  const dizhiIndex = hourDizhiIndex(hour);
+  const tianganIndex = (zishiTianganIndex(dayTianganIndex) + dizhiIndex) % 10;
+  return `${tiangan[tianganIndex]}${dizhi[dizhiIndex]}`;
 }
 
 /** 子正跨界提示阈值（分钟）：出生时刻距最近子正（00:00）在此范围内时判定为近子正 */
-const ZI_ZHENG_WARN_MINUTES = 15;
+const ZIZHENG_WARN_MINUTES = 15;
 
 /** 出生时刻是否近子正（00:00）。子正为早晚子时分界，近子正时刻几分出入即影响日柱/时柱。 */
-function isNearZiZheng(hour: number, minute: number): boolean {
+function isNearZizheng(hour: number, minute: number): boolean {
   const minutesOfDay = hour * 60 + minute;
   const distToMidnight = Math.min(minutesOfDay, 1440 - minutesOfDay);
-  return distToMidnight <= ZI_ZHENG_WARN_MINUTES;
+  return distToMidnight <= ZIZHENG_WARN_MINUTES;
 }
 
 /**
@@ -267,24 +267,24 @@ export function paipan(input: PaipanInput): PaipanResult {
   const { effective, longitudeCorrectionApplied } = resolveEffectiveInput(input);
   const offset = daysSinceAnchor(effective.year, effective.month, effective.day);
   const birthUtc = inputToUtcMs(effective);
-  const [nianzhu, yearGanIndex] = computeYearPillar(effective, birthUtc);
+  const [nianzhu, yearTianganIndex] = computeYearPillar(effective, birthUtc);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
-  // 不包装会让天干/地支取到 undefined。dayGanIndex 与 日柱 复用同一归一化结果。
+  // 不包装会让天干/地支取到 undefined。dayTianganIndex 与 日柱 复用同一归一化结果。
   const dayIndex = (((DAY_PILLAR_ANCHOR_INDEX + offset) % 60) + 60) % 60;
-  const dayGanIndex = dayIndex % 10;
-  const yuezhu = computeMonthPillar(effective, birthUtc, yearGanIndex);
+  const dayTianganIndex = dayIndex % 10;
+  const yuezhu = computeMonthPillar(effective, birthUtc, yearTianganIndex);
   const result: PaipanResult = {
     nianzhu,
     yuezhu,
     rizhu: liushijiazi(dayIndex),
-    shizhu: computeHourPillar(effective.hour, dayGanIndex),
-    nearZizheng: isNearZiZheng(effective.hour, effective.minute),
+    shizhu: computeHourPillar(effective.hour, dayTianganIndex),
+    nearZizheng: isNearZizheng(effective.hour, effective.minute),
     longitudeCorrectionApplied,
   };
   if (input.gender !== undefined) {
     result.dayun = dayun(
       yuezhu,
-      yearGanIndex,
+      yearTianganIndex,
       input.gender,
       birthUtc,
       effective.year,

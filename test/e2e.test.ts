@@ -41,6 +41,8 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
       els.map(e => e.textContent)
     );
     expect(rowLabels).toEqual(["日期", "主星", "天干", "地支", "藏干", "副星"]);
+    expect(await page.locator("#sizhu-grid .sizhu-canggan").first().textContent()).toContain("乙");
+    expect(await page.locator("#sizhu-grid .sizhu-fuxing").first().textContent()).toContain("正官");
 
     expect(await page.isVisible("#result-tips:not([hidden])")).toBe(true);
     expect(await page.locator("#dayun-grid .pillar-card").count()).toBe(8);

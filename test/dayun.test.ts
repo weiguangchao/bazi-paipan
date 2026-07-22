@@ -32,15 +32,15 @@ describe("大运 - 方向 (T6)", () => {
 });
 
 describe("排盘 - 大运顺行 8 柱 (T6)", () => {
-  // 2000-03-10 12:00 clock时：庚辰年己卯月（阳年）男 -> 顺行。
+  // 2000-03-10 12:00 钟表时：庚辰年己卯月（阳年）男 -> 顺行。
   // 月柱 己卯，顺推 8 柱：庚辰、辛巳、壬午、癸未、甲申、乙酉、丙戌、丁亥。
   // 8 柱干支由月柱顺推得出，与 tyme4ts 默认排法一致。
   it("阳年男 2000-03-10 12:00 -> 顺行 8 柱庚辰…丁亥，起运 8岁6月", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
     expect(result.dayun).toBeDefined();
-    const { direction, Qiyunsui, zhu } = result.dayun!;
+    const { direction, qiyun, zhu } = result.dayun!;
     expect(direction).toBe("顺");
-    expect(Qiyunsui).toEqual({ ageYears: 8, ageMonths: 6 });
+    expect(qiyun).toEqual({ ageYears: 8, ageMonths: 6 });
     expect(zhu).toHaveLength(8);
     const ganzhi = zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
@@ -52,14 +52,14 @@ describe("排盘 - 大运顺行 8 柱 (T6)", () => {
   // 每柱管 10 年：起运岁为 8岁6月，故 8 柱起运岁依次 8、18、28、38、48、58、68、78（月不变 6）。
   it("顺行 8 柱起运岁依次递增 10 岁", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
-    const qiyunsuiAges = result.dayun!.zhu.map((p) => p.Qiyunsui.ageYears);
+    const qiyunsuiAges = result.dayun!.zhu.map((p) => p.qiyun.ageYears);
     expect(qiyunsuiAges).toEqual([8, 18, 28, 38, 48, 58, 68, 78]);
     // 月数从起运岁继承，各柱相同
-    expect(result.dayun!.zhu.every((p) => p.Qiyunsui.ageMonths === 6)).toBe(true);
+    expect(result.dayun!.zhu.every((p) => p.qiyun.ageMonths === 6)).toBe(true);
   });
 
   // 起运年月：第 0 柱 = 出生年月 + 起运岁。出生 2000-03，起运 8岁6月 -> 2008-09。
-  // 之after每柱 +10 年。顺序：2008-09、2018-09、2028-09、2038-09、2048-09、2058-09、2068-09、2078-09。
+  // 之后每柱 +10 年。顺序：2008-09、2018-09、2028-09、2038-09、2048-09、2058-09、2068-09、2078-09。
   it("顺行起运年月：2000-03 出生起运 8岁6月 -> 第 0 柱 2008-09", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
     const firstZhu = result.dayun!.zhu[0]!;
@@ -73,9 +73,9 @@ describe("排盘 - 大运逆行 8 柱 (T6)", () => {
   // 同一阳年出生、改性别女 -> 逆行。月柱 己卯 逆推：戊寅、丁丑、丙子、乙亥、甲戌、癸酉、壬申、辛未。
   it("阳年女 2000-03-10 12:00 -> 逆行 8 柱戊寅…辛未，起运 1岁6月", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "女" });
-    const { direction, Qiyunsui, zhu } = result.dayun!;
+    const { direction, qiyun, zhu } = result.dayun!;
     expect(direction).toBe("逆");
-    expect(Qiyunsui).toEqual({ ageYears: 1, ageMonths: 6 });
+    expect(qiyun).toEqual({ ageYears: 1, ageMonths: 6 });
     const ganzhi = zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
       "戊寅", "丁丑", "丙子", "乙亥",
@@ -111,21 +111,21 @@ describe("排盘 - 大运逆行 8 柱 (T6)", () => {
 
 describe("排盘 - 起运岁命例 (T6)", () => {
   // 起运岁由出生时刻到最近一节的天数按 3 天折 1 年折算，精确到年+月。
-  // 立春after刚出生阳男 2000-02-05 04:41（立春 04:40 after 1 分钟）顺行数到下一节（惊蛰 03-05 22:42）。
+  // 立春后刚出生阳男 2000-02-05 04:41（立春 04:40 后 1 分钟）顺行数到下一节（惊蛰 03-05 22:42）。
   // 约 29.75 天 -> 29.75*4 = 119 月 -> 9 岁 11 月。
-  it("立春after出生阳男 -> 顺行数到惊蛰，起运 9岁11月", () => {
+  it("立春后出生阳男 -> 顺行数到惊蛰，起运 9岁11月", () => {
     const result = paipan({ year: 2000, month: 2, day: 5, hour: 4, minute: 41, gender: "男" });
     expect(result.dayun!.direction).toBe("顺");
-    expect(result.dayun!.Qiyunsui).toEqual({ ageYears: 9, ageMonths: 11 });
+    expect(result.dayun!.qiyun).toEqual({ ageYears: 9, ageMonths: 11 });
   });
 
-  // 逆行命例：2000-01-01 12:00 庚辰年（实为 1999 己卯年，立春before）男 -> 阳年男顺
+  // 逆行命例：2000-01-01 12:00 庚辰年（实为 1999 己卯年，立春前）男 -> 阳年男顺
   // 还是阴年？1999 己卯，己=5 奇数序号 -> 阴年男 -> 逆。
-  // 2000-01-01 12:00 时属 1999 年（立春before），年柱 己卯-> 阴年男 -> 逆行。
-  // 逆行数到上一节（小寒 2000-01-06 17:00？不对，1-01 在小寒before，上一节应是大雪 1999-12-07）。
-  it("立春before出生（1999己卯阴年）男 -> 逆行（按归属年干己判定）", () => {
+  // 2000-01-01 12:00 时属 1999 年（立春前），年柱 己卯-> 阴年男 -> 逆行。
+  // 逆行数到上一节（小寒 2000-01-06 17:00？不对，1-01 在小寒前，上一节应是大雪 1999-12-07）。
+  it("立春前出生（1999己卯阴年）男 -> 逆行（按归属年干己判定）", () => {
     const result = paipan({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: "男" });
-    expect(result.nianzhu).toBe("己卯"); // 立春before归 1999 阴年
+    expect(result.nianzhu).toBe("己卯"); // 立春前归 1999 阴年
     expect(result.dayun!.direction).toBe("逆"); // 阴年男逆
   });
 });
@@ -140,7 +140,7 @@ describe("排盘 - 无性别不算大运 (T6)", () => {
 });
 
 describe("大运 - 纯函数单测 (T6)", () => {
-  // 直接调用 大运 纯函数，绕过排盘before置。
+  // 直接调用 大运 纯函数，绕过排盘前置。
   it("月柱 戊寅、阳年（年干戊=4 阳年）男顺行 -> 第 0 柱 己卯", () => {
     const r = dayun("戊寅", 4, "男", Date.UTC(2000, 1, 5, 4, 41) - 8 * 3600 * 1000, 2000, 2);
     expect(r.direction).toBe("顺");

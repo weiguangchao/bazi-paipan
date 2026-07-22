@@ -27,7 +27,7 @@ export interface PaipanError {
 
 /** 藏干及其相对日主的十神。两者同属 API 计算结果，前端不推导命理语义。 */
 export interface CangganOut {
-  gan: string;
+  tiangan: string;
   shishen: string;
 }
 
@@ -50,7 +50,7 @@ export interface TipOut {
   message: string;
 }
 
-export interface DayunZhuOut {
+export interface DayunzhuOut {
   ganzhi: string;
   shishen: string;
   canggan: string[];
@@ -62,7 +62,7 @@ export interface DayunZhuOut {
 export interface DayunOut {
   direction: "顺" | "逆";
   qiyun: { ageYears: number; ageMonths: number };
-  zhu: DayunZhuOut[];
+  zhu: DayunzhuOut[];
 }
 
 export interface LiunianItemOut {
@@ -87,28 +87,28 @@ const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
 function pillarToOut(ganzhi: string, dayMasterTiangan: string, isDayPillar: boolean): PillarOut {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
-  const zhi = ganzhi.charAt(1);
-  const canggan = cangganTable[zhi]!;
+  const dizhiCharacter = ganzhi.charAt(1);
+  const canggan = cangganTable[dizhiCharacter]!;
   return {
     ganzhi,
     shishen: isDayPillar ? "日主" : tianganShishen,
-    canggan: canggan.map((gan, i) => ({ gan, shishen: cangganShishen[i]! })),
+    canggan: canggan.map((tiangan, i) => ({ tiangan, shishen: cangganShishen[i]! })),
   };
 }
 
-function dayunZhuToOut(
+function dayunzhuToOut(
   ganzhi: string,
   dayMasterTiangan: string,
   qiyun: { ageYears: number; ageMonths: number },
   startYearMonth: { year: number; month: number },
-): DayunZhuOut {
+): DayunzhuOut {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
-  const zhi = ganzhi.charAt(1);
-  const canggan = cangganTable[zhi]!;
+  const dizhiCharacter = ganzhi.charAt(1);
+  const canggan = cangganTable[dizhiCharacter]!;
   return {
     ganzhi,
     shishen: tianganShishen,
-    canggan: canggan.map((g, i) => g + cangganShishen[i]),
+    canggan: canggan.map((tiangan, i) => tiangan + cangganShishen[i]),
     qiyun: { ageYears: qiyun.ageYears, ageMonths: qiyun.ageMonths },
     startYear: startYearMonth.year,
     startMonth: startYearMonth.month,
@@ -230,17 +230,17 @@ export function computePaipan(
   const dayun = result.dayun!;
   const dayunOut: DayunOut = {
     direction: dayun.direction,
-    qiyun: { ageYears: dayun.Qiyunsui.ageYears, ageMonths: dayun.Qiyunsui.ageMonths },
-    zhu: dayun.zhu.map((p) => dayunZhuToOut(p.ganzhi, dayMasterTiangan, p.Qiyunsui, p.startYearMonth)),
+    qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
+    zhu: dayun.zhu.map((p) => dayunzhuToOut(p.ganzhi, dayMasterTiangan, p.qiyun, p.startYearMonth)),
   };
 
   const currentYear = getBeijingYear();
   const liunianResult = liunian(currentYear);
   const liunianItems: LiunianItemOut[] = liunianResult.map((p) => {
     const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, p.ganzhi);
-    const zhi = p.ganzhi.charAt(1);
-    const canggan = cangganTable[zhi]!;
-    return { year: p.year, ganzhi: p.ganzhi, shishen: tianganShishen, canggan: canggan.map((g, i) => g + cangganShishen[i]) };
+    const dizhiCharacter = p.ganzhi.charAt(1);
+    const canggan = cangganTable[dizhiCharacter]!;
+    return { year: p.year, ganzhi: p.ganzhi, shishen: tianganShishen, canggan: canggan.map((tiangan, i) => tiangan + cangganShishen[i]) };
   });
 
   return {
