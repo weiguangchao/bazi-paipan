@@ -4,27 +4,29 @@
 
 ## Language
 
+命理概念在代码中使用下列反引号内的规范 token：采用完整、无声调且不拆分的拼音。通用编程概念使用英文；`dayMaster` 是“日主”的唯一英文例外，用于避免与“日柱”`rizhu` 混淆。
+
 ## 干支与四柱
 
-**天干** (Tiangan / Heavenly Stems):
+**天干** (`tiangan`; Tiangan / Heavenly Stems):
 甲、乙、丙、丁、戊、己、庚、辛、壬、癸这十个循环符号。与地支配对构成干支。
 
-**地支** (Dizhi / Earthly Branches):
+**地支** (`dizhi`; Dizhi / Earthly Branches):
 子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥这十二个循环符号。与天干配对构成干支。
 
-**干支** (Ganzhi):
+**干支** (`ganzhi`; Ganzhi):
 一个天干与一个地支的配对，如“甲子”。
 
-**六十甲子** (Liushijiazi / Sexagenary Cycle):
+**六十甲子** (`liushijiazi`; Liushijiazi / Sexagenary Cycle):
 天干与地支同步推进形成的六十个干支循环。
 
-**四柱** (Sizhu / Four Pillars):
+**四柱** (`sizhu`; Sizhu / Four Pillars):
 年柱、月柱、日柱、时柱的合称，构成一次排盘的四个干支位置。
 
-**柱** (Zhu / Pillar):
+**柱** (`zhu`; Zhu / Pillar):
 由一个干支组成的命理位置或单位；年柱、月柱、日柱、时柱、大运柱和流年柱都使用此术语。
 
-**年柱 / 月柱 / 日柱 / 时柱** (Nianzhu / Yuezhu / Rizhu / Shizhu):
+**年柱 / 月柱 / 日柱 / 时柱** (`nianzhu` / `yuezhu` / `rizhu` / `shizhu`; Nianzhu / Yuezhu / Rizhu / Shizhu):
 四柱中分别对应年、月、日、时的干支位置。
 
 ## 时制
@@ -51,35 +53,50 @@ _Avoid_: 地方时、太阳时、本地时、平太阳时（特指不含均时�
 
 ## 切换点
 
-**立春** (Lichun / Start of Spring):
+**立春** (`lichun`; Lichun / Start of Spring):
 二十四节气之首，太阳黄经 315°。年柱在此刻切换到下一干支年，与农历正月初一无关。
 _Avoid_: 新年、春节（口语）
 
-**节** (Jié):
+**节** (`jie`; Jié):
 二十四节气中按月分布的十二个切换点（立春、惊蛰、清明……）。月柱在交节那一刻切换。区别于"中气"。
 _Avoid_: 节气（统称，混淆了节与中气）
 
 ## 子时
 
-**子时** (Zi Hour):
+**子时** (`zishi`; Zi Hour):
 23:00–01:00 的两小时时段，对应地支"子"。时柱地支固定为子。
 
-**晚子时** (Late Zi Hour):
+**晚子时** (`wanzishi`; Late Zi Hour):
 子时中 23:00–00:00 的一段。日柱仍属当日，时柱用当日子时干支。
 _Avoid_: 夜子时、子正前
 
-**早子时** (Early Zi Hour):
+**早子时** (`zaozishi`; Early Zi Hour):
 子时中 00:00–01:00 的一段。日柱切到次日，时柱用次日子时干支。
 _Avoid_: 子正后
 
-**子正** (Zi Zheng):
+**子正** (`zizheng`; Zi Zheng):
 00:00 整。早子时与晚子时的分界，也是日柱切换点。
 
-## 流年
+## 大运与流年
 
-**流年** (Liunian / Annual Pillar):
+**大运** (`dayun`; Major Luck Cycle):
+以月柱为起点，按命局规定的顺逆方向排列的一组长期运程，每步管十年。
+
+**大运柱** (`dayunzhu`; Major Luck Pillar):
+大运中的单步干支及其管辖岁段；相邻大运柱沿既定方向推进一位干支。
+
+**起运** (`qiyun`; Luck Cycle Start):
+命局从出生进入第一步大运的起始安排，以起运岁和起运公历年月表示。
+
+**起运岁** (`qiyunsui`; Luck Cycle Starting Age):
+从出生时刻到大运柱开始时的年龄，以整年和整月表示；后续大运柱每隔十年起算。
+
+**流年** (`liunian`; Liunian / Annual Fortune):
 每一公历年对应的一柱干支。公历年 N → 六十甲子序号 `(N − 4) mod 60`（2000 → 庚辰）。不查立春时刻，纯按公历年 mod。
 _Avoid_: 年运、岁运
+
+**流年柱** (`liunianzhu`; Annual Pillar):
+表示某一流年的单柱干支，是流年序列中的一个年度位置。
 
 **今年** (Current Year):
 排盘参考的公历年。由 CLI 边缘按北京时间（UTC+8）读取机器时钟得到，传入流年纯函数。排盘核心不读时钟。
@@ -90,21 +107,21 @@ _Avoid_: 当前年（口语）
 
 ## 十神
 
-**日主** (Day Master):
+**日主** (`dayMaster`; Day Master):
 日柱的天干，十神与藏干十神的参照点（"我"）。日主本身不计十神。
 _Avoid_: 命主、身主（口语，与日支混）
 
-**十神** (Ten Gods):
+**十神** (`shishen`; Ten Gods):
 由日主与目标天干的五行 + 阴阳关系推出的十种角色：比肩、劫财、食神、伤官、偏财、正财、七杀、正官、偏印、正印。阴阳按天干序号偶阳奇阴，五行生克定关系类别。
 _Avoid_: 十星
 
-**五行** (Wuxing / Five Elements):
+**五行** (`wuxing`; Wuxing / Five Elements):
 木、火、土、金、水五种关系类别。十神以日主与目标天干的五行生克关系定类别。
 
-**阴阳** (Yinyang):
+**阴阳** (`yinyang`; Yinyang):
 天干的阴、阳属性。本项目按天干序号偶阳奇阴，用于区分同一五行关系下的两种十神。
 
-**藏干** (Canggan / Hidden Stems):
+**藏干** (`canggan`; Canggan / Hidden Stems):
 地支中暗藏的天干（人元），每个地支 1-3 个。藏干相对日主各计一个十神。
 _Avoid_: 人元（古称，与"藏干"混用）
 
