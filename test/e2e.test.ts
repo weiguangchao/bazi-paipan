@@ -58,6 +58,24 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.close();
   });
 
+  it("四柱藏干不显示五行 emoji，天干地支保留", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
+
+    const cangganAfterContent = await page.locator("#sizhu-grid .sizhu-canggan > div").evaluateAll((els) =>
+      els.map((el) => getComputedStyle(el, "::after").content),
+    );
+    expect(cangganAfterContent).toEqual(cangganAfterContent.map(() => "none"));
+
+    const ganzhiAfterContent = await page.locator("#sizhu-grid .sizhu-gan, #sizhu-grid .sizhu-zhi").evaluateAll((els) =>
+      els.map((el) => getComputedStyle(el, "::after").content),
+    );
+    expect(ganzhiAfterContent.every((content) => content !== "none")).toBe(true);
+
+    await page.close();
+  });
+
   it("今年不在十步范围时默认选择第一步", async () => {
     const page = await newPage({ width: 1280, height: 900 });
     await page.fill("#date", "2100-01-01");

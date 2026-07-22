@@ -252,11 +252,11 @@ button[type="submit"]:hover { opacity: 0.9; }
   font-size: 0.62em;
   vertical-align: 0.05em;
 }
-.element-wood::after { content: "🪵"; }
-.element-fire::after { content: "🔥"; }
-.element-earth::after { content: "⛰"; }
-.element-metal::after { content: "⚙"; }
-.element-water::after { content: "💧"; }
+:is(.sizhu-gan, .sizhu-zhi).element-wood::after { content: "🪵"; }
+:is(.sizhu-gan, .sizhu-zhi).element-fire::after { content: "🔥"; }
+:is(.sizhu-gan, .sizhu-zhi).element-earth::after { content: "⛰"; }
+:is(.sizhu-gan, .sizhu-zhi).element-metal::after { content: "⚙"; }
+:is(.sizhu-gan, .sizhu-zhi).element-water::after { content: "💧"; }
 
 #dayun-info {
   font-size: 0.85rem;
