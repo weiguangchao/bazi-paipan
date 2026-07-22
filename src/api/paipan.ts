@@ -2,7 +2,7 @@
 // 唯一业务 API POST /api/paipan 的处理逻辑。不改变领域语义，只做校验 + 组装。
 // 词汇遵循 CONTEXT.md。错误信封与成功信封由本模块产出。
 
-import { 排盘, type 排盘Input } from "../paipan.js";
+import { paipan, type PaipanInput as DomainPaipanInput } from "../paipan.js";
 import { liunian } from "../liunian.js";
 import { shishen, cangganTable } from "../shishen.js";
 import { findLongitude, type Birthplace } from "../birthplace.js";
@@ -205,23 +205,23 @@ export function computePaipan(
 
   const birthplace: Birthplace | undefined =
     hasProv && hasCity ? { province: input.province!, city: input.city! } : undefined;
-  const domainInput: 排盘Input = { year, month, day, hour, minute, birthplace, gender: input.gender as Gender };
+  const domainInput: DomainPaipanInput = { year, month, day, hour, minute, birthplace, gender: input.gender as Gender };
 
-  const result = 排盘(domainInput);
-  const dayMasterTiangan = result.日柱.charAt(0);
+  const result = paipan(domainInput);
+  const dayMasterTiangan = result.rizhu.charAt(0);
 
   const siZhu: SiZhuOut = {
-    year: pillarToOut(result.年柱, dayMasterTiangan, false),
-    month: pillarToOut(result.月柱, dayMasterTiangan, false),
-    day: pillarToOut(result.日柱, dayMasterTiangan, true),
-    hour: pillarToOut(result.时柱, dayMasterTiangan, false),
+    year: pillarToOut(result.nianzhu, dayMasterTiangan, false),
+    month: pillarToOut(result.yuezhu, dayMasterTiangan, false),
+    day: pillarToOut(result.rizhu, dayMasterTiangan, true),
+    hour: pillarToOut(result.shizhu, dayMasterTiangan, false),
   };
 
   const tips: TipOut[] = [];
-  if (result.近子正) {
+  if (result.nearZizheng) {
     tips.push({ code: "NEAR_ZI_ZHENG", message: "出生时刻近子正（00:00），已按早晚子时归属日柱与时柱；若实际时刻略有出入，排盘结果可能不同。" });
   }
-  if (!result.经度修正) {
+  if (!result.longitudeCorrectionApplied) {
     tips.push({ code: "NO_LONGITUDE_CORRECTION", message: "未做经度修正，真太阳时可能偏移。给出出生省市可按出生地经度修正为真太阳时。" });
   } else {
     tips.push({ code: "TRUE_SOLAR_TIME", message: "已按出生地经度修正与均时差合成为真太阳时排盘。" });

@@ -11,7 +11,7 @@ import { findLongitude, type Birthplace } from "./birthplace.js";
 import { dayun, type Gender, type DayunResult } from "./dayun.js";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
-export interface 排盘Input {
+export interface PaipanInput {
   year: number;
   month: number;
   day: number;
@@ -31,18 +31,18 @@ export interface 排盘Input {
 
 /** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
  *  T6 阶段增附大运（仅当输入带 gender 时）。 */
-export interface 排盘Result {
-  年柱: string;
-  月柱: string;
-  日柱: string;
-  时柱: string;
+export interface PaipanResult {
+  nianzhu: string;
+  yuezhu: string;
+  rizhu: string;
+  shizhu: string;
   /** 出生时刻近子正（00:00）时为 true，CLI 据此打印跨界提示 */
-  近子正: boolean;
+  nearZizheng: boolean;
   /**
    * 是否对出生时刻做了经度修正（即是否提供了有效出生地）。
    * CLI 据此决定是否打印"未做经度修正，真太阳时可能偏移"提示。
    */
-  经度修正: boolean;
+  longitudeCorrectionApplied: boolean;
   /**
    * 大运（8 柱）。仅当输入带 gender 时给出，否则为 undefined。
    * CLI 据此打印 8 柱大运。
@@ -98,7 +98,7 @@ function clockTimeToUtcMs(
 }
 
 /** 将排盘输入的出生时刻转为 UTC 毫秒时间戳 */
-function inputToUtcMs(input: 排盘Input): number {
+function inputToUtcMs(input: PaipanInput): number {
   return clockTimeToUtcMs(
     input.year,
     input.month,
@@ -136,12 +136,12 @@ function utcMsToBeijingFields(utcMs: number): {
  * 真太阳时是本地太阳时，但排盘的所有切换点（立春、节、子正）都按钟表时日期分解
  * 来对比，故这里只做时间戳平移后重新按钟表时分解，不改时区。
  */
-function resolveEffectiveInput(input: 排盘Input): {
-  effective: 排盘Input;
-  经度修正: boolean;
+function resolveEffectiveInput(input: PaipanInput): {
+  effective: PaipanInput;
+  longitudeCorrectionApplied: boolean;
 } {
   if (!input.birthplace) {
-    return { effective: stripBirthplace(input), 经度修正: false };
+    return { effective: stripBirthplace(input), longitudeCorrectionApplied: false };
   }
   const r = findLongitude(input.birthplace);
   if (!r.found) {
@@ -154,12 +154,12 @@ function resolveEffectiveInput(input: 排盘Input): {
   const solarUtc = applyTrueSolarTime(clockUtc, r.longitude);
   return {
     effective: { ...utcMsToBeijingFields(solarUtc) },
-    经度修正: true,
+    longitudeCorrectionApplied: true,
   };
 }
 
 /** 去掉 birthplace，返回纯钟表时排盘输入。 */
-function stripBirthplace(input: 排盘Input): 排盘Input {
+function stripBirthplace(input: PaipanInput): PaipanInput {
   const { birthplace: _bp, ...rest } = input;
   return rest;
 }
@@ -170,7 +170,7 @@ function stripBirthplace(input: 排盘Input): 排盘Input {
  * 干支年序号 = (公历年 - 4) mod 60（甲子=0）。
  * 返回 [年柱, 年干序号]。
  */
-function computeYearPillar(input: 排盘Input, birthUtc: number): [string, number] {
+function computeYearPillar(input: PaipanInput, birthUtc: number): [string, number] {
   const lichunUtc = getLichunMoment(input.year);
   // 出生在立春之前 -> 归上一公历年
   const ganzhiYear = birthUtc < lichunUtc ? input.year - 1 : input.year;
@@ -185,7 +185,7 @@ function computeYearPillar(input: 排盘Input, birthUtc: number): [string, numbe
  * 上一年的年干推算，与年柱归属保持一致。
  */
 function computeMonthPillar(
-  input: 排盘Input,
+  input: PaipanInput,
   birthUtc: number,
   yearGanIndex: number,
 ): string {
@@ -263,27 +263,27 @@ function isNearZiZheng(hour: number, minute: number): boolean {
  * - 大运从月柱出发排 8 柱，方向按阳男阴女顺/阴男阳女逆；起运岁按出生时刻到
  *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
-export function 排盘(input: 排盘Input): 排盘Result {
-  const { effective, 经度修正 } = resolveEffectiveInput(input);
+export function paipan(input: PaipanInput): PaipanResult {
+  const { effective, longitudeCorrectionApplied } = resolveEffectiveInput(input);
   const offset = daysSinceAnchor(effective.year, effective.month, effective.day);
   const birthUtc = inputToUtcMs(effective);
-  const [年柱, yearGanIndex] = computeYearPillar(effective, birthUtc);
+  const [nianzhu, yearGanIndex] = computeYearPillar(effective, birthUtc);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
   // 不包装会让天干/地支取到 undefined。dayGanIndex 与 日柱 复用同一归一化结果。
   const dayIndex = (((DAY_PILLAR_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayGanIndex = dayIndex % 10;
-  const 月柱 = computeMonthPillar(effective, birthUtc, yearGanIndex);
-  const result: 排盘Result = {
-    年柱,
-    月柱,
-    日柱: liushijiazi(dayIndex),
-    时柱: computeHourPillar(effective.hour, dayGanIndex),
-    近子正: isNearZiZheng(effective.hour, effective.minute),
-    经度修正,
+  const yuezhu = computeMonthPillar(effective, birthUtc, yearGanIndex);
+  const result: PaipanResult = {
+    nianzhu,
+    yuezhu,
+    rizhu: liushijiazi(dayIndex),
+    shizhu: computeHourPillar(effective.hour, dayGanIndex),
+    nearZizheng: isNearZiZheng(effective.hour, effective.minute),
+    longitudeCorrectionApplied,
   };
   if (input.gender !== undefined) {
     result.dayun = dayun(
-      月柱,
+      yuezhu,
       yearGanIndex,
       input.gender,
       birthUtc,
