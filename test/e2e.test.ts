@@ -104,7 +104,11 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
 
   it("大运与流年卡片遵循文字层级、十神简写与只读语义", async () => {
     const page = await newPage({ width: 1280, height: 900 });
+    const responsePromise = page.waitForResponse((response) =>
+      response.url().endsWith("/api/paipan") && response.request().method() === "POST",
+    );
     await page.click('button[type="submit"]');
+    const responseData = (await (await responsePromise).json()).data;
     await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
 
     const firstDayun = page.locator("#dayun-grid .dayun-card").first();
@@ -118,10 +122,23 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     expect(await page.locator("#liunian-grid .liunian-card .pillar-row").count()).toBe(20);
     expect(await page.locator("#liunian-grid .current-year-badge").count()).toBe(1);
 
-    const allowed = new Set(["比", "劫", "食", "伤", "才", "财", "杀", "官", "枭", "印"]);
+    const abbreviationByShishen = {
+      "比肩": "比", "劫财": "劫", "食神": "食", "伤官": "伤", "偏财": "才",
+      "正财": "财", "七杀": "杀", "正官": "官", "偏印": "枭", "正印": "印",
+    };
     const abbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
-    expect(abbreviations.length).toBe(40);
-    expect(abbreviations.every((value) => allowed.has(value))).toBe(true);
+    const selectedDayun = responseData.dayun.zhu.find((zhu) => zhu.liunian.some((item) => item.isCurrentYear)) ?? responseData.dayun.zhu[0];
+    const expectedAbbreviations = [
+      ...responseData.dayun.zhu.flatMap((zhu) => [abbreviationByShishen[zhu.tianganShishen], abbreviationByShishen[zhu.dizhiShishen]]),
+      ...selectedDayun.liunian.flatMap((item) => [abbreviationByShishen[item.tianganShishen], abbreviationByShishen[item.dizhiShishen]]),
+    ];
+    expect(abbreviations).toEqual(expectedAbbreviations);
+
+    const rowOrder = await page.locator("#dayun-grid .pillar-row, #liunian-grid .pillar-row").evaluateAll((rows) => rows.map((row) => ({
+      classes: Array.from(row.children, (child) => child.className),
+      flexDirection: getComputedStyle(row).flexDirection,
+    })));
+    expect(rowOrder.every((row) => row.flexDirection === "row" && row.classes[0] === "pillar-character" && row.classes[1] === "pillar-shishen-short")).toBe(true);
 
     const styles = await page.locator("#dayun-grid .pillar-row").first().evaluate((row) => {
       const character = getComputedStyle(row.querySelector(".pillar-character")!);
