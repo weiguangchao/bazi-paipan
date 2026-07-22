@@ -9,13 +9,13 @@
 import { liushijiazi } from "./ganzhi.js";
 
 /** 流年柱：年（公历）+ 该年干支。 */
-export interface 流年柱 {
-  年: number;
-  干支: string;
+export interface Liunianzhu {
+  year: number;
+  ganzhi: string;
 }
 
 /** 流年输出长度：今年起向后 10 柱。 */
-const 流年柱数 = 10;
+const liunianzhuCount = 10;
 
 /**
  * 流年纯函数：给定今年公历年，返回从今年起向后 10 柱干支。
@@ -24,12 +24,12 @@ const 流年柱数 = 10;
  *
  * 例：`流年(2024)` 返回从 2024 甲辰起的 10 柱。
  */
-export function 流年(今年公历年: number): 流年柱[] {
-  const 柱: 流年柱[] = [];
-  for (let i = 0; i < 流年柱数; i++) {
-    const 年 = 今年公历年 + i;
-    const 序号 = (((年 - 4) % 60) + 60) % 60;
-    柱.push({ 年, 干支: liushijiazi(序号) });
+export function liunian(currentGregorianYear: number): Liunianzhu[] {
+  const zhu: Liunianzhu[] = [];
+  for (let i = 0; i < liunianzhuCount; i++) {
+    const year = currentGregorianYear + i;
+    const index = (((year - 4) % 60) + 60) % 60;
+    zhu.push({ year, ganzhi: liushijiazi(index) });
   }
-  return 柱;
+  return zhu;
 }

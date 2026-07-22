@@ -3,11 +3,11 @@
 // 词汇遵循 CONTEXT.md。错误信封与成功信封由本模块产出。
 
 import { 排盘, type 排盘Input } from "../paipan.js";
-import { 流年 } from "../liunian.js";
-import { 十神, 藏干表 } from "../shishen.js";
+import { liunian } from "../liunian.js";
+import { shishen, cangganTable } from "../shishen.js";
 import { findLongitude, type Birthplace } from "../birthplace.js";
 import { getBeijingYear } from "../beijing-time.js";
-import type { 性别 } from "../dayun.js";
+import type { Gender } from "../dayun.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
 export interface PaipanInput {
@@ -85,33 +85,33 @@ export const DEFAULT_CITY = "市辖区";
 
 const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
-function pillarToOut(ganZhi: string, 日主天干: string, isDayPillar: boolean): PillarOut {
-  const { 天干十神, 藏干十神 } = 十神(日主天干, ganZhi);
+function pillarToOut(ganZhi: string, dayMasterTiangan: string, isDayPillar: boolean): PillarOut {
+  const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganZhi);
   const zhi = ganZhi.charAt(1);
-  const 藏干 = 藏干表[zhi]!;
+  const canggan = cangganTable[zhi]!;
   return {
     ganZhi,
-    shiShen: isDayPillar ? "日主" : 天干十神,
-    cangGan: 藏干.map((gan, i) => ({ gan, shiShen: 藏干十神[i]! })),
+    shiShen: isDayPillar ? "日主" : tianganShishen,
+    cangGan: canggan.map((gan, i) => ({ gan, shiShen: cangganShishen[i]! })),
   };
 }
 
 function dayunZhuToOut(
   ganZhi: string,
-  日主天干: string,
-  qiYun: { 岁: number; 月: number },
-  起年月: { year: number; month: number },
+  dayMasterTiangan: string,
+  qiYun: { ageYears: number; ageMonths: number },
+  startYearMonth: { year: number; month: number },
 ): DayunZhuOut {
-  const { 天干十神, 藏干十神 } = 十神(日主天干, ganZhi);
+  const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganZhi);
   const zhi = ganZhi.charAt(1);
-  const 藏干 = 藏干表[zhi]!;
+  const canggan = cangganTable[zhi]!;
   return {
     ganZhi,
-    shiShen: 天干十神,
-    cangGan: 藏干.map((g, i) => g + 藏干十神[i]),
-    qiYun: { ageYears: qiYun.岁, ageMonths: qiYun.月 },
-    startYear: 起年月.year,
-    startMonth: 起年月.month,
+    shiShen: tianganShishen,
+    cangGan: canggan.map((g, i) => g + cangganShishen[i]),
+    qiYun: { ageYears: qiYun.ageYears, ageMonths: qiYun.ageMonths },
+    startYear: startYearMonth.year,
+    startMonth: startYearMonth.month,
   };
 }
 
@@ -205,16 +205,16 @@ export function computePaipan(
 
   const birthplace: Birthplace | undefined =
     hasProv && hasCity ? { province: input.province!, city: input.city! } : undefined;
-  const domainInput: 排盘Input = { year, month, day, hour, minute, birthplace, gender: input.gender as 性别 };
+  const domainInput: 排盘Input = { year, month, day, hour, minute, birthplace, gender: input.gender as Gender };
 
   const result = 排盘(domainInput);
-  const 日主天干 = result.日柱.charAt(0);
+  const dayMasterTiangan = result.日柱.charAt(0);
 
   const siZhu: SiZhuOut = {
-    year: pillarToOut(result.年柱, 日主天干, false),
-    month: pillarToOut(result.月柱, 日主天干, false),
-    day: pillarToOut(result.日柱, 日主天干, true),
-    hour: pillarToOut(result.时柱, 日主天干, false),
+    year: pillarToOut(result.年柱, dayMasterTiangan, false),
+    month: pillarToOut(result.月柱, dayMasterTiangan, false),
+    day: pillarToOut(result.日柱, dayMasterTiangan, true),
+    hour: pillarToOut(result.时柱, dayMasterTiangan, false),
   };
 
   const tips: TipOut[] = [];
@@ -227,27 +227,27 @@ export function computePaipan(
     tips.push({ code: "TRUE_SOLAR_TIME", message: "已按出生地经度修正与均时差合成为真太阳时排盘。" });
   }
 
-  const dayun = result.大运!;
+  const dayun = result.dayun!;
   const dayunOut: DayunOut = {
-    direction: dayun.方向,
-    qiYun: { ageYears: dayun.起运岁.岁, ageMonths: dayun.起运岁.月 },
-    zhu: dayun.柱.map((p) => dayunZhuToOut(p.干支, 日主天干, p.起运岁, p.起年月)),
+    direction: dayun.direction,
+    qiYun: { ageYears: dayun.Qiyunsui.ageYears, ageMonths: dayun.Qiyunsui.ageMonths },
+    zhu: dayun.zhu.map((p) => dayunZhuToOut(p.ganzhi, dayMasterTiangan, p.Qiyunsui, p.startYearMonth)),
   };
 
-  const 今年 = getBeijingYear();
-  const liunianResult = 流年(今年);
-  const liunian: LiunianItemOut[] = liunianResult.map((p) => {
-    const { 天干十神, 藏干十神 } = 十神(日主天干, p.干支);
-    const zhi = p.干支.charAt(1);
-    const 藏干 = 藏干表[zhi]!;
-    return { year: p.年, ganZhi: p.干支, shiShen: 天干十神, cangGan: 藏干.map((g, i) => g + 藏干十神[i]) };
+  const currentYear = getBeijingYear();
+  const liunianResult = liunian(currentYear);
+  const liunianItems: LiunianItemOut[] = liunianResult.map((p) => {
+    const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, p.ganzhi);
+    const zhi = p.ganzhi.charAt(1);
+    const canggan = cangganTable[zhi]!;
+    return { year: p.year, ganZhi: p.ganzhi, shiShen: tianganShishen, cangGan: canggan.map((g, i) => g + cangganShishen[i]) };
   });
 
   return {
     ok: true,
     data: {
       input: { date: input.date, time: input.time, gender: input.gender, province: input.province ?? "", city: input.city ?? "" },
-      siZhu, tips, dayun: dayunOut, liunian,
+      siZhu, tips, dayun: dayunOut, liunian: liunianItems,
     },
   };
 }

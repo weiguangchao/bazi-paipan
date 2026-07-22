@@ -8,7 +8,7 @@ import { liushijiazi, tiangan, dizhi, JIE_TERM_INDEXES } from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
 import { applyTrueSolarTime } from "./solar-time.js";
 import { findLongitude, type Birthplace } from "./birthplace.js";
-import { 大运, type 性别, type 大运Result } from "./dayun.js";
+import { dayun, type Gender, type DayunResult } from "./dayun.js";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
 export interface 排盘Input {
@@ -26,7 +26,7 @@ export interface 排盘Input {
    * 可选性别。给出时计算大运（8 柱）并附在返回结果中；未给出时不计算大运。
    * 大运方向按阳男阴女顺、阴男阳女逆，起运岁与每柱干支依赖性别。
    */
-  gender?: 性别;
+  gender?: Gender;
 }
 
 /** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
@@ -47,7 +47,7 @@ export interface 排盘Result {
    * 大运（8 柱）。仅当输入带 gender 时给出，否则为 undefined。
    * CLI 据此打印 8 柱大运。
    */
-  大运?: 大运Result;
+  dayun?: DayunResult;
 }
 
 // 锚点：2000-01-01 日柱为戊午，六十甲子序号 54（甲子=0）
@@ -282,7 +282,7 @@ export function 排盘(input: 排盘Input): 排盘Result {
     经度修正,
   };
   if (input.gender !== undefined) {
-    result.大运 = 大运(
+    result.dayun = dayun(
       月柱,
       yearGanIndex,
       input.gender,

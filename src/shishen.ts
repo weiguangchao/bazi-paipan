@@ -35,7 +35,7 @@ function ganYinYang(gan: string): 0 | 1 {
  * 子癸；丑己癸辛；寅甲丙戊；卯乙；辰戊乙癸；巳丙戊庚；午丁己；
  * 未己丁乙；申庚壬戊；酉辛；戌戊辛丁；亥壬甲。
  */
-export const 藏干表: Record<string, string[]> = {
+export const cangganTable: Record<string, string[]> = {
   子: ["癸"],
   丑: ["己", "癸", "辛"],
   寅: ["甲", "丙", "戊"],
@@ -51,11 +51,11 @@ export const 藏干表: Record<string, string[]> = {
 };
 
 /** 十神结果：天干位的十神 + 地支藏干位（按藏干顺序）的十神数组。 */
-export interface 十神Result {
+export interface ShishenResult {
   /** 干支天干相对日主的十神。 */
-  天干十神: string;
+  tianganShishen: string;
   /** 干支地支的藏干各自相对日主的十神，顺序与藏干表一致。 */
-  藏干十神: string[];
+  cangganShishen: string[];
 }
 
 /**
@@ -83,12 +83,12 @@ const 十神关系表: [string, string][] = [
  * @param 目标天干 任意天干
  * @returns 十神名称（十种之一）
  */
-function 推十神(日主天干: string, 目标天干: string): string {
-  const a = ganWuxingIndex(日主天干);
+function 推十神(dayMasterTiangan: string, 目标天干: string): string {
+  const a = ganWuxingIndex(dayMasterTiangan);
   const b = ganWuxingIndex(目标天干);
   const diff = (b - a + 5) % 5;
   const [同阴阳, 异阴阳] = 十神关系表[diff]!;
-  return ganYinYang(日主天干) === ganYinYang(目标天干) ? 同阴阳 : 异阴阳;
+  return ganYinYang(dayMasterTiangan) === ganYinYang(目标天干) ? 同阴阳 : 异阴阳;
 }
 
 /**
@@ -102,21 +102,21 @@ function 推十神(日主天干: string, 目标天干: string): string {
  * @param 干支 两字干支，如 "庚辰"
  * @returns 天干十神 + 藏干十神数组
  */
-export function 十神(日主天干: string, 干支: string): 十神Result {
-  if (干支.length !== 2) {
-    throw new Error(`非法干支：${干支}`);
+export function shishen(dayMasterTiangan: string, ganzhi: string): ShishenResult {
+  if (ganzhi.length !== 2) {
+    throw new Error(`非法干支：${ganzhi}`);
   }
-  const gan = 干支.charAt(0);
-  const zhi = 干支.charAt(1);
+  const gan = ganzhi.charAt(0);
+  const zhi = ganzhi.charAt(1);
   if (!(tiangan as readonly string[]).includes(gan)) {
     throw new Error(`非法天干：${gan}`);
   }
   if (!(dizhi as readonly string[]).includes(zhi)) {
     throw new Error(`非法地支：${zhi}`);
   }
-  const 藏干 = 藏干表[zhi]!;
+  const canggan = cangganTable[zhi]!;
   return {
-    天干十神: 推十神(日主天干, gan),
-    藏干十神: 藏干.map((g) => 推十神(日主天干, g)),
+    tianganShishen: 推十神(dayMasterTiangan, gan),
+    cangganShishen: canggan.map((g) => 推十神(dayMasterTiangan, g)),
   };
 }

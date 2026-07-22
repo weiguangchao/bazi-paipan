@@ -11,42 +11,42 @@ import { tiangan, dizhi, JIE_TERM_INDEXES } from "./ganzhi.js";
 import { getSolarTermMoment } from "./jieqi.js";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
-export type 性别 = "男" | "女";
+export type Gender = "男" | "女";
 
 /** 大运方向：顺行（从月柱顺推干支 +1，起运数到下一节）或逆行（−1，上一节）。 */
-export type 大运方向 = "顺" | "逆";
+export type DayunDirection = "顺" | "逆";
 
 /**
  * 起运岁：精确到年+月。3 天折 1 年、1 天折 4 个月。
  * 命理表述"N岁M月起运"。M 为 0-11。
  */
-export interface 起运岁 {
+export interface Qiyunsui {
   /** 整年数。 */
-  岁: number;
+  ageYears: number;
   /** 整月数（0-11）。 */
-  月: number;
+  ageMonths: number;
 }
 
 /** 单柱大运：干支 + 起运年月 + 起运岁 + 管辖岁段。 */
-export interface 大运柱 {
+export interface DayunZhu {
   /** 第几柱大运，0-based。 */
-  序号: number;
+  index: number;
   /** 该柱干支。 */
-  干支: string;
+  ganzhi: string;
   /** 该柱起算的起运岁（第 0 柱起于起运岁，每柱递增 10 岁）。 */
-  起运岁: 起运岁;
+  Qiyunsui: Qiyunsui;
   /** 该柱起始公历年月（第 0 柱 = 出生年 + 起运岁；每柱递增 10 年）。 */
-  起年月: { year: number; month: number };
+  startYearMonth: { year: number; month: number };
 }
 
 /** 大运完整结果：方向 + 起运岁 + 8 柱。 */
-export interface 大运Result {
+export interface DayunResult {
   /** 方向：阳男/阴女顺、阴男/阳女逆。 */
-  方向: 大运方向;
+  direction: DayunDirection;
   /** 从出生时刻到最近一节折算的起运岁（精确到年+月）。 */
-  起运岁: 起运岁;
+  Qiyunsui: Qiyunsui;
   /** 8 柱大运。 */
-  柱: 大运柱[];
+  zhu: DayunZhu[];
 }
 
 /** 3 天折 1 年，即 1 天折 4 个月。用毫秒换算。 */
@@ -56,7 +56,7 @@ const MS_PER_DAY = 86_400_000;
  * 判定大运方向。阳年（年干序号为偶：甲丙戊庚壬）男 / 阴年女顺行；
  * 阴年男 / 阳年女逆行。阳阴按年干序号奇偶：0,2,4,6,8 为阳，1,3,5,7,9 为阴。
  */
-export function 判定大运方向(gender: 性别, yearGanIndex: number): 大运方向 {
+export function determineDayunDirection(gender: Gender, yearGanIndex: number): DayunDirection {
   const isYangYear = yearGanIndex % 2 === 0;
   // 阳男、阴女顺；阴男、阳女逆
   const forward = isYangYear === (gender === "男");
@@ -86,13 +86,13 @@ function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean):
  * 折算起运岁：由出生时刻到最近一节的天数按 3 天折 1 年折算，
  * 精确到年+月（1 天 ≈ 4 个月）。
  */
-function 折算起运岁(diffMs: number): 起运岁 {
+function calculateQiyunsui(diffMs: number): Qiyunsui {
   const totalDays = diffMs / MS_PER_DAY;
   // 3 天 = 1 年 = 12 月，故 1 天 = 4 月。总月数 = totalDays * 4。
   const totalMonths = totalDays * 4;
-  const 岁 = Math.floor(totalMonths / 12);
-  const 月 = Math.floor(totalMonths - 岁 * 12);
-  return { 岁, 月 };
+  const ageYears = Math.floor(totalMonths / 12);
+  const ageMonths = Math.floor(totalMonths - ageYears * 12);
+  return { ageYears, ageMonths };
 }
 
 /**
@@ -102,10 +102,10 @@ function 折算起运岁(diffMs: number): 起运岁 {
 function computeStartYearMonth(
   birthYear: number,
   birthMonth: number,
-  起运岁: 起运岁,
+  Qiyunsui: Qiyunsui,
   柱序号: number,
 ): { year: number; month: number } {
-  const totalStartMonths = (birthYear * 12 + (birthMonth - 1)) + 起运岁.岁 * 12 + 起运岁.月;
+  const totalStartMonths = (birthYear * 12 + (birthMonth - 1)) + Qiyunsui.ageYears * 12 + Qiyunsui.ageMonths;
   const startMonths = totalStartMonths + 柱序号 * 120; // 每柱 10 年 = 120 月
   return {
     year: Math.floor(startMonths / 12),
@@ -136,36 +136,36 @@ function splitPillar(pillar: string): { ganIdx: number; zhiIdx: number } {
  * @param birthMonth 出生公历月（用于起运年月起算）
  * @returns 大运完整结果（方向 + 起运岁 + 8 柱）
  */
-export function 大运(
+export function dayun(
   月柱: string,
   yearGanIndex: number,
-  gender: 性别,
+  gender: Gender,
   birthUtc: number,
   birthYear: number,
   birthMonth: number,
-): 大运Result {
-  const 方向 = 判定大运方向(gender, yearGanIndex);
-  const forward = 方向 === "顺";
+): DayunResult {
+  const direction = determineDayunDirection(gender, yearGanIndex);
+  const forward = direction === "顺";
   const jieMs = findAdjacentJie(birthUtc, birthYear, forward);
   const diffMs = forward ? jieMs - birthUtc : birthUtc - jieMs;
-  const 起运岁 = 折算起运岁(diffMs);
+  const Qiyunsui = calculateQiyunsui(diffMs);
 
   const { ganIdx: monthGan, zhiIdx: monthZhi } = splitPillar(月柱);
   const step = forward ? 1 : -1;
-  const 柱: 大运柱[] = [];
+  const zhu: DayunZhu[] = [];
   for (let i = 0; i < 8; i++) {
     // 从月柱顺/逆推进 i+1 步。月柱本身是合法六十甲子（干支同进），故步进后干支
     // 奇偶仍匹配，可直接拼装。
     const ganIdx = (((monthGan + step * (i + 1)) % 10) + 10) % 10;
     const zhiIdx = (((monthZhi + step * (i + 1)) % 12) + 12) % 12;
-    const 起年月 = computeStartYearMonth(birthYear, birthMonth, 起运岁, i);
-    柱.push({
-      序号: i,
-      干支: `${tiangan[ganIdx]}${dizhi[zhiIdx]}`,
-      起运岁: { 岁: 起运岁.岁 + i * 10, 月: 起运岁.月 },
-      起年月,
+    const startYearMonth = computeStartYearMonth(birthYear, birthMonth, Qiyunsui, i);
+    zhu.push({
+      index: i,
+      ganzhi: `${tiangan[ganIdx]}${dizhi[zhiIdx]}`,
+      Qiyunsui: { ageYears: Qiyunsui.ageYears + i * 10, ageMonths: Qiyunsui.ageMonths },
+      startYearMonth,
     });
   }
 
-  return { 方向, 起运岁, 柱 };
+  return { direction, Qiyunsui, zhu };
 }
