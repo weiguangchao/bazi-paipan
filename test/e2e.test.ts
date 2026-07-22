@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { chromium, type Browser } from "playwright";
+import { chromium, type Browser, type Page } from "playwright";
 import { serve } from "../src/serve.js";
 import type { PaipanServer } from "../src/http-server.js";
 
@@ -24,6 +24,17 @@ async function newPage(viewport: { width: number; height: number }) {
   await page.goto(baseUrl + "/");
   await page.waitForLoadState("networkidle");
   return page;
+}
+
+async function selectBeijingBirthplace(page: Page) {
+  await page.selectOption("#province", "北京市");
+  await page.waitForFunction(() => (document.getElementById("city") as HTMLSelectElement).value === "市辖区");
+}
+
+async function expectCityUnselected(page: Page) {
+  expect(await page.isDisabled("#city")).toBe(true);
+  expect(await page.inputValue("#city")).toBe("");
+  expect(await page.locator("#city option").textContent()).toBe("请先选择省份");
 }
 
 describe("E2E - 桌面 viewport (1280x900)", () => {
@@ -143,6 +154,7 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
 
   it("大运与流年卡片遵循文字层级、十神简写与只读语义", async () => {
     const page = await newPage({ width: 1280, height: 900 });
+    await selectBeijingBirthplace(page);
     const responsePromise = page.waitForResponse((response) =>
       response.url().endsWith("/api/paipan") && response.request().method() === "POST",
     );
@@ -193,12 +205,13 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.close();
   });
 
-  it("省市联动与清空", async () => {
+  it("省市默认状态、联动与清空", async () => {
     const page = await newPage({ width: 1280, height: 900 });
 
-    // Default 北京市/市辖区
-    expect(await page.inputValue("#province")).toBe("北京市");
-    expect(await page.inputValue("#city")).toBe("市辖区");
+    // 默认不选出生地，按钟表时排盘
+    expect(await page.inputValue("#province")).toBe("");
+    expect(await page.locator('#province option[value=""]').textContent()).toBe("不选（按北京时间）");
+    await expectCityUnselected(page);
 
     // 切到四川省 -> 城市重新加载
     await page.selectOption("#province", "四川省");
@@ -209,9 +222,41 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     // 清空省份 -> 城市禁用，两者均空
     await page.selectOption("#province", "");
     await page.waitForTimeout(300);
-    expect(await page.isDisabled("#city")).toBe(true);
     expect(await page.inputValue("#province")).toBe("");
-    expect(await page.inputValue("#city")).toBe("");
+    await expectCityUnselected(page);
+
+    await page.close();
+  });
+
+  it("清空省份后忽略尚未完成的城市请求", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    var releaseCityRequest = function () {};
+    var cityRequestReleased = new Promise(function (resolve) { releaseCityRequest = resolve; });
+    var markCityRequestStarted = function () {};
+    var cityRequestStarted = new Promise(function (resolve) { markCityRequestStarted = resolve; });
+
+    await page.route("**/cities/*", async function (route) {
+      var pathname = decodeURIComponent(new URL(route.request().url()).pathname);
+      if (!pathname.endsWith("/cities/四川省.json")) {
+        await route.continue();
+        return;
+      }
+      markCityRequestStarted();
+      await cityRequestReleased;
+      await route.continue();
+    });
+
+    await page.selectOption("#province", "四川省");
+    await cityRequestStarted;
+    await page.selectOption("#province", "");
+    var responsePromise = page.waitForResponse(function (response) {
+      return decodeURIComponent(new URL(response.url()).pathname).endsWith("/cities/四川省.json");
+    });
+    releaseCityRequest();
+    await responsePromise;
+    await page.waitForTimeout(50);
+
+    await expectCityUnselected(page);
 
     await page.close();
   });
@@ -283,6 +328,7 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
 
   it("窄屏覆盖卡片数量、切换、键盘、信息层级与横向滚动", async () => {
     const page = await newPage({ width: 375, height: 812 });
+    await selectBeijingBirthplace(page);
     await page.click('button[type="submit"]');
     await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
 

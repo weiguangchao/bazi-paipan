@@ -30,11 +30,6 @@
         opt.textContent = p;
         provinceSelect.appendChild(opt);
       });
-      // 默认选 北京市
-      provinceSelect.value = "北京市";
-      loadCities("北京市").then(function () {
-        citySelect.value = "市辖区";
-      });
     });
 
   // 省份变化 -> 加载对应城市
@@ -72,7 +67,9 @@
       .then(function (r) { return r.json(); })
       .then(function (cities) {
         provinceCitiesCache[province] = cities;
-        populateCities(cities);
+        if (provinceSelect.value === province) {
+          populateCities(cities);
+        }
       });
   }
 
