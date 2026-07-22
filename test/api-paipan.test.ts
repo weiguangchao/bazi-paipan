@@ -207,6 +207,20 @@ describe("POST /api/paipan - HTTP 错误契约", () => {
     const res = await fetch(baseUrl + "/api/paipan", { method: "PUT" });
     expect(res.status).toBe(405);
   });
+
+  it("__testForceError -> 500 + INTERNAL_ERROR + 不泄露实现细节", async () => {
+    const { status, body } = await postPaipan({
+      date: "2000-01-01", time: "12:00", gender: "男",
+      province: "北京市", city: "市辖区",
+      __testForceError: true,
+    });
+    expect(status).toBe(500);
+    expect(body.error.code).toBe("INTERNAL_ERROR");
+    expect(body.error.message).toBe("服务内部错误");
+    expect(body.error.fields).toEqual({});
+    // 不泄露实现细节
+    expect(JSON.stringify(body)).not.toMatch(/forced internal error|Error|stack/);
+  });
 });
 
 describe("POST /api/paipan - fields 始终存在", () => {

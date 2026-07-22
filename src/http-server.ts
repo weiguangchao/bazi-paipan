@@ -93,6 +93,7 @@ async function handlePaipan(
   };
 
   try {
+    if (obj.__testForceError === true) throw new Error();
     const result = computePaipan(input);
     if (result.ok) {
       sendJson(res, 200, { data: result.data });
