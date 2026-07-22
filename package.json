@@ -10,8 +10,9 @@
     "build": "tsup src/index.ts --format esm --clean",
     "dev": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && npm run check:ascii-identifiers",
     "test:watch": "vitest",
+    "check:ascii-identifiers": "node scripts/check-ascii-identifiers.mjs",
     "scrape:wenzhen": "tsx scripts/scrape-wenzhen.ts",
     "build:cities": "node scripts/build-public-data.cjs"
   },

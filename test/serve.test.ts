@@ -27,7 +27,7 @@ function getOccupier(port: number): Promise<{ close: () => Promise<void> }> {
   });
 }
 
-describe("serve - 命令自动化", () => {
+describe("serve - command自动化", () => {
   // 验收：默认端口 3000、支持 --port、仅监听 127.0.0.1
   it("默认端口 3000", async () => {
     const s = await serve({ onReady: () => {} });
@@ -55,13 +55,13 @@ describe("serve - 命令自动化", () => {
   it("端口被占用时明确失败", async () => {
     const occupier = await getOccupier(3555);
     try {
-      await expect(serve({ port: 3555, onReady: () => {} })).rejects.toThrow(/已被占用/);
+    await expect(serve({ port: 3555, onReady: () => {} })).rejects.toThrow(/已被占用/);
     } finally {
       await occupier.close();
     }
   });
 
-  // 验收：服务成功启动后触发浏览器打开意图并输出本机地址（mock 验证）
+  // 验收：服务成功启动after触发浏览器打开意图并输出本机地址（mock 验证）
   it("onReady 回调触发浏览器打开意图并输出地址", async () => {
     let openedUrl = "";
     const s = await serve({ port: 3777, onReady: (url) => { openedUrl = url; } });
@@ -74,21 +74,21 @@ describe("serve - 命令自动化", () => {
   it("close() 干净关闭监听器", async () => {
     const s = await serve({ port: 3666, onReady: () => {} });
     await s.close();
-    // 关闭后端口应可复用
+    // 关闭after端口应可复用
     const s2 = await serve({ port: 3666, onReady: () => {} });
     servers.push(s2);
     expect(s2.port).toBe(3666);
     await cleanup(s2);
   });
 
-  // 验收：无子命令显示帮助（通过子进程测试）
-  it("无子命令显示帮助并退出", async () => {
+  // 验收：无子command显示帮助（通过子进程测试）
+  it("无子command显示帮助并退出", async () => {
     const { execSync } = await import("node:child_process");
     const result = execSync("npx tsx src/index.ts", {
       cwd: process.cwd(),
       encoding: "utf8",
       timeout: 5000,
     });
-    expect(result).toMatch(/Usage|用法|Commands|命令/);
+    expect(result).toMatch(/Usage|usage|Commands|command/);
   });
 });

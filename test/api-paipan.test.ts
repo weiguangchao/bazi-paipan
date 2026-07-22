@@ -45,7 +45,7 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.input.province).toBe("北京市");
     expect(data.input.city).toBe("市辖区");
 
-    // siZhu：四柱干支与已知命例一致
+    // siZhu：四柱干支与known命例一致
     expect(data.sizhu.year.ganzhi).toBe("己卯");
     expect(data.sizhu.month.ganzhi).toBe("丙子");
     expect(data.sizhu.day.ganzhi).toBe("戊午");
@@ -76,7 +76,7 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(z0.startYear).toBeTypeOf("number");
     expect(z0.startMonth).toBeTypeOf("number");
 
-    // liunian：10 项，从当前北京年起
+    // liunian：10 项，从当before北京年起
     expect(data.liunian).toHaveLength(10);
     expect(data.liunian[0].ganzhi).toBeTypeOf("string");
     expect(data.liunian[0].shishen).toBeTypeOf("string");
@@ -88,7 +88,7 @@ describe("POST /api/paipan - 成功响应", () => {
     }
   });
 
-  it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
+  it("空省市 -> clock时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
     const { status, body } = await postPaipan({
       date: "2000-01-01",
       time: "12:00",
@@ -97,7 +97,7 @@ describe("POST /api/paipan - 成功响应", () => {
       city: "",
     });
     expect(status).toBe(200);
-    // 时柱戊午（钟表时，未做经度修正）
+    // 时柱戊午（clock时，未做经度修正）
     expect(body.data.sizhu.hour.ganzhi).toBe("戊午");
     expect(body.data.tips.some((t: any) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
   });
