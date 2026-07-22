@@ -6,7 +6,7 @@ import { paipan, type PaipanInput as DomainPaipanInput } from "../paipan.js";
 import { liunian } from "../liunian.js";
 import { shishen, cangganTable } from "../shishen.js";
 import { findLongitude, type Birthplace } from "../birthplace.js";
-import { getBeijingYear } from "../beijing-time.js";
+import { getBeijingYearMonth } from "../beijing-time.js";
 import type { Gender } from "../dayun.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
@@ -57,6 +57,7 @@ export interface DayunzhuOut {
   qiyun: { ageYears: number; ageMonths: number };
   startYear: number;
   startMonth: number;
+  isCurrent: boolean;
   liunian: LiunianItemOut[];
 }
 
@@ -111,14 +112,18 @@ function dayunzhuToOut(
   qiyun: { ageYears: number; ageMonths: number },
   startYearMonth: { year: number; month: number },
   currentYear: number,
+  currentMonth: number,
 ): DayunzhuOut {
   const pillarShishen = pillarShishenToOut(ganzhi, dayMasterTiangan);
+  const startMonthIndex = startYearMonth.year * 12 + startYearMonth.month - 1;
+  const currentMonthIndex = currentYear * 12 + currentMonth - 1;
   return {
     ganzhi,
     ...pillarShishen,
     qiyun: { ageYears: qiyun.ageYears, ageMonths: qiyun.ageMonths },
     startYear: startYearMonth.year,
     startMonth: startYearMonth.month,
+    isCurrent: currentMonthIndex >= startMonthIndex && currentMonthIndex < startMonthIndex + 120,
     liunian: liunian(startYearMonth.year).map((item) => liunianzhuToOut(item, dayMasterTiangan, currentYear)),
   };
 }
@@ -250,11 +255,18 @@ export function computePaipan(
   }
 
   const dayun = result.dayun!;
-  const currentYear = getBeijingYear();
+  const { year: currentYear, month: currentMonth } = getBeijingYearMonth();
   const dayunOut: DayunOut = {
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
-    zhu: dayun.zhu.map((p) => dayunzhuToOut(p.ganzhi, dayMasterTiangan, p.qiyun, p.startYearMonth, currentYear)),
+    zhu: dayun.zhu.map((p) => dayunzhuToOut(
+      p.ganzhi,
+      dayMasterTiangan,
+      p.qiyun,
+      p.startYearMonth,
+      currentYear,
+      currentMonth,
+    )),
   };
 
   return {

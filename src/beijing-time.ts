@@ -12,6 +12,12 @@ export const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
  * 已切到北京新年。
  */
 export function getBeijingYear(): number {
+  return getBeijingYearMonth().year;
+}
+
+/** 按北京时间（UTC+8）读取机器时钟，返回当前公历年月。 */
+export function getBeijingYearMonth(): { year: number; month: number } {
   const now = Date.now();
-  return new Date(now + BEIJING_OFFSET_MS).getUTCFullYear();
+  const beijingNow = new Date(now + BEIJING_OFFSET_MS);
+  return { year: beijingNow.getUTCFullYear(), month: beijingNow.getUTCMonth() + 1 };
 }

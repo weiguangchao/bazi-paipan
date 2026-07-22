@@ -143,7 +143,8 @@ button[type="submit"]:hover { opacity: 0.9; }
   margin-bottom: 8px;
 }
 .pillar-year { min-height: 1.5em; }
-.current-year-badge {
+.current-year-badge,
+.current-dayun-badge {
   display: inline-block;
   margin-left: 4px;
   padding: 0 4px;

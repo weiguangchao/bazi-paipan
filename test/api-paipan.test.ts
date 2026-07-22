@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { serve } from "../src/serve.js";
 import type { PaipanServer } from "../src/http-server.js";
 
@@ -75,6 +75,7 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(z0.qiyun.ageMonths).toBeTypeOf("number");
     expect(z0.startYear).toBeTypeOf("number");
     expect(z0.startMonth).toBeTypeOf("number");
+    expect(z0.isCurrent).toBeTypeOf("boolean");
 
     expect(z0.liunian).toHaveLength(10);
     expect(z0.liunian.map((item: any) => item.year)).toEqual(
@@ -91,6 +92,7 @@ describe("POST /api/paipan - 成功响应", () => {
       expect(dayunzhu.liunian[9].year).toBe(dayunzhu.startYear + 9);
     }
     expect(data.dayun.zhu.flatMap((item: any) => item.liunian).filter((item: any) => item.isCurrentYear)).toHaveLength(1);
+    expect(data.dayun.zhu.filter((item: any) => item.isCurrent)).toHaveLength(1);
   });
 
   it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
@@ -105,6 +107,23 @@ describe("POST /api/paipan - 成功响应", () => {
     // 时柱戊午（钟表时，未做经度修正）
     expect(body.data.sizhu.hour.ganzhi).toBe("戊午");
     expect(body.data.tips.some((t: any) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
+  });
+
+  it("当前大运按北京时间起运月份切换", async () => {
+    const now = vi.spyOn(Date, "now");
+    const input = {
+      date: "1990-05-15", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
+    };
+
+    now.mockReturnValue(Date.UTC(2017, 7, 15));
+    const august = await postPaipan(input);
+    expect(august.body.data.dayun.zhu.findIndex((zhu: any) => zhu.isCurrent)).toBe(1);
+
+    now.mockReturnValue(Date.UTC(2017, 8, 15));
+    const september = await postPaipan(input);
+    expect(september.body.data.dayun.zhu.findIndex((zhu: any) => zhu.isCurrent)).toBe(2);
+
+    now.mockRestore();
   });
 });
 

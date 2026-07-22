@@ -256,6 +256,19 @@
     return row;
   }
 
+  function createPillarYear(yearValue, badgeText, badgeClassName) {
+    var year = document.createElement("div");
+    year.className = "pillar-label pillar-year";
+    year.appendChild(document.createTextNode(String(yearValue)));
+    if (badgeText) {
+      var badge = document.createElement("span");
+      badge.className = badgeClassName;
+      badge.textContent = badgeText;
+      year.appendChild(badge);
+    }
+    return year;
+  }
+
   function createDayunCard(zhu, index, selected) {
     var card = document.createElement("button");
     card.type = "button";
@@ -263,15 +276,14 @@
     card.dataset.index = String(index);
     card.dataset.startYear = String(zhu.startYear);
     card.setAttribute("aria-pressed", selected ? "true" : "false");
-    card.setAttribute("aria-label", zhu.startYear + "年大运，年龄" + zhu.qiyun.ageYears + "岁" + zhu.qiyun.ageMonths + "月");
+    var ageRange = zhu.qiyun.ageYears + "~" + (zhu.qiyun.ageYears + 9) + "岁";
+    card.setAttribute("aria-label", zhu.startYear + "年大运，年龄" + ageRange + (zhu.isCurrent ? "，当前" : ""));
     if (selected) card.classList.add("is-selected");
 
-    var year = document.createElement("div");
-    year.className = "pillar-label pillar-year";
-    year.textContent = String(zhu.startYear);
+    var year = createPillarYear(zhu.startYear, zhu.isCurrent ? "当前" : "", "current-dayun-badge");
     var age = document.createElement("div");
     age.className = "pillar-age";
-    age.textContent = "年龄：" + zhu.qiyun.ageYears + "岁" + zhu.qiyun.ageMonths + "月";
+    age.textContent = ageRange;
     card.appendChild(year);
     card.appendChild(age);
     card.appendChild(createPillarRow(zhu.ganzhi.charAt(0), zhu.tianganShishen));
@@ -282,15 +294,7 @@
   function createLiunianCard(item) {
     var card = document.createElement("div");
     card.className = "pillar-card liunian-card";
-    var year = document.createElement("div");
-    year.className = "pillar-label pillar-year";
-    year.appendChild(document.createTextNode(String(item.year)));
-    if (item.isCurrentYear) {
-      var badge = document.createElement("span");
-      badge.className = "current-year-badge";
-      badge.textContent = "今年";
-      year.appendChild(badge);
-    }
+    var year = createPillarYear(item.year, item.isCurrentYear ? "今年" : "", "current-year-badge");
     card.appendChild(year);
     card.appendChild(createPillarRow(item.ganzhi.charAt(0), item.tianganShishen));
     card.appendChild(createPillarRow(item.ganzhi.charAt(1), item.dizhiShishen));
@@ -299,12 +303,10 @@
 
   function renderDayun(dayun) {
     var info = document.getElementById("dayun-info");
-    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiyun.ageYears + "岁" + dayun.qiyun.ageMonths + "月";
+    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiyun.ageYears + "岁";
     var grid = document.getElementById("dayun-grid");
     grid.innerHTML = "";
-    var selectedIndex = dayun.zhu.findIndex(function (zhu) {
-      return zhu.liunian.some(function (item) { return item.isCurrentYear; });
-    });
+    var selectedIndex = dayun.zhu.findIndex(function (zhu) { return zhu.isCurrent; });
     if (selectedIndex < 0) selectedIndex = 0;
     dayun.zhu.forEach(function (zhu, i) {
       var card = createDayunCard(zhu, i, i === selectedIndex);

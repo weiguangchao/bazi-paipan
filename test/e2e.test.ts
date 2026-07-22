@@ -66,11 +66,32 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
 
     const selectedIndex = await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-index");
     expect(selectedIndex).toBe("0");
+    expect(await page.locator("#dayun-grid .current-dayun-badge").count()).toBe(0);
     const firstStartYear = Number(await page.locator("#dayun-grid .pillar-card").first().getAttribute("data-start-year"));
     const visibleYears = await page.locator("#liunian-grid .pillar-year").evaluateAll((els) =>
       els.map((el) => el.firstChild!.textContent!.trim()),
     );
     expect(visibleYears[0]).toBe(String(firstStartYear));
+
+    await page.close();
+  });
+
+  it("当前大运 tag 独立于用户选择态", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
+
+    const badge = page.locator("#dayun-grid .current-dayun-badge");
+    expect(await badge.count()).toBe(1);
+    expect(await badge.textContent()).toBe("当前");
+    const currentCard = badge.locator("xpath=ancestor::button[1]");
+    const currentIndex = await currentCard.getAttribute("data-index");
+    expect(await currentCard.getAttribute("aria-pressed")).toBe("true");
+
+    const otherIndex = currentIndex === "0" ? 1 : 0;
+    await page.locator("#dayun-grid .dayun-card").nth(otherIndex).click();
+    expect(await page.locator("#dayun-grid .dayun-card.is-selected").getAttribute("data-index")).toBe(String(otherIndex));
+    expect(await badge.locator("xpath=ancestor::button[1]").getAttribute("data-index")).toBe(currentIndex);
 
     await page.close();
   });
@@ -113,7 +134,9 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
 
     const firstDayun = page.locator("#dayun-grid .dayun-card").first();
     expect(await firstDayun.locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
-    expect(await firstDayun.locator(":scope > .pillar-age").textContent()).toMatch(/^年龄：\d+岁\d+月$/);
+    expect(await firstDayun.locator(":scope > .pillar-age").textContent()).toBe("8~17岁");
+    expect(await page.locator("#dayun-info").textContent()).toBe("方向：逆行；起运 8岁");
+    expect(await page.locator("#result-dayun").textContent()).not.toMatch(/\d+月/);
     expect(await firstDayun.textContent()).not.toMatch(/第\s*\d+|起运：|藏干|副星|\d{4}年\d+月/);
     expect(await firstDayun.locator(".pillar-row").count()).toBe(2);
 
@@ -127,7 +150,7 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
       "正财": "财", "七杀": "杀", "正官": "官", "偏印": "枭", "正印": "印",
     };
     const abbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
-    const selectedDayun = responseData.dayun.zhu.find((zhu) => zhu.liunian.some((item) => item.isCurrentYear)) ?? responseData.dayun.zhu[0];
+    const selectedDayun = responseData.dayun.zhu.find((zhu) => zhu.isCurrent) ?? responseData.dayun.zhu[0];
     const expectedAbbreviations = [
       ...responseData.dayun.zhu.flatMap((zhu) => [abbreviationByShishen[zhu.tianganShishen], abbreviationByShishen[zhu.dizhiShishen]]),
       ...selectedDayun.liunian.flatMap((item) => [abbreviationByShishen[item.tianganShishen], abbreviationByShishen[item.dizhiShishen]]),
@@ -249,7 +272,7 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
     expect(await buttons.count()).toBe(10);
     expect(await page.locator("#liunian-grid .liunian-card").count()).toBe(10);
     expect(await buttons.first().locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
-    expect(await buttons.first().locator(":scope > .pillar-age").textContent()).toMatch(/^年龄：\d+岁\d+月$/);
+    expect(await buttons.first().locator(":scope > .pillar-age").textContent()).toBe("8~17岁");
     expect(await buttons.first().locator(".pillar-row").count()).toBe(2);
     expect(await page.locator("#liunian-grid .liunian-card .pillar-row").count()).toBe(20);
     const narrowAbbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
