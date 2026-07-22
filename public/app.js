@@ -157,20 +157,20 @@
 
   function renderResult(data) {
     emptyState.hidden = true;
-    renderSiZhu(data.siZhu);
+    renderSiZhu(data.sizhu);
     renderTips(data.tips);
     renderDayun(data.dayun);
     renderLiunian(data.liunian);
   }
 
-  function renderSiZhu(siZhu) {
+  function renderSiZhu(sizhu) {
     var grid = document.getElementById("sizhu-grid");
     grid.innerHTML = "";
     var pillars = [
-      { label: "年柱", data: siZhu.year },
-      { label: "月柱", data: siZhu.month },
-      { label: "日柱", data: siZhu.day },
-      { label: "时柱", data: siZhu.hour },
+      { label: "年柱", data: sizhu.year },
+      { label: "月柱", data: sizhu.month },
+      { label: "日柱", data: sizhu.day },
+      { label: "时柱", data: sizhu.hour },
     ];
 
     grid.className = "sizhu-table";
@@ -178,19 +178,19 @@
       return createTextCell("sizhu-column-label", pillar.label);
     }));
     grid.appendChild(createSiZhuRow("主星", pillars, function (pillar) {
-      return createTextCell("sizhu-shishen", pillar.data.shiShen);
+      return createTextCell("sizhu-shishen", pillar.data.shishen);
     }));
     grid.appendChild(createSiZhuRow("天干", pillars, function (pillar) {
-      return createWuXingCell("sizhu-gan", pillar.data.ganZhi.charAt(0));
+      return createWuXingCell("sizhu-gan", pillar.data.ganzhi.charAt(0));
     }));
     grid.appendChild(createSiZhuRow("地支", pillars, function (pillar) {
-      return createWuXingCell("sizhu-zhi", pillar.data.ganZhi.charAt(1));
+      return createWuXingCell("sizhu-zhi", pillar.data.ganzhi.charAt(1));
     }));
     grid.appendChild(createSiZhuRow("藏干", pillars, function (pillar) {
-      return createCangGanCell("sizhu-canggan", pillar.data.cangGan, "gan");
+      return createCangGanCell("sizhu-canggan", pillar.data.canggan, "gan");
     }));
     grid.appendChild(createSiZhuRow("副星", pillars, function (pillar) {
-      return createCangGanCell("sizhu-fuxing", pillar.data.cangGan, "shiShen");
+      return createCangGanCell("sizhu-fuxing", pillar.data.canggan, "shiShen");
     }));
     document.getElementById("result-sizhu").hidden = false;
   }
@@ -218,10 +218,10 @@
     return cell;
   }
 
-  function createCangGanCell(className, cangGan, field) {
+  function createCangGanCell(className, canggan, field) {
     var cell = document.createElement("div");
     cell.className = "sizhu-cell " + className;
-    cangGan.forEach(function (item) {
+    canggan.forEach(function (item) {
       var line = document.createElement("div");
       if (field === "gan") {
         line.className = "element-" + getWuXing(item.gan);
@@ -243,13 +243,13 @@
   function createPillarCard(label, pillar) {
     var card = document.createElement("div");
     card.className = "pillar-card";
-    var gan = pillar.ganZhi.charAt(0);
-    var zhi = pillar.ganZhi.charAt(1);
-    var cangGanStr = pillar.cangGan.join(" ");
+    var gan = pillar.ganzhi.charAt(0);
+    var zhi = pillar.ganzhi.charAt(1);
+    var cangGanStr = pillar.canggan.join(" ");
     card.innerHTML =
       '<div class="pillar-label">' + label + "</div>" +
       '<div class="pillar-gan">' + gan + "</div>" +
-      '<div class="pillar-shishen">' + pillar.shiShen + "</div>" +
+      '<div class="pillar-shishen">' + pillar.shishen + "</div>" +
       '<div class="pillar-zhi">' + zhi + "</div>" +
       '<div class="pillar-canggan">' + cangGanStr + "</div>";
     return card;
@@ -268,14 +268,14 @@
 
   function renderDayun(dayun) {
     var info = document.getElementById("dayun-info");
-    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiYun.ageYears + "岁" + dayun.qiYun.ageMonths + "月";
+    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiyun.ageYears + "岁" + dayun.qiyun.ageMonths + "月";
     var grid = document.getElementById("dayun-grid");
     grid.innerHTML = "";
     dayun.zhu.forEach(function (zhu, i) {
       var card = createPillarCard("第" + (i + 1) + "柱", zhu);
       var start = document.createElement("div");
       start.className = "pillar-start";
-      start.textContent = zhu.qiYun.ageYears + "岁起；" + zhu.startYear + "年" + zhu.startMonth + "月";
+      start.textContent = zhu.qiyun.ageYears + "岁起；" + zhu.startYear + "年" + zhu.startMonth + "月";
       card.appendChild(start);
       grid.appendChild(card);
     });

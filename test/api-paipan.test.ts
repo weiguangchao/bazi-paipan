@@ -46,17 +46,17 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.input.city).toBe("市辖区");
 
     // siZhu：四柱干支与已知命例一致
-    expect(data.siZhu.year.ganZhi).toBe("己卯");
-    expect(data.siZhu.month.ganZhi).toBe("丙子");
-    expect(data.siZhu.day.ganZhi).toBe("戊午");
-    expect(data.siZhu.hour.ganZhi).toBe("戊午");
+    expect(data.sizhu.year.ganzhi).toBe("己卯");
+    expect(data.sizhu.month.ganzhi).toBe("丙子");
+    expect(data.sizhu.day.ganzhi).toBe("戊午");
+    expect(data.sizhu.hour.ganzhi).toBe("戊午");
 
     // 日柱天干位标日主，不标十神
-    expect(data.siZhu.day.shiShen).toBe("日主");
+    expect(data.sizhu.day.shishen).toBe("日主");
     // 年柱天干十神：己相对戊日主为劫财
-    expect(data.siZhu.year.shiShen).toBe("劫财");
+    expect(data.sizhu.year.shishen).toBe("劫财");
     // 藏干与副星由 API 分字段返回：卯藏乙，乙相对戊日主为正官
-    expect(data.siZhu.year.cangGan).toEqual([{ gan: "乙", shiShen: "正官" }]);
+    expect(data.sizhu.year.canggan).toEqual([{ gan: "乙", shishen: "正官" }]);
 
     // tips：给出出生地 -> TRUE_SOLAR_TIME 提示
     expect(data.tips).toBeInstanceOf(Array);
@@ -64,23 +64,23 @@ describe("POST /api/paipan - 成功响应", () => {
 
     // dayun：方向顺、起运岁、8 柱
     expect(data.dayun.direction).toBe("逆"); // 1999己卯阴年男 -> 逆
-    expect(data.dayun.qiYun.ageYears).toBeTypeOf("number");
+    expect(data.dayun.qiyun.ageYears).toBeTypeOf("number");
     expect(data.dayun.zhu).toHaveLength(8);
     // 每柱含 ganZhi、shiShen、cangGan、qiYun、startYear、startMonth
     const z0 = data.dayun.zhu[0];
-    expect(z0.ganZhi).toBeTypeOf("string");
-    expect(z0.shiShen).toBeTypeOf("string");
-    expect(z0.cangGan).toBeInstanceOf(Array);
-    expect(z0.qiYun.ageYears).toBeTypeOf("number");
-    expect(z0.qiYun.ageMonths).toBeTypeOf("number");
+    expect(z0.ganzhi).toBeTypeOf("string");
+    expect(z0.shishen).toBeTypeOf("string");
+    expect(z0.canggan).toBeInstanceOf(Array);
+    expect(z0.qiyun.ageYears).toBeTypeOf("number");
+    expect(z0.qiyun.ageMonths).toBeTypeOf("number");
     expect(z0.startYear).toBeTypeOf("number");
     expect(z0.startMonth).toBeTypeOf("number");
 
     // liunian：10 项，从当前北京年起
     expect(data.liunian).toHaveLength(10);
-    expect(data.liunian[0].ganZhi).toBeTypeOf("string");
-    expect(data.liunian[0].shiShen).toBeTypeOf("string");
-    expect(data.liunian[0].cangGan).toBeInstanceOf(Array);
+    expect(data.liunian[0].ganzhi).toBeTypeOf("string");
+    expect(data.liunian[0].shishen).toBeTypeOf("string");
+    expect(data.liunian[0].canggan).toBeInstanceOf(Array);
     // 年份依次 +1
     const years = data.liunian.map((l: any) => l.year);
     for (let i = 1; i < years.length; i++) {
@@ -98,7 +98,7 @@ describe("POST /api/paipan - 成功响应", () => {
     });
     expect(status).toBe(200);
     // 时柱戊午（钟表时，未做经度修正）
-    expect(body.data.siZhu.hour.ganZhi).toBe("戊午");
+    expect(body.data.sizhu.hour.ganzhi).toBe("戊午");
     expect(body.data.tips.some((t: any) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
   });
 });
