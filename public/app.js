@@ -15,6 +15,10 @@
   timeInput.value = "12:00";
 
   var provinceCitiesCache = {};
+  var shishenAbbreviations = {
+    "比肩": "比", "劫财": "劫", "食神": "食", "伤官": "伤", "偏财": "才",
+    "正财": "财", "七杀": "杀", "正官": "官", "偏印": "枭", "正印": "印",
+  };
 
   // 加载省份索引
   fetch("/cities/provinces.json")
@@ -238,18 +242,58 @@
     return "water";
   }
 
-  function createPillarCard(label, pillar) {
+  function createPillarRow(character, fullShishen) {
+    var row = document.createElement("div");
+    row.className = "pillar-row";
+    var characterElement = document.createElement("span");
+    characterElement.className = "pillar-character";
+    characterElement.textContent = character;
+    var shishenElement = document.createElement("span");
+    shishenElement.className = "pillar-shishen-short";
+    shishenElement.textContent = shishenAbbreviations[fullShishen];
+    row.appendChild(characterElement);
+    row.appendChild(shishenElement);
+    return row;
+  }
+
+  function createDayunCard(zhu, index, selected) {
+    var card = document.createElement("button");
+    card.type = "button";
+    card.className = "pillar-card dayun-card";
+    card.dataset.index = String(index);
+    card.dataset.startYear = String(zhu.startYear);
+    card.setAttribute("aria-pressed", selected ? "true" : "false");
+    card.setAttribute("aria-label", zhu.startYear + "年大运，年龄" + zhu.qiyun.ageYears + "岁" + zhu.qiyun.ageMonths + "月");
+    if (selected) card.classList.add("is-selected");
+
+    var year = document.createElement("div");
+    year.className = "pillar-label pillar-year";
+    year.textContent = String(zhu.startYear);
+    var age = document.createElement("div");
+    age.className = "pillar-age";
+    age.textContent = "年龄：" + zhu.qiyun.ageYears + "岁" + zhu.qiyun.ageMonths + "月";
+    card.appendChild(year);
+    card.appendChild(age);
+    card.appendChild(createPillarRow(zhu.ganzhi.charAt(0), zhu.tianganShishen));
+    card.appendChild(createPillarRow(zhu.ganzhi.charAt(1), zhu.dizhiShishen));
+    return card;
+  }
+
+  function createLiunianCard(item) {
     var card = document.createElement("div");
-    card.className = "pillar-card";
-    var tianganCharacter = pillar.ganzhi.charAt(0);
-    var dizhiCharacter = pillar.ganzhi.charAt(1);
-    var cangganString = (pillar.canggan || []).join(" ");
-    card.innerHTML =
-      '<div class="pillar-label">' + label + "</div>" +
-      '<div class="pillar-gan">' + tianganCharacter + "</div>" +
-      '<div class="pillar-shishen">' + (pillar.shishen || pillar.tianganShishen) + "</div>" +
-      '<div class="pillar-zhi">' + dizhiCharacter + "</div>" +
-      '<div class="pillar-canggan">' + cangganString + "</div>";
+    card.className = "pillar-card liunian-card";
+    var year = document.createElement("div");
+    year.className = "pillar-label pillar-year";
+    year.appendChild(document.createTextNode(String(item.year)));
+    if (item.isCurrentYear) {
+      var badge = document.createElement("span");
+      badge.className = "current-year-badge";
+      badge.textContent = "今年";
+      year.appendChild(badge);
+    }
+    card.appendChild(year);
+    card.appendChild(createPillarRow(item.ganzhi.charAt(0), item.tianganShishen));
+    card.appendChild(createPillarRow(item.ganzhi.charAt(1), item.dizhiShishen));
     return card;
   }
 
@@ -263,14 +307,15 @@
     });
     if (selectedIndex < 0) selectedIndex = 0;
     dayun.zhu.forEach(function (zhu, i) {
-      var card = createPillarCard("第" + (i + 1) + "柱", zhu);
-      card.dataset.index = String(i);
-      card.dataset.startYear = String(zhu.startYear);
-      if (i === selectedIndex) card.classList.add("is-selected");
-      var start = document.createElement("div");
-      start.className = "pillar-start";
-      start.textContent = zhu.qiyun.ageYears + "岁起；" + zhu.startYear + "年" + zhu.startMonth + "月";
-      card.appendChild(start);
+      var card = createDayunCard(zhu, i, i === selectedIndex);
+      card.addEventListener("click", function () {
+        grid.querySelectorAll(".dayun-card").forEach(function (button) {
+          var isSelected = button === card;
+          button.classList.toggle("is-selected", isSelected);
+          button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        });
+        renderLiunian(zhu.liunian);
+      });
       grid.appendChild(card);
     });
     renderLiunian(dayun.zhu[selectedIndex].liunian);
@@ -281,8 +326,7 @@
     var grid = document.getElementById("liunian-grid");
     grid.innerHTML = "";
     items.forEach(function (item) {
-      var card = createPillarCard(String(item.year), item);
-      grid.appendChild(card);
+      grid.appendChild(createLiunianCard(item));
     });
     document.getElementById("result-liunian").hidden = false;
   }

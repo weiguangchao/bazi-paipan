@@ -50,7 +50,9 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     expect(await page.locator("#dayun-grid .pillar-card.is-selected").count()).toBe(1);
 
     const selectedStartYear = Number(await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-start-year"));
-    const visibleYears = await page.locator("#liunian-grid .pillar-label").allTextContents();
+    const visibleYears = await page.locator("#liunian-grid .pillar-year").evaluateAll((els) =>
+      els.map((el) => el.firstChild!.textContent!.trim()),
+    );
     expect(visibleYears).toEqual(Array.from({ length: 10 }, (_, i) => String(selectedStartYear + i)));
 
     await page.close();
@@ -65,8 +67,70 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     const selectedIndex = await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-index");
     expect(selectedIndex).toBe("0");
     const firstStartYear = Number(await page.locator("#dayun-grid .pillar-card").first().getAttribute("data-start-year"));
-    const visibleYears = await page.locator("#liunian-grid .pillar-label").allTextContents();
+    const visibleYears = await page.locator("#liunian-grid .pillar-year").evaluateAll((els) =>
+      els.map((el) => el.firstChild!.textContent!.trim()),
+    );
     expect(visibleYears[0]).toBe(String(firstStartYear));
+
+    await page.close();
+  });
+
+  it("大运选择按钮支持点击、Enter 与 Space 并更新关联流年", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#dayun-grid button.dayun-card", { timeout: 5000 });
+
+    const buttons = page.locator("#dayun-grid button.dayun-card");
+    expect(await buttons.count()).toBe(10);
+
+    async function expectSelected(index: number) {
+      const button = buttons.nth(index);
+      const startYear = Number(await button.getAttribute("data-start-year"));
+      expect(await button.getAttribute("aria-pressed")).toBe("true");
+      expect(await page.locator("#liunian-grid .pillar-year").first().evaluate((el) => el.firstChild!.textContent!.trim())).toBe(String(startYear));
+    }
+
+    await buttons.nth(1).click();
+    await expectSelected(1);
+    await buttons.nth(2).focus();
+    await page.keyboard.press("Enter");
+    await expectSelected(2);
+    await buttons.nth(3).focus();
+    await page.keyboard.press("Space");
+    await expectSelected(3);
+
+    await page.close();
+  });
+
+  it("大运与流年卡片遵循文字层级、十神简写与只读语义", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
+
+    const firstDayun = page.locator("#dayun-grid .dayun-card").first();
+    expect(await firstDayun.locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
+    expect(await firstDayun.locator(":scope > .pillar-age").textContent()).toMatch(/^年龄：\d+岁\d+月$/);
+    expect(await firstDayun.textContent()).not.toMatch(/第\s*\d+|起运：|藏干|副星|\d{4}年\d+月/);
+    expect(await firstDayun.locator(".pillar-row").count()).toBe(2);
+
+    expect(await page.locator("#liunian-grid button").count()).toBe(0);
+    expect(await page.locator("#liunian-grid .liunian-card").count()).toBe(10);
+    expect(await page.locator("#liunian-grid .liunian-card .pillar-row").count()).toBe(20);
+    expect(await page.locator("#liunian-grid .current-year-badge").count()).toBe(1);
+
+    const allowed = new Set(["比", "劫", "食", "伤", "才", "财", "杀", "官", "枭", "印"]);
+    const abbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
+    expect(abbreviations.length).toBe(40);
+    expect(abbreviations.every((value) => allowed.has(value))).toBe(true);
+
+    const styles = await page.locator("#dayun-grid .pillar-row").first().evaluate((row) => {
+      const character = getComputedStyle(row.querySelector(".pillar-character")!);
+      const shishen = getComputedStyle(row.querySelector(".pillar-shishen-short")!);
+      return { characterSize: parseFloat(character.fontSize), shishenSize: parseFloat(shishen.fontSize), shishenColor: shishen.color };
+    });
+    expect(styles.shishenSize).toBeLessThan(styles.characterSize);
+    const colors = await page.locator(".pillar-shishen-short").evaluateAll((els) => [...new Set(els.map((el) => getComputedStyle(el).color))]);
+    expect(colors).toEqual([styles.shishenColor]);
 
     await page.close();
   });
@@ -155,6 +219,29 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+
+    await page.close();
+  });
+
+  it("窄屏大运与流年各自保持单行横向滚动", async () => {
+    const page = await newPage({ width: 375, height: 812 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
+
+    for (const selector of ["#dayun-grid", "#liunian-grid"]) {
+      const layout = await page.locator(selector).evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          flexWrap: style.flexWrap,
+          overflowX: style.overflowX,
+          scrollWidth: element.scrollWidth,
+          clientWidth: element.clientWidth,
+        };
+      });
+      expect(layout.flexWrap).toBe("nowrap");
+      expect(["auto", "scroll"]).toContain(layout.overflowX);
+      expect(layout.scrollWidth).toBeGreaterThan(layout.clientWidth);
+    }
 
     await page.close();
   });
