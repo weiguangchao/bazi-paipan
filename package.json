@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "scrape:wenzhen": "tsx scripts/scrape-wenzhen.ts"
+    "scrape:wenzhen": "tsx scripts/scrape-wenzhen.ts",
+    "build:cities": "node scripts/build-public-data.cjs"
   },
   "engines": {
     "node": ">=20"

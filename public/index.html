@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>命盘工作台 - 八字排盘</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="workbench">
+    <aside class="form-panel">
+      <h1>命盘工作台</h1>
+      <form id="paipan-form" novalidate>
+        <div class="field">
+          <label for="date">出生日期</label>
+          <input type="date" id="date" name="date" required>
+          <span class="field-error" data-field="date"></span>
+        </div>
+        <div class="field">
+          <label for="time">出生时间</label>
+          <input type="time" id="time" name="time" required>
+          <span class="field-error" data-field="time"></span>
+        </div>
+        <div class="field">
+          <label for="gender">性别</label>
+          <select id="gender" name="gender">
+            <option value="男" selected>男</option>
+            <option value="女">女</option>
+          </select>
+          <span class="field-error" data-field="gender"></span>
+        </div>
+        <div class="field">
+          <label for="province">出生省</label>
+          <select id="province" name="province">
+            <option value="">（不选则按钟表时）</option>
+          </select>
+          <span class="field-error" data-field="province"></span>
+        </div>
+        <div class="field">
+          <label for="city">出生市</label>
+          <select id="city" name="city" disabled>
+            <option value="">请先选择省份</option>
+          </select>
+          <span class="field-error" data-field="city"></span>
+        </div>
+        <button type="submit">排盘</button>
+      </form>
+      <div id="general-error" class="general-error" hidden></div>
+    </aside>
+    <main class="result-panel">
+      <section id="result-sizhu" class="result-section" hidden>
+        <h2>四柱</h2>
+        <div id="sizhu-grid" class="pillar-grid"></div>
+      </section>
+      <section id="result-tips" class="result-section" hidden>
+        <h2>提示</h2>
+        <ul id="tips-list"></ul>
+      </section>
+      <section id="result-dayun" class="result-section" hidden>
+        <h2>大运</h2>
+        <div id="dayun-info"></div>
+        <div id="dayun-grid" class="pillar-grid horizontal"></div>
+      </section>
+      <section id="result-liunian" class="result-section" hidden>
+        <h2>流年</h2>
+        <div id="liunian-grid" class="pillar-grid horizontal"></div>
+      </section>
+      <div id="empty-state" class="empty-state">
+        <p>填写出生资料后点击「排盘」查看命盘</p>
+      </div>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+(function () {
+  "use strict";
+
+  var form = document.getElementById("paipan-form");
+  var dateInput = document.getElementById("date");
+  var timeInput = document.getElementById("time");
+  var genderSelect = document.getElementById("gender");
+  var provinceSelect = document.getElementById("province");
+  var citySelect = document.getElementById("city");
+  var generalError = document.getElementById("general-error");
+  var emptyState = document.getElementById("empty-state");
+
+  // 默认值
+  dateInput.value = "2000-01-01";
+  timeInput.value = "12:00";
+
+  var provinceCitiesCache = {};
+
+  // 加载省份索引
+  fetch("/cities/provinces.json")
+    .then(function (r) { return r.json(); })
+    .then(function (provinces) {
+      provinces.forEach(function (p) {
+        var opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        provinceSelect.appendChild(opt);
+      });
+      // 默认选 北京市
+      provinceSelect.value = "北京市";
+      loadCities("北京市").then(function () {
+        citySelect.value = "市辖区";
+      });
+    });
+
+  // 省份变化 -> 加载对应城市
+  provinceSelect.addEventListener("change", function () {
+    var prov = provinceSelect.value;
+    if (prov) {
+      citySelect.disabled = false;
+      loadCities(prov).then(function () {
+        citySelect.value = citySelect.options[0] ? citySelect.options[0].value : "";
+      });
+    } else {
+      citySelect.disabled = true;
+      citySelect.innerHTML = "";
+      var opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "请先选择省份";
+      citySelect.appendChild(opt);
+      citySelect.value = "";
+    }
+    clearFieldError("province");
+    clearFieldError("city");
+  });
+
+  citySelect.addEventListener("change", function () {
+    clearFieldError("province");
+    clearFieldError("city");
+  });
+
+  function loadCities(province) {
+    if (provinceCitiesCache[province]) {
+      populateCities(provinceCitiesCache[province]);
+      return Promise.resolve();
+    }
+    return fetch("/cities/" + encodeURIComponent(province) + ".json")
+      .then(function (r) { return r.json(); })
+      .then(function (cities) {
+        provinceCitiesCache[province] = cities;
+        populateCities(cities);
+      });
+  }
+
+  function populateCities(cities) {
+    citySelect.innerHTML = "";
+    cities.forEach(function (c) {
+      var opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      citySelect.appendChild(opt);
+    });
+  }
+
+  // 清除字段错误
+  function clearFieldError(field) {
+    var el = document.querySelector(".field-error[data-field=\"" + field + "\"]");
+    if (el) el.textContent = "";
+    var fieldEl = document.getElementById(field);
+    if (fieldEl && fieldEl.parentElement) {
+      fieldEl.parentElement.classList.remove("has-error");
+    }
+  }
+
+  function clearAllErrors() {
+    document.querySelectorAll(".field-error").forEach(function (el) { el.textContent = ""; });
+    document.querySelectorAll(".field").forEach(function (el) { el.classList.remove("has-error"); });
+    generalError.hidden = true;
+  }
+
+  function showFieldError(field, message) {
+    var el = document.querySelector(".field-error[data-field=\"" + field + "\"]");
+    if (el) el.textContent = message;
+    var fieldEl = document.getElementById(field);
+    if (fieldEl && fieldEl.parentElement) {
+      fieldEl.parentElement.classList.add("has-error");
+    }
+  }
+
+  function showGeneralError(message) {
+    generalError.textContent = message;
+    generalError.hidden = false;
+  }
+
+  // 表单提交
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearAllErrors();
+
+    var body = {
+      date: dateInput.value,
+      time: timeInput.value,
+      gender: genderSelect.value,
+      province: provinceSelect.value || "",
+      city: citySelect.value || "",
+    };
+
+    fetch("/api/paipan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+      .then(function (res) {
+        return res.json().then(function (json) {
+          return { ok: res.ok, status: res.status, body: json };
+        });
+      })
+      .then(function (result) {
+        if (result.ok) {
+          renderResult(result.body.data);
+        } else {
+          renderError(result.body.error);
+        }
+      })
+      .catch(function () {
+        showGeneralError("网络错误，请重试");
+      });
+  });
+
+  function renderError(error) {
+    var fields = error.fields || {};
+    Object.keys(fields).forEach(function (f) {
+      showFieldError(f, fields[f]);
+    });
+    showGeneralError(error.message || "排盘失败");
+  }
+
+  function renderResult(data) {
+    emptyState.hidden = true;
+    renderSiZhu(data.siZhu);
+    renderTips(data.tips);
+    renderDayun(data.dayun);
+    renderLiunian(data.liunian);
+  }
+
+  function renderSiZhu(siZhu) {
+    var grid = document.getElementById("sizhu-grid");
+    grid.innerHTML = "";
+    var pillars = [
+      { label: "年柱", data: siZhu.year },
+      { label: "月柱", data: siZhu.month },
+      { label: "日柱", data: siZhu.day },
+      { label: "时柱", data: siZhu.hour },
+    ];
+    pillars.forEach(function (p) {
+      grid.appendChild(createPillarCard(p.label, p.data));
+    });
+    document.getElementById("result-sizhu").hidden = false;
+  }
+
+  function createPillarCard(label, pillar) {
+    var card = document.createElement("div");
+    card.className = "pillar-card";
+    var gan = pillar.ganZhi.charAt(0);
+    var zhi = pillar.ganZhi.charAt(1);
+    var cangGanStr = pillar.cangGan.join(" ");
+    card.innerHTML =
+      '<div class="pillar-label">' + label + "</div>" +
+      '<div class="pillar-gan">' + gan + "</div>" +
+      '<div class="pillar-shishen">' + pillar.shiShen + "</div>" +
+      '<div class="pillar-zhi">' + zhi + "</div>" +
+      '<div class="pillar-canggan">' + cangGanStr + "</div>";
+    return card;
+  }
+
+  function renderTips(tips) {
+    var list = document.getElementById("tips-list");
+    list.innerHTML = "";
+    tips.forEach(function (tip) {
+      var li = document.createElement("li");
+      li.textContent = tip.message;
+      list.appendChild(li);
+    });
+    document.getElementById("result-tips").hidden = tips.length === 0;
+  }
+
+  function renderDayun(dayun) {
+    var info = document.getElementById("dayun-info");
+    info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiYun.ageYears + "岁" + dayun.qiYun.ageMonths + "月";
+    var grid = document.getElementById("dayun-grid");
+    grid.innerHTML = "";
+    dayun.zhu.forEach(function (zhu, i) {
+      var card = createPillarCard("第" + (i + 1) + "柱", zhu);
+      var start = document.createElement("div");
+      start.className = "pillar-start";
+      start.textContent = zhu.qiYun.ageYears + "岁起；" + zhu.startYear + "年" + zhu.startMonth + "月";
+      card.appendChild(start);
+      grid.appendChild(card);
+    });
+    document.getElementById("result-dayun").hidden = false;
+  }
+
+  function renderLiunian(items) {
+    var grid = document.getElementById("liunian-grid");
+    grid.innerHTML = "";
+    items.forEach(function (item) {
+      var card = createPillarCard(String(item.year), item);
+      grid.appendChild(card);
+    });
+    document.getElementById("result-liunian").hidden = false;
+  }
+})();
