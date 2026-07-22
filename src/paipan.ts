@@ -23,7 +23,7 @@ export interface PaipanInput {
    */
   birthplace?: Birthplace;
   /**
-   * 可选性别。给出时计算大运（8 柱）并附在返回结果中；未给出时不计算大运。
+   * 可选性别。给出时计算大运（10 柱）并附在返回结果中；未给出时不计算大运。
    * 大运方向按阳男阴女顺、阴男阳女逆，起运岁与每柱干支依赖性别。
    */
   gender?: Gender;
@@ -44,8 +44,8 @@ export interface PaipanResult {
    */
   longitudeCorrectionApplied: boolean;
   /**
-   * 大运（8 柱）。仅当输入带 gender 时给出，否则为 undefined。
-   * CLI 据此打印 8 柱大运。
+   * 大运（10 柱）。仅当输入带 gender 时给出，否则为 undefined。
+   * CLI 据此打印 10 柱大运。
    */
   dayun?: DayunResult;
 }
@@ -253,14 +253,14 @@ function isNearZizheng(hour: number, minute: number): boolean {
 /**
  * 排盘纯函数。
  * T5：返回年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
- * T6：输入带 gender 时附大运（8 柱）。
+ * T6：输入带 gender 时附大运（10 柱）。
  * - 真太阳时作为输入预处理：给出出生地时按经度修正 + 均时差合成为真太阳时
  *   （视太阳时），所有柱从修正后的时刻算起（CONTEXT.md）。未给出生地走钟表时。
  * - 年柱按立春切换、月柱按节切换（ADR-0001）
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
  * - 近子正判定基于实际排盘所用时刻（已做经度修正）
- * - 大运从月柱出发排 8 柱，方向按阳男阴女顺/阴男阳女逆；起运岁按出生时刻到
+ * - 大运从月柱出发排 10 柱，方向按阳男阴女顺/阴男阳女逆；起运岁按出生时刻到
  *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
 export function paipan(input: PaipanInput): PaipanResult {

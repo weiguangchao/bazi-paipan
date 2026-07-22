@@ -159,7 +159,6 @@
     emptyState.hidden = true;
     renderSizhu(data.sizhu);
     renderDayun(data.dayun);
-    renderLiunian(data.liunian);
   }
 
   function renderSizhu(sizhu) {
@@ -244,11 +243,11 @@
     card.className = "pillar-card";
     var tianganCharacter = pillar.ganzhi.charAt(0);
     var dizhiCharacter = pillar.ganzhi.charAt(1);
-    var cangganString = pillar.canggan.join(" ");
+    var cangganString = (pillar.canggan || []).join(" ");
     card.innerHTML =
       '<div class="pillar-label">' + label + "</div>" +
       '<div class="pillar-gan">' + tianganCharacter + "</div>" +
-      '<div class="pillar-shishen">' + pillar.shishen + "</div>" +
+      '<div class="pillar-shishen">' + (pillar.shishen || pillar.tianganShishen) + "</div>" +
       '<div class="pillar-zhi">' + dizhiCharacter + "</div>" +
       '<div class="pillar-canggan">' + cangganString + "</div>";
     return card;
@@ -259,14 +258,22 @@
     info.textContent = "方向：" + dayun.direction + "行；起运 " + dayun.qiyun.ageYears + "岁" + dayun.qiyun.ageMonths + "月";
     var grid = document.getElementById("dayun-grid");
     grid.innerHTML = "";
+    var selectedIndex = dayun.zhu.findIndex(function (zhu) {
+      return zhu.liunian.some(function (item) { return item.isCurrentYear; });
+    });
+    if (selectedIndex < 0) selectedIndex = 0;
     dayun.zhu.forEach(function (zhu, i) {
       var card = createPillarCard("第" + (i + 1) + "柱", zhu);
+      card.dataset.index = String(i);
+      card.dataset.startYear = String(zhu.startYear);
+      if (i === selectedIndex) card.classList.add("is-selected");
       var start = document.createElement("div");
       start.className = "pillar-start";
       start.textContent = zhu.qiyun.ageYears + "岁起；" + zhu.startYear + "年" + zhu.startMonth + "月";
       card.appendChild(start);
       grid.appendChild(card);
     });
+    renderLiunian(dayun.zhu[selectedIndex].liunian);
     document.getElementById("result-dayun").hidden = false;
   }
 

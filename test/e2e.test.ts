@@ -45,8 +45,28 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     expect(await page.locator("#sizhu-grid .sizhu-fuxing").first().textContent()).toContain("正官");
 
     expect(await page.locator("#result-tips").count()).toBe(0);
-    expect(await page.locator("#dayun-grid .pillar-card").count()).toBe(8);
+    expect(await page.locator("#dayun-grid .pillar-card").count()).toBe(10);
     expect(await page.locator("#liunian-grid .pillar-card").count()).toBe(10);
+    expect(await page.locator("#dayun-grid .pillar-card.is-selected").count()).toBe(1);
+
+    const selectedStartYear = Number(await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-start-year"));
+    const visibleYears = await page.locator("#liunian-grid .pillar-label").allTextContents();
+    expect(visibleYears).toEqual(Array.from({ length: 10 }, (_, i) => String(selectedStartYear + i)));
+
+    await page.close();
+  });
+
+  it("今年不在十步范围时默认选择第一步", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.fill("#date", "2100-01-01");
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#result-dayun:not([hidden])", { timeout: 5000 });
+
+    const selectedIndex = await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-index");
+    expect(selectedIndex).toBe("0");
+    const firstStartYear = Number(await page.locator("#dayun-grid .pillar-card").first().getAttribute("data-start-year"));
+    const visibleYears = await page.locator("#liunian-grid .pillar-label").allTextContents();
+    expect(visibleYears[0]).toBe(String(firstStartYear));
 
     await page.close();
   });

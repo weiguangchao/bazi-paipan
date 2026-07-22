@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { liunian } from "../src/liunian.js";
 import { getBeijingYear } from "../src/beijing-time.js";
 
-// 流年纯函数（ADR-0003）：给定今年公历年，返回从今年起向后 10 柱干支。
+// 流年纯函数（ADR-0003）：给定起始公历年，返回从该年起向后 10 柱干支。
 // 每柱 = 六十甲子((公历年 - 4) mod 60)，公历年每 +1，序号 +1。
 // 不查立春，纯按公历年 mod 60。
 // 2000 庚辰：序号 (2000-4) mod 60 = 1996 mod 60 = 16 -> 六十甲子(16) = 庚辰（甲子=0）。

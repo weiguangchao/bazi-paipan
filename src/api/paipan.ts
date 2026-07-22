@@ -52,11 +52,12 @@ export interface TipOut {
 
 export interface DayunzhuOut {
   ganzhi: string;
-  shishen: string;
-  canggan: string[];
+  tianganShishen: string;
+  dizhiShishen: string;
   qiyun: { ageYears: number; ageMonths: number };
   startYear: number;
   startMonth: number;
+  liunian: LiunianItemOut[];
 }
 
 export interface DayunOut {
@@ -68,8 +69,9 @@ export interface DayunOut {
 export interface LiunianItemOut {
   year: number;
   ganzhi: string;
-  shishen: string;
-  canggan: string[];
+  tianganShishen: string;
+  dizhiShishen: string;
+  isCurrentYear: boolean;
 }
 
 export interface PaipanData {
@@ -77,7 +79,6 @@ export interface PaipanData {
   sizhu: SizhuOut;
   tips: TipOut[];
   dayun: DayunOut;
-  liunian: LiunianItemOut[];
 }
 
 export const DEFAULT_PROVINCE = "北京市";
@@ -101,17 +102,32 @@ function dayunzhuToOut(
   dayMasterTiangan: string,
   qiyun: { ageYears: number; ageMonths: number },
   startYearMonth: { year: number; month: number },
+  currentYear: number,
 ): DayunzhuOut {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
-  const dizhiCharacter = ganzhi.charAt(1);
-  const canggan = cangganTable[dizhiCharacter]!;
   return {
     ganzhi,
-    shishen: tianganShishen,
-    canggan: canggan.map((tiangan, i) => tiangan + cangganShishen[i]),
+    tianganShishen,
+    dizhiShishen: cangganShishen[0]!,
     qiyun: { ageYears: qiyun.ageYears, ageMonths: qiyun.ageMonths },
     startYear: startYearMonth.year,
     startMonth: startYearMonth.month,
+    liunian: liunian(startYearMonth.year).map((item) => liunianzhuToOut(item, dayMasterTiangan, currentYear)),
+  };
+}
+
+function liunianzhuToOut(
+  item: { year: number; ganzhi: string },
+  dayMasterTiangan: string,
+  currentYear: number,
+): LiunianItemOut {
+  const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, item.ganzhi);
+  return {
+    year: item.year,
+    ganzhi: item.ganzhi,
+    tianganShishen,
+    dizhiShishen: cangganShishen[0]!,
+    isCurrentYear: item.year === currentYear,
   };
 }
 
@@ -228,26 +244,18 @@ export function computePaipan(
   }
 
   const dayun = result.dayun!;
+  const currentYear = getBeijingYear();
   const dayunOut: DayunOut = {
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
-    zhu: dayun.zhu.map((p) => dayunzhuToOut(p.ganzhi, dayMasterTiangan, p.qiyun, p.startYearMonth)),
+    zhu: dayun.zhu.map((p) => dayunzhuToOut(p.ganzhi, dayMasterTiangan, p.qiyun, p.startYearMonth, currentYear)),
   };
-
-  const currentYear = getBeijingYear();
-  const liunianResult = liunian(currentYear);
-  const liunianItems: LiunianItemOut[] = liunianResult.map((p) => {
-    const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, p.ganzhi);
-    const dizhiCharacter = p.ganzhi.charAt(1);
-    const canggan = cangganTable[dizhiCharacter]!;
-    return { year: p.year, ganzhi: p.ganzhi, shishen: tianganShishen, canggan: canggan.map((tiangan, i) => tiangan + cangganShishen[i]) };
-  });
 
   return {
     ok: true,
     data: {
       input: { date: input.date, time: input.time, gender: input.gender, province: input.province ?? "", city: input.city ?? "" },
-      sizhu, tips, dayun: dayunOut, liunian: liunianItems,
+      sizhu, tips, dayun: dayunOut,
     },
   };
 }

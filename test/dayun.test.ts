@@ -6,10 +6,10 @@ import { dayun, determineDayunDirection, type Gender } from "../src/dayun.js";
 // - 方向：阳年（年干序号偶：甲丙戊庚壬）男 / 阴年女顺行；阴年男 / 阳年女逆行。
 // - 起运岁：出生时刻到最近一"节"（顺行数下一节、逆行数上一节）的天数按
 //   3 天折 1 年折算，精确到年+月（1 天 ≈ 4 个月），报为"N岁M月起运"。
-// - 8 柱，每柱管 10 年，天干地支从月柱顺/逆推出。
+// - 10 柱，每柱管 10 年，天干地支从月柱顺/逆推出。
 //
 // 真值来源：
-// - 方向与 8 柱干支由月柱顺/逆推进 + 五虎遁推出（与 tyme4ts 默认一致）。
+// - 方向与干支序列由月柱顺/逆推进 + 五虎遁推出（与 tyme4ts 规则一致）。
 // - 起运岁以移植自 tyme4ts 的 jieqi.ts 交节时刻为准。
 // 2000 庚辰年（庚=7，阳年）；2001 辛巳年（辛=7，阴年）。
 
@@ -31,29 +31,26 @@ describe("大运 - 方向 (T6)", () => {
   });
 });
 
-describe("排盘 - 大运顺行 8 柱 (T6)", () => {
+describe("排盘 - 大运顺行 10 柱", () => {
   // 2000-03-10 12:00 钟表时：庚辰年己卯月（阳年）男 -> 顺行。
-  // 月柱 己卯，顺推 8 柱：庚辰、辛巳、壬午、癸未、甲申、乙酉、丙戌、丁亥。
-  // 8 柱干支由月柱顺推得出，与 tyme4ts 默认排法一致。
-  it("阳年男 2000-03-10 12:00 -> 顺行 8 柱庚辰…丁亥，起运 8岁6月", () => {
+  it("阳年男 2000-03-10 12:00 -> 顺行 10 柱庚辰…己丑，起运规则不变", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
     expect(result.dayun).toBeDefined();
     const { direction, qiyun, zhu } = result.dayun!;
     expect(direction).toBe("顺");
     expect(qiyun).toEqual({ ageYears: 8, ageMonths: 6 });
-    expect(zhu).toHaveLength(8);
+    expect(zhu).toHaveLength(10);
     const ganzhi = zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
       "庚辰", "辛巳", "壬午", "癸未",
-      "甲申", "乙酉", "丙戌", "丁亥",
+      "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑",
     ]);
   });
 
-  // 每柱管 10 年：起运岁为 8岁6月，故 8 柱起运岁依次 8、18、28、38、48、58、68、78（月不变 6）。
-  it("顺行 8 柱起运岁依次递增 10 岁", () => {
+  it("顺行 10 柱起运岁依次递增 10 岁", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
     const qiyunsuiAges = result.dayun!.zhu.map((p) => p.qiyun.ageYears);
-    expect(qiyunsuiAges).toEqual([8, 18, 28, 38, 48, 58, 68, 78]);
+    expect(qiyunsuiAges).toEqual([8, 18, 28, 38, 48, 58, 68, 78, 88, 98]);
     // 月数从起运岁继承，各柱相同
     expect(result.dayun!.zhu.every((p) => p.qiyun.ageMonths === 6)).toBe(true);
   });
@@ -64,14 +61,14 @@ describe("排盘 - 大运顺行 8 柱 (T6)", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
     const firstZhu = result.dayun!.zhu[0]!;
     expect(firstZhu.startYearMonth).toEqual({ year: 2008, month: 9 });
-    const lastZhu = result.dayun!.zhu[7]!;
-    expect(lastZhu.startYearMonth).toEqual({ year: 2078, month: 9 });
+    const lastZhu = result.dayun!.zhu[9]!;
+    expect(lastZhu.startYearMonth).toEqual({ year: 2098, month: 9 });
   });
 });
 
-describe("排盘 - 大运逆行 8 柱 (T6)", () => {
+describe("排盘 - 大运逆行 10 柱", () => {
   // 同一阳年出生、改性别女 -> 逆行。月柱 己卯 逆推：戊寅、丁丑、丙子、乙亥、甲戌、癸酉、壬申、辛未。
-  it("阳年女 2000-03-10 12:00 -> 逆行 8 柱戊寅…辛未，起运 1岁6月", () => {
+  it("阳年女 2000-03-10 12:00 -> 逆行 10 柱戊寅…己巳，起运 1岁6月", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "女" });
     const { direction, qiyun, zhu } = result.dayun!;
     expect(direction).toBe("逆");
@@ -79,7 +76,7 @@ describe("排盘 - 大运逆行 8 柱 (T6)", () => {
     const ganzhi = zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
       "戊寅", "丁丑", "丙子", "乙亥",
-      "甲戌", "癸酉", "壬申", "辛未",
+      "甲戌", "癸酉", "壬申", "辛未", "庚午", "己巳",
     ]);
   });
 
@@ -89,22 +86,22 @@ describe("排盘 - 大运逆行 8 柱 (T6)", () => {
     expect(result.dayun!.direction).toBe("逆");
     // 月柱辛卯（辛年五虎遁丙起 -> 寅月庚寅、卯月辛卯）
     expect(result.yuezhu).toBe("辛卯");
-    // 逆推 8 柱：庚寅、己丑、戊子、丁亥、丙戌、乙酉、甲申、癸未
+    // 逆推 10 柱：庚寅、己丑、戊子、丁亥、丙戌、乙酉、甲申、癸未、壬午、辛巳
     const ganzhi = result.dayun!.zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
       "庚寅", "己丑", "戊子", "丁亥",
-      "丙戌", "乙酉", "甲申", "癸未",
+      "丙戌", "乙酉", "甲申", "癸未", "壬午", "辛巳",
     ]);
   });
 
   it("阴年女 2001-03-10 12:00 -> 顺行（阴年女顺）", () => {
     const result = paipan({ year: 2001, month: 3, day: 10, hour: 12, minute: 0, gender: "女" });
     expect(result.dayun!.direction).toBe("顺");
-    // 月柱辛卯顺推 8 柱：壬辰、癸巳、甲午、乙未、丙申、丁酉、戊戌、己亥
+    // 月柱辛卯顺推 10 柱：壬辰、癸巳、甲午、乙未、丙申、丁酉、戊戌、己亥、庚子、辛丑
     const ganzhi = result.dayun!.zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
       "壬辰", "癸巳", "甲午", "乙未",
-      "丙申", "丁酉", "戊戌", "己亥",
+      "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑",
     ]);
   });
 });

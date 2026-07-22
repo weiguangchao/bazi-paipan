@@ -62,30 +62,35 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.tips).toBeInstanceOf(Array);
     expect(data.tips.some((t: any) => t.code === "TRUE_SOLAR_TIME")).toBe(true);
 
-    // dayun：方向顺、起运岁、8 柱
+    // dayun：方向、起运岁、10 柱
     expect(data.dayun.direction).toBe("逆"); // 1999己卯阴年男 -> 逆
     expect(data.dayun.qiyun.ageYears).toBeTypeOf("number");
-    expect(data.dayun.zhu).toHaveLength(8);
-    // 每柱含 ganzhi、shishen、canggan、qiyun、startYear、startMonth
+    expect(data.dayun.zhu).toHaveLength(10);
+    // 每柱含起运信息、天干/地支本气十神和十个大运关联流年
     const z0 = data.dayun.zhu[0];
     expect(z0.ganzhi).toBeTypeOf("string");
-    expect(z0.shishen).toBeTypeOf("string");
-    expect(z0.canggan).toBeInstanceOf(Array);
+    expect(z0.tianganShishen).toBeTypeOf("string");
+    expect(z0.dizhiShishen).toBeTypeOf("string");
     expect(z0.qiyun.ageYears).toBeTypeOf("number");
     expect(z0.qiyun.ageMonths).toBeTypeOf("number");
     expect(z0.startYear).toBeTypeOf("number");
     expect(z0.startMonth).toBeTypeOf("number");
 
-    // liunian：10 项，从当前北京年起
-    expect(data.liunian).toHaveLength(10);
-    expect(data.liunian[0].ganzhi).toBeTypeOf("string");
-    expect(data.liunian[0].shishen).toBeTypeOf("string");
-    expect(data.liunian[0].canggan).toBeInstanceOf(Array);
-    // 年份依次 +1
-    const years = data.liunian.map((l: any) => l.year);
-    for (let i = 1; i < years.length; i++) {
-      expect(years[i]).toBe(years[i - 1] + 1);
+    expect(z0.liunian).toHaveLength(10);
+    expect(z0.liunian.map((item: any) => item.year)).toEqual(
+      Array.from({ length: 10 }, (_, i) => z0.startYear + i),
+    );
+    expect(z0.liunian[0].tianganShishen).toBeTypeOf("string");
+    expect(z0.liunian[0].dizhiShishen).toBeTypeOf("string");
+    expect(z0.liunian[0].isCurrentYear).toBeTypeOf("boolean");
+    expect(data.liunian).toBeUndefined();
+
+    for (const dayunzhu of data.dayun.zhu) {
+      expect(dayunzhu.liunian).toHaveLength(10);
+      expect(dayunzhu.liunian[0].year).toBe(dayunzhu.startYear);
+      expect(dayunzhu.liunian[9].year).toBe(dayunzhu.startYear + 9);
     }
+    expect(data.dayun.zhu.flatMap((item: any) => item.liunian).filter((item: any) => item.isCurrentYear)).toHaveLength(1);
   });
 
   it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
