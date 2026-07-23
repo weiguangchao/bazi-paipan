@@ -7,7 +7,15 @@
 // 顺行从出生时刻向前数到下一节，逆行向后数到上一节。每柱天干地支从月柱
 // 顺行 +1 或逆行 −1 推出。
 
-import { tiangan, dizhi, JIE_TERM_INDEXES } from "./ganzhi.js";
+import {
+  tiangan,
+  dizhi,
+  ganzhiDizhi,
+  ganzhiFromCharacters,
+  ganzhiTiangan,
+  JIE_TERM_INDEXES,
+  type Ganzhi,
+} from "./ganzhi.js";
 import { getSolarTermMoment } from "./jieqi.js";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
@@ -32,7 +40,7 @@ export interface Dayunzhu {
   /** 第几柱大运，0-based。 */
   index: number;
   /** 该柱干支。 */
-  ganzhi: string;
+  ganzhi: Ganzhi;
   /** 该柱起算的起运岁（第 0 柱起于起运岁，每柱递增 10 岁）。 */
   qiyun: Qiyunsui;
   /** 该柱起始公历年月（第 0 柱 = 出生年 + 起运岁；每柱递增 10 年）。 */
@@ -114,14 +122,9 @@ function computeStartYearMonth(
 }
 
 /** 从月柱干支拆出月干序号与月支序号。 */
-function splitPillar(pillar: string): { tianganIndex: number; dizhiIndex: number } {
-  const tianganCharacter = pillar.charAt(0);
-  const dizhiCharacter = pillar.charAt(1);
-  const tianganIndex = (tiangan as readonly string[]).indexOf(tianganCharacter);
-  const dizhiIndex = (dizhi as readonly string[]).indexOf(dizhiCharacter);
-  if (tianganIndex < 0 || dizhiIndex < 0) {
-    throw new Error(`非法干支柱：${pillar}`);
-  }
+function splitPillar(pillar: Ganzhi): { tianganIndex: number; dizhiIndex: number } {
+  const tianganIndex = tiangan.indexOf(ganzhiTiangan(pillar));
+  const dizhiIndex = dizhi.indexOf(ganzhiDizhi(pillar));
   return { tianganIndex, dizhiIndex };
 }
 
@@ -137,7 +140,7 @@ function splitPillar(pillar: string): { tianganIndex: number; dizhiIndex: number
  * @returns 大运完整结果（方向 + 起运岁 + 10 柱）
  */
 export function dayun(
-  yuezhu: string,
+  yuezhu: Ganzhi,
   yearTianganIndex: number,
   gender: Gender,
   birthUtc: number,
@@ -161,7 +164,7 @@ export function dayun(
     const startYearMonth = computeStartYearMonth(birthYear, birthMonth, qiyunsui, i);
     zhu.push({
       index: i,
-      ganzhi: `${tiangan[tianganIndex]}${dizhi[dizhiIndex]}`,
+      ganzhi: ganzhiFromCharacters(tiangan[tianganIndex]!, dizhi[dizhiIndex]!),
       qiyun: { ageYears: qiyunsui.ageYears + i * 10, ageMonths: qiyunsui.ageMonths },
       startYearMonth,
     });

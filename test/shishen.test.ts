@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { shishen, cangganTable } from "../src/shishen.js";
+import { dizhi, type Dizhi, type Tiangan } from "../src/ganzhi.js";
 
 // 十神纯函数：对日主 + 任意干支返回 { 天干十神, 藏干十神[] }。
 // 五行：甲乙木、丙丁火、戊己土、庚辛金、壬癸水；阴阳按天干序号偶阳奇阴。
@@ -45,11 +46,11 @@ describe("十神 - 规则穷举 10 种十神（日主=戊，阳土）", () => {
   });
 
   it("偏印：丙（生我火、同阴阳）-> 偏印", () => {
-    expect(shishen(dayMaster, "丙巳").tianganShishen).toBe("偏印");
+    expect(shishen(dayMaster, "丙子").tianganShishen).toBe("偏印");
   });
 
   it("正印：丁（生我火、异阴阳）-> 正印", () => {
-    expect(shishen(dayMaster, "丁午").tianganShishen).toBe("正印");
+    expect(shishen(dayMaster, "丁丑").tianganShishen).toBe("正印");
   });
 });
 
@@ -78,7 +79,7 @@ describe("藏干表 - 12 地支全量覆盖", () => {
   // 锁定藏干表（不标本气/中气/余气）：每个地支藏干数与内容固定。
   // 子癸；丑己癸辛；寅甲丙戊；卯乙；辰戊乙癸；巳丙戊庚；午丁己；
   // 未己丁乙；申庚壬戊；酉辛；戌戊辛丁；亥壬甲。
-  const expected: Record<string, string[]> = {
+  const expected: Record<Dizhi, readonly Tiangan[]> = {
     "子": ["癸"],
     "丑": ["己", "癸", "辛"],
     "寅": ["甲", "丙", "戊"],
@@ -93,9 +94,10 @@ describe("藏干表 - 12 地支全量覆盖", () => {
     "亥": ["壬", "甲"],
   };
 
-  for (const [dizhi, expectedTiangan] of Object.entries(expected)) {
-    it(`${dizhi} -> ${expectedTiangan.join("")}（${expectedTiangan.length} 个藏干）`, () => {
-      expect(cangganTable[dizhi]).toEqual(expectedTiangan);
+  for (const dizhiCharacter of dizhi) {
+    const expectedTiangan = expected[dizhiCharacter];
+    it(`${dizhiCharacter} -> ${expectedTiangan.join("")}（${expectedTiangan.length} 个藏干）`, () => {
+      expect(cangganTable[dizhiCharacter]).toEqual(expectedTiangan);
     });
   }
 

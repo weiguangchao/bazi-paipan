@@ -8,6 +8,7 @@ import { shishen, cangganTable } from "../shishen.js";
 import { findLongitude, type Birthplace } from "../birthplace.js";
 import { getBeijingYearMonth } from "../beijing-time.js";
 import type { Gender } from "../dayun.js";
+import { ganzhiDizhi, ganzhiTiangan, type Ganzhi, type Tiangan } from "../ganzhi.js";
 import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../../public/birth-date.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
@@ -86,9 +87,9 @@ export interface PaipanData {
 export const DEFAULT_PROVINCE = "北京市";
 export const DEFAULT_CITY = "市辖区";
 
-function pillarToOut(ganzhi: string, dayMasterTiangan: string, isDayPillar: boolean): PillarOut {
+function pillarToOut(ganzhi: Ganzhi, dayMasterTiangan: Tiangan, isDayPillar: boolean): PillarOut {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
-  const dizhiCharacter = ganzhi.charAt(1);
+  const dizhiCharacter = ganzhiDizhi(ganzhi);
   const canggan = cangganTable[dizhiCharacter]!;
   return {
     ganzhi,
@@ -98,16 +99,16 @@ function pillarToOut(ganzhi: string, dayMasterTiangan: string, isDayPillar: bool
 }
 
 function pillarShishenToOut(
-  ganzhi: string,
-  dayMasterTiangan: string,
+  ganzhi: Ganzhi,
+  dayMasterTiangan: Tiangan,
 ): { tianganShishen: string; dizhiShishen: string } {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
   return { tianganShishen, dizhiShishen: cangganShishen[0]! };
 }
 
 function dayunzhuToOut(
-  ganzhi: string,
-  dayMasterTiangan: string,
+  ganzhi: Ganzhi,
+  dayMasterTiangan: Tiangan,
   qiyun: { ageYears: number; ageMonths: number },
   startYearMonth: { year: number; month: number },
   currentYear: number,
@@ -128,8 +129,8 @@ function dayunzhuToOut(
 }
 
 function liunianzhuToOut(
-  item: { year: number; ganzhi: string },
-  dayMasterTiangan: string,
+  item: { year: number; ganzhi: Ganzhi },
+  dayMasterTiangan: Tiangan,
   currentYear: number,
 ): LiunianItemOut {
   const pillarShishen = pillarShishenToOut(item.ganzhi, dayMasterTiangan);
@@ -214,7 +215,7 @@ export function computePaipan(
   const domainInput: DomainPaipanInput = { year, month, day, hour, minute, birthplace, gender: input.gender as Gender };
 
   const result = paipan(domainInput);
-  const dayMasterTiangan = result.rizhu.charAt(0);
+  const dayMasterTiangan = ganzhiTiangan(result.rizhu);
 
   const sizhu: SizhuOut = {
     year: pillarToOut(result.nianzhu, dayMasterTiangan, false),

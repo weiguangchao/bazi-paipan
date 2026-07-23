@@ -4,7 +4,14 @@
 // 真太阳时合成（经度修正 + 均时差）作为输入预处理（CONTEXT.md）：给出出生地时把
 // 钟表时合成为真太阳时（视太阳时），所有柱从修正后的时刻算起。
 
-import { liushijiazi, tiangan, dizhi, JIE_TERM_INDEXES } from "./ganzhi.js";
+import {
+  liushijiazi,
+  tiangan,
+  dizhi,
+  ganzhiFromCharacters,
+  JIE_TERM_INDEXES,
+  type Ganzhi,
+} from "./ganzhi.js";
 import { getLichunMoment, getSolarTermMoment } from "./jieqi.js";
 import { applyTrueSolarTime } from "./solar-time.js";
 import { findLongitude, type Birthplace } from "./birthplace.js";
@@ -32,10 +39,10 @@ export interface PaipanInput {
 /** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
  *  T6 阶段增附大运（仅当输入带 gender 时）。 */
 export interface PaipanResult {
-  nianzhu: string;
-  yuezhu: string;
-  rizhu: string;
-  shizhu: string;
+  nianzhu: Ganzhi;
+  yuezhu: Ganzhi;
+  rizhu: Ganzhi;
+  shizhu: Ganzhi;
   /** 出生时刻近子正（00:00）时为 true，CLI 据此打印跨界提示 */
   nearZizheng: boolean;
   /**
@@ -170,7 +177,7 @@ function stripBirthplace(input: PaipanInput): PaipanInput {
  * 干支年序号 = (公历年 - 4) mod 60（甲子=0）。
  * 返回 [年柱, 年干序号]。
  */
-function computeYearPillar(input: PaipanInput, birthUtc: number): [string, number] {
+function computeYearPillar(input: PaipanInput, birthUtc: number): [Ganzhi, number] {
   const lichunUtc = getLichunMoment(input.year);
   // 出生在立春之前 -> 归上一公历年
   const ganzhiYear = birthUtc < lichunUtc ? input.year - 1 : input.year;
@@ -188,7 +195,7 @@ function computeMonthPillar(
   input: PaipanInput,
   birthUtc: number,
   yearTianganIndex: number,
-): string {
+): Ganzhi {
   // 候选：本公历年与上一公历年的所有"节"交节时刻。取 <= birth 的最近一个。
   let bestJieIdx = -1;
   let bestMs = Number.NEGATIVE_INFINITY;
@@ -208,7 +215,7 @@ function computeMonthPillar(
   const firstMonthTiangan = firstMonthTianganIndex(yearTianganIndex);
   const step = ((monthDizhiIndex - 2) + 12) % 12;
   const monthTianganIndex = (firstMonthTiangan + step) % 10;
-  return `${tiangan[monthTianganIndex]}${dizhi[monthDizhiIndex]}`;
+  return ganzhiFromCharacters(tiangan[monthTianganIndex]!, dizhi[monthDizhiIndex]!);
 }
 
 /**
@@ -234,10 +241,10 @@ function zishiTianganIndex(dayTianganIndex: number): number {
  * 子时依早晚子时（ADR-0002）--日柱已按公历日对齐子正（00:00），故日干随历法日
  * 自然切换：23:00-00:00 晚子时用当日日干、00:00-01:00 早子时用次日（历法当日）日干。
  */
-function computeHourPillar(hour: number, dayTianganIndex: number): string {
+function computeHourPillar(hour: number, dayTianganIndex: number): Ganzhi {
   const dizhiIndex = hourDizhiIndex(hour);
   const tianganIndex = (zishiTianganIndex(dayTianganIndex) + dizhiIndex) % 10;
-  return `${tiangan[tianganIndex]}${dizhi[dizhiIndex]}`;
+  return ganzhiFromCharacters(tiangan[tianganIndex]!, dizhi[dizhiIndex]!);
 }
 
 /** 子正跨界提示阈值（分钟）：出生时刻距最近子正（00:00）在此范围内时判定为近子正 */

@@ -5,12 +5,12 @@
 // 每柱 = 六十甲子((公历年 - 4) mod 60)（甲子=0，2000 -> 庚辰）。
 // 不查立春时刻，纯按公历年 mod 60（CONTEXT.md 流年术语）。
 
-import { liushijiazi } from "./ganzhi.js";
+import { liushijiazi, type Ganzhi } from "./ganzhi.js";
 
 /** 流年柱：年（公历）+ 该年干支。 */
 export interface Liunianzhu {
   year: number;
-  ganzhi: string;
+  ganzhi: Ganzhi;
 }
 
 /** 流年输出长度：给定公历年起向后 10 柱。 */

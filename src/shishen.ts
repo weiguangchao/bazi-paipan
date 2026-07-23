@@ -9,10 +9,17 @@
 // 日主位标 "日主" 是 CLI 层叠加（见 src/index.ts），纯函数始终返回十神规则结果。
 // 排盘核心与排盘Result 不动：日主从 日柱 天干读，十神作为 CLI/组合层后置步骤。
 
-import { tiangan, dizhi } from "./ganzhi.js";
+import {
+  tiangan,
+  ganzhiDizhi,
+  ganzhiTiangan,
+  type Dizhi,
+  type Ganzhi,
+  type Tiangan,
+} from "./ganzhi.js";
 
 /** 天干五行序号：0=木、1=火、2=土、3=金、4=水。甲乙木、丙丁火、戊己土、庚辛金、壬癸水。 */
-function tianganWuxingIndex(tianganCharacter: string): number {
+function tianganWuxingIndex(tianganCharacter: Tiangan): number {
   const idx = (tiangan as readonly string[]).indexOf(tianganCharacter);
   if (idx < 0) {
     throw new Error(`非法天干：${tianganCharacter}`);
@@ -22,7 +29,7 @@ function tianganWuxingIndex(tianganCharacter: string): number {
 }
 
 /** 天干阴阳：序号偶为阳(0)、奇为阴(1)。 */
-function tianganYinyang(tianganCharacter: string): 0 | 1 {
+function tianganYinyang(tianganCharacter: Tiangan): 0 | 1 {
   const idx = (tiangan as readonly string[]).indexOf(tianganCharacter);
   if (idx < 0) {
     throw new Error(`非法天干：${tianganCharacter}`);
@@ -35,7 +42,7 @@ function tianganYinyang(tianganCharacter: string): 0 | 1 {
  * 子癸；丑己癸辛；寅甲丙戊；卯乙；辰戊乙癸；巳丙戊庚；午丁己；
  * 未己丁乙；申庚壬戊；酉辛；戌戊辛丁；亥壬甲。
  */
-export const cangganTable: Record<string, string[]> = {
+export const cangganTable: Record<Dizhi, readonly Tiangan[]> = {
   "子": ["癸"],
   "丑": ["己", "癸", "辛"],
   "寅": ["甲", "丙", "戊"],
@@ -83,7 +90,7 @@ const shishenRelations: [string, string][] = [
  * @param targetTiangan 任意天干
  * @returns 十神名称（十种之一）
  */
-function deriveShishen(dayMasterTiangan: string, targetTiangan: string): string {
+function deriveShishen(dayMasterTiangan: Tiangan, targetTiangan: Tiangan): string {
   const a = tianganWuxingIndex(dayMasterTiangan);
   const b = tianganWuxingIndex(targetTiangan);
   const diff = (b - a + 5) % 5;
@@ -102,18 +109,9 @@ function deriveShishen(dayMasterTiangan: string, targetTiangan: string): string 
  * @param 干支 两字干支，如 "庚辰"
  * @returns 天干十神 + 藏干十神数组
  */
-export function shishen(dayMasterTiangan: string, ganzhi: string): ShishenResult {
-  if (ganzhi.length !== 2) {
-    throw new Error(`非法干支：${ganzhi}`);
-  }
-  const tianganCharacter = ganzhi.charAt(0);
-  const dizhiCharacter = ganzhi.charAt(1);
-  if (!(tiangan as readonly string[]).includes(tianganCharacter)) {
-    throw new Error(`非法天干：${tianganCharacter}`);
-  }
-  if (!(dizhi as readonly string[]).includes(dizhiCharacter)) {
-    throw new Error(`非法地支：${dizhiCharacter}`);
-  }
+export function shishen(dayMasterTiangan: Tiangan, ganzhi: Ganzhi): ShishenResult {
+  const tianganCharacter = ganzhiTiangan(ganzhi);
+  const dizhiCharacter = ganzhiDizhi(ganzhi);
   const canggan = cangganTable[dizhiCharacter]!;
   return {
     tianganShishen: deriveShishen(dayMasterTiangan, tianganCharacter),
