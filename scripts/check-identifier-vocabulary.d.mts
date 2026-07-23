@@ -1,5 +1,7 @@
 export interface DeprecatedPinyinViolation {
   identifier: string;
+  context?: string;
+  naming?: string;
   deprecatedToken: string;
   canonicalToken: string;
   line: number;
@@ -7,6 +9,10 @@ export interface DeprecatedPinyinViolation {
 }
 
 export function findDeprecatedPinyinIdentifiers(
+  source: string,
+  fileName?: string,
+): DeprecatedPinyinViolation[];
+export function findDeprecatedPinyinNaming(
   source: string,
   fileName?: string,
 ): DeprecatedPinyinViolation[];
