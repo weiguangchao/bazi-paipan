@@ -1,10 +1,5 @@
 import type { BirthDateParts } from "../public/birth-date.js";
 
-export interface PersonalInfo {
-  shengxiao: string;
-  zodiacSign: string;
-}
-
 const shengxiaoCycle = [
   "鼠", "牛", "虎", "兔", "龙", "蛇",
   "马", "羊", "猴", "鸡", "狗", "猪",
@@ -24,6 +19,15 @@ const zodiacSignBoundaries = [
   { day: 23, before: "天蝎座", after: "射手座" },
   { day: 22, before: "射手座", after: "摩羯座" },
 ] as const;
+
+export type Shengxiao = (typeof shengxiaoCycle)[number];
+export type ZodiacSign =
+  (typeof zodiacSignBoundaries)[number]["before" | "after"];
+
+export interface PersonalInfo {
+  shengxiao: Shengxiao;
+  zodiacSign: ZodiacSign;
+}
 
 /** 根据原始公历出生日期计算生肖与星座，不读取排盘后的有效时刻或年柱。 */
 export function personalInfo(birthDate: BirthDateParts): PersonalInfo {
