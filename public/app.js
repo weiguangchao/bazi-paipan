@@ -229,9 +229,35 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
 
   function renderResult(data) {
     emptyState.hidden = true;
+    renderPersonal(data.personal);
     renderSizhu(data.sizhu);
     renderGanzhiRelations(data.ganzhiRelations);
     renderDayun(data.dayun);
+  }
+
+  function renderPersonal(personal) {
+    var container = document.getElementById("personal-info");
+    container.innerHTML = "";
+    [
+      { label: "生肖", value: personal.shengxiao },
+      { label: "星座", value: personal.zodiacSign },
+    ].forEach(function (item) {
+      var info = document.createElement("div");
+      info.className = "personal-item";
+
+      var label = document.createElement("span");
+      label.className = "personal-label";
+      label.textContent = item.label;
+
+      var value = document.createElement("span");
+      value.className = "personal-value";
+      value.textContent = item.value;
+
+      info.appendChild(label);
+      info.appendChild(value);
+      container.appendChild(info);
+    });
+    document.getElementById("result-personal").hidden = false;
   }
 
   function renderGanzhiRelations(ganzhiRelations) {

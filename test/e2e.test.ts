@@ -44,6 +44,29 @@ async function submitBirthData(page: Page, date: string, time: string) {
   await page.waitForSelector("#result-ganzhi-relations:not([hidden])", { timeout: 5000 });
 }
 
+async function expectPersonalInfo(viewport: { width: number; height: number }) {
+  const page = await newPage(viewport);
+  await submitBirthData(page, "2000-01-01", "12:00");
+
+  expect(await page.locator("#result-personal h2").textContent()).toBe("个人");
+  expect(await page.locator("#personal-info .personal-label").allTextContents())
+    .toEqual(["生肖", "星座"]);
+  expect(await page.locator("#personal-info .personal-value").allTextContents())
+    .toEqual(["龙", "摩羯座"]);
+  expect(await page.locator(".result-panel > section").evaluateAll((sections) =>
+    sections.slice(0, 2).map((section) => section.id)
+  )).toEqual(["result-personal", "result-sizhu"]);
+
+  const personalColumns = await page.locator("#personal-info").evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.split(" ").length
+  );
+  expect(personalColumns).toBe(2);
+  expect(await page.evaluate(() =>
+    document.documentElement.scrollWidth <= document.documentElement.clientWidth
+  )).toBe(true);
+  await page.close();
+}
+
 async function expectRealGanzhiRelations(viewport: { width: number; height: number }) {
   const nonEmptyPage = await newPage(viewport);
   await submitBirthData(nonEmptyPage, "2000-01-01", "12:00");
@@ -58,6 +81,7 @@ async function expectRealGanzhiRelations(viewport: { width: number; height: numb
   expect(await nonEmptyPage.locator(".result-panel > section").evaluateAll((sections) =>
     sections.map((section) => section.id)
   )).toEqual([
+    "result-personal",
     "result-sizhu",
     "result-ganzhi-relations",
     "result-dayun",
@@ -133,6 +157,10 @@ async function expectDenseGanzhiRelations(
 }
 
 describe("E2E - 桌面 viewport (1280x900)", () => {
+  it("个人栏位于四柱前并展示 API 返回的生肖与星座", async () => {
+    await expectPersonalInfo({ width: 1280, height: 900 });
+  });
+
   it("干支留意真实非空、空状态与密集 API 顺序", async () => {
     await expectRealGanzhiRelations({ width: 1280, height: 900 });
     await expectDenseGanzhiRelations({ width: 1280, height: 900 }, false);
@@ -639,6 +667,10 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
 });
 
 describe("E2E - 窄屏 viewport (375x812)", () => {
+  it("个人栏在窄屏保持两列且无横向溢出", async () => {
+    await expectPersonalInfo({ width: 375, height: 812 });
+  });
+
   it("干支留意保留双行结构、密集标签整项换行且无横向溢出", async () => {
     await expectRealGanzhiRelations({ width: 375, height: 812 });
     await expectDenseGanzhiRelations({ width: 375, height: 812 }, true);

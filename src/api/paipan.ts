@@ -13,6 +13,7 @@ import {
   ganzhiRelations,
   type GanzhiRelationsResult,
 } from "../ganzhi-relations.js";
+import { personalInfo, type PersonalInfo } from "../personal-info.js";
 import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../../public/birth-date.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
@@ -83,6 +84,7 @@ export interface LiunianItemOut {
 
 export interface PaipanData {
   input: { date: string; time: string; gender: string; province: string; city: string };
+  personal: PersonalInfo;
   sizhu: SizhuOut;
   ganzhiRelations: GanzhiRelationsResult;
   tips: TipOut[];
@@ -218,6 +220,7 @@ export function computePaipan(
   const birthplace: Birthplace | undefined =
     hasProv && hasCity ? { province: input.province!, city: input.city! } : undefined;
   const domainInput: DomainPaipanInput = { year, month, day, hour, minute, birthplace, gender: input.gender as Gender };
+  const personal = personalInfo({ year, month, day });
 
   const result = paipan(domainInput);
   const dayMasterTiangan = ganzhiTiangan(result.rizhu);
@@ -264,7 +267,7 @@ export function computePaipan(
     ok: true,
     data: {
       input: { date: input.date, time: input.time, gender: input.gender, province: input.province ?? "", city: input.city ?? "" },
-      sizhu, ganzhiRelations: ganzhiRelationsResult, tips, dayun: dayunOut,
+      personal, sizhu, ganzhiRelations: ganzhiRelationsResult, tips, dayun: dayunOut,
     },
   };
 }

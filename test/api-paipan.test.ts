@@ -45,6 +45,9 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(data.input.province).toBe("北京市");
     expect(data.input.city).toBe("市辖区");
 
+    // personal：直接使用原始公历生日；2000-01-01 属龙且为摩羯座
+    expect(data.personal).toEqual({ shengxiao: "龙", zodiacSign: "摩羯座" });
+
     // sizhu：四柱干支与既有命例一致
     expect(data.sizhu.year.ganzhi).toBe("己卯");
     expect(data.sizhu.month.ganzhi).toBe("丙子");
@@ -93,6 +96,40 @@ describe("POST /api/paipan - 成功响应", () => {
     }
     expect(data.dayun.zhu.flatMap((item: any) => item.liunian).filter((item: any) => item.isCurrentYear)).toHaveLength(1);
     expect(data.dayun.zhu.filter((item: any) => item.isCurrent)).toHaveLength(1);
+  });
+
+  it("生肖按原始公历年计算，不读取立春前的年柱地支", async () => {
+    const { status, body } = await postPaipan({
+      date: "2000-01-01",
+      time: "12:00",
+      gender: "男",
+      province: "",
+      city: "",
+    });
+
+    expect(status).toBe(200);
+    expect(body.data.sizhu.year.ganzhi).toBe("己卯");
+    expect(body.data.personal.shengxiao).toBe("龙");
+  });
+
+  it("星座按原始公历月日计算，不随真太阳时跨日", async () => {
+    const birthData = {
+      date: "2026-11-22",
+      time: "23:20",
+      gender: "男",
+    };
+    const clock = await postPaipan({ ...birthData, province: "", city: "" });
+    const trueSolarTime = await postPaipan({
+      ...birthData,
+      province: "黑龙江省",
+      city: "双鸭山市",
+    });
+
+    expect(clock.status).toBe(200);
+    expect(trueSolarTime.status).toBe(200);
+    expect(trueSolarTime.body.data.sizhu.day.ganzhi)
+      .not.toBe(clock.body.data.sizhu.day.ganzhi);
+    expect(trueSolarTime.body.data.personal.zodiacSign).toBe("天蝎座");
   });
 
   it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
