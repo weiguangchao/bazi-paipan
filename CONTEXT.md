@@ -39,6 +39,27 @@ _Avoid_: 参数链接、查询链接
 **年柱 / 月柱 / 日柱 / 时柱** (`nianzhu` / `yuezhu` / `rizhu` / `shizhu`; Nianzhu / Yuezhu / Rizhu / Shizhu):
 四柱中分别对应年、月、日、时的干支位置。
 
+## 干支关系
+
+**天干相克** (`tianganxiangke`; Tiangan Xiangke):
+四柱天干中两个天干按木克土、土克水、水克火、火克金、金克木形成的有方向关系，关系以克者在前表达；命中天干五合的配对不同时计作天干相克。
+
+**天干五合** (`tianganwuhe`; Tiangan Wuhe):
+四柱天干中甲己、乙庚、丙辛、丁壬或戊癸配对形成的关系。
+
+**地支六冲** (`dizhiliuchong`; Dizhi Liu Chong):
+四柱地支中子午、丑未、寅申、卯酉、辰戌或巳亥配对形成的无方向关系。
+
+**地支六合** (`dizhiliuhe`; Dizhi Liu He):
+四柱地支中子丑、寅亥、卯戌、辰酉、巳申或午未配对形成的无方向关系。
+
+**地支三合** (`dizhisanhe`; Dizhi Sanhe):
+四柱地支中出现申子辰、亥卯未、寅午戌或巳酉丑完整一组的关系。
+
+**地支半三合** (`dizhibansanhe`; Dizhi Ban Sanhe):
+四柱地支中出现同一地支三合组合内任意两个不同地支的关系；包括申辰、亥未、寅戌、巳丑这类组合，且不要求两个地支所在的柱相邻。
+_Avoid_: 仅把包含中间旺支的组合称为半三合
+
 ## 时制
 
 **钟表时** (Clock Time):
