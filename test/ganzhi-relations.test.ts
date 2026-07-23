@@ -199,6 +199,22 @@ describe("干支关系 - 聚合、互斥与稳定排序", () => {
     expect(ganzhiRelations(inputFrom(["甲子", "丙寅", "丁卯", "乙巳"])))
       .toEqual({ tiangan: [], dizhi: [] });
   });
+
+  it("一次调用的返回项不能污染后续调用", () => {
+    const input = inputFrom(["甲子", "戊寅"]);
+    const firstResult = ganzhiRelations(input);
+    Reflect.set(firstResult.tiangan[0]!, "text", "污染");
+    Reflect.set(firstResult.tiangan[0]!.members, 0, "乙");
+
+    expect(ganzhiRelations(input)).toEqual({
+      tiangan: [{
+        type: "tianganxiangke",
+        members: ["甲", "戊"],
+        text: "甲克戊",
+      }],
+      dizhi: [],
+    });
+  });
 });
 
 describe("干支关系 - 命名四柱校验", () => {

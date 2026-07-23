@@ -16,12 +16,12 @@ export type GanzhiRelationType =
   | "dizhibansanhe";
 
 export interface GanzhiRelationItem {
-  type: GanzhiRelationType;
-  members:
+  readonly type: GanzhiRelationType;
+  readonly members:
     | readonly [Tiangan, Tiangan]
     | readonly [Dizhi, Dizhi]
     | readonly [Dizhi, Dizhi, Dizhi];
-  text: string;
+  readonly text: string;
 }
 
 export interface GanzhiRelationsResult {
@@ -122,8 +122,13 @@ const dizhibansanheTable = [
 function relationItem<
   Type extends GanzhiRelationType,
   Members extends GanzhiRelationItem["members"],
->(type: Type, members: Members, text: string): { type: Type; members: Members; text: string } {
-  return { type, members, text };
+>(
+  type: Type,
+  members: Members,
+  text: string,
+): { readonly type: Type; readonly members: Members; readonly text: string } {
+  Object.freeze(members);
+  return Object.freeze({ type, members, text });
 }
 
 function includesAll<T>(values: ReadonlySet<T>, members: readonly T[]): boolean {
