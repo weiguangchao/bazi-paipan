@@ -38,17 +38,17 @@ export interface CangganOut {
 }
 
 /** 单柱 API 结构。 */
-export interface PillarOut {
+export interface ZhuOut {
   ganzhi: string;
   shishen: string; // 天干十神；日柱天干位为 "日主"
   canggan: CangganOut[]; // 藏干及其副星（与藏干顺序一致）
 }
 
 export interface SizhuOut {
-  year: PillarOut;
-  month: PillarOut;
-  day: PillarOut;
-  hour: PillarOut;
+  year: ZhuOut;
+  month: ZhuOut;
+  day: ZhuOut;
+  hour: ZhuOut;
 }
 
 export interface TipOut {
@@ -92,18 +92,18 @@ export interface PaipanData {
 export const DEFAULT_PROVINCE = "北京市";
 export const DEFAULT_CITY = "市辖区";
 
-function pillarToOut(ganzhi: Ganzhi, dayMasterTiangan: Tiangan, isDayPillar: boolean): PillarOut {
+function zhuToOut(ganzhi: Ganzhi, dayMasterTiangan: Tiangan, isRizhu: boolean): ZhuOut {
   const { tianganShishen, cangganShishen } = shishen(dayMasterTiangan, ganzhi);
   const dizhiCharacter = ganzhiDizhi(ganzhi);
   const canggan = cangganTable[dizhiCharacter]!;
   return {
     ganzhi,
-    shishen: isDayPillar ? "日主" : tianganShishen,
+    shishen: isRizhu ? "日主" : tianganShishen,
     canggan: canggan.map((tiangan, i) => ({ tiangan, shishen: cangganShishen[i]! })),
   };
 }
 
-function pillarShishenToOut(
+function zhuShishenToOut(
   ganzhi: Ganzhi,
   dayMasterTiangan: Tiangan,
 ): { tianganShishen: string; dizhiShishen: string } {
@@ -119,12 +119,12 @@ function dayunzhuToOut(
   currentYear: number,
   currentMonth: number,
 ): DayunzhuOut {
-  const pillarShishen = pillarShishenToOut(ganzhi, dayMasterTiangan);
+  const zhuShishen = zhuShishenToOut(ganzhi, dayMasterTiangan);
   const startMonthIndex = startYearMonth.year * 12 + startYearMonth.month - 1;
   const currentMonthIndex = currentYear * 12 + currentMonth - 1;
   return {
     ganzhi,
-    ...pillarShishen,
+    ...zhuShishen,
     qiyun: { ageYears: qiyun.ageYears, ageMonths: qiyun.ageMonths },
     startYear: startYearMonth.year,
     startMonth: startYearMonth.month,
@@ -138,11 +138,11 @@ function liunianzhuToOut(
   dayMasterTiangan: Tiangan,
   currentYear: number,
 ): LiunianItemOut {
-  const pillarShishen = pillarShishenToOut(item.ganzhi, dayMasterTiangan);
+  const zhuShishen = zhuShishenToOut(item.ganzhi, dayMasterTiangan);
   return {
     year: item.year,
     ganzhi: item.ganzhi,
-    ...pillarShishen,
+    ...zhuShishen,
     isCurrentYear: item.year === currentYear,
   };
 }
@@ -223,10 +223,10 @@ export function computePaipan(
   const dayMasterTiangan = ganzhiTiangan(result.rizhu);
 
   const sizhu: SizhuOut = {
-    year: pillarToOut(result.nianzhu, dayMasterTiangan, false),
-    month: pillarToOut(result.yuezhu, dayMasterTiangan, false),
-    day: pillarToOut(result.rizhu, dayMasterTiangan, true),
-    hour: pillarToOut(result.shizhu, dayMasterTiangan, false),
+    year: zhuToOut(result.nianzhu, dayMasterTiangan, false),
+    month: zhuToOut(result.yuezhu, dayMasterTiangan, false),
+    day: zhuToOut(result.rizhu, dayMasterTiangan, true),
+    hour: zhuToOut(result.shizhu, dayMasterTiangan, false),
   };
   const ganzhiRelationsResult = ganzhiRelations({
     nianzhu: result.nianzhu,

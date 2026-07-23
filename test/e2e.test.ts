@@ -373,10 +373,10 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.click('button[type="submit"]');
     await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
 
-    const pillarLabels = await page.$$eval("#sizhu-grid .sizhu-column-label", els =>
+    const sizhuLabels = await page.$$eval("#sizhu-grid .sizhu-column-label", els =>
       els.map(e => e.textContent)
     );
-    expect(pillarLabels).toEqual(["年柱", "月柱", "日柱", "时柱"]);
+    expect(sizhuLabels).toEqual(["年柱", "月柱", "日柱", "时柱"]);
 
     const rowLabels = await page.$$eval("#sizhu-grid .sizhu-row-label", els =>
       els.map(e => e.textContent)
@@ -386,12 +386,12 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     expect(await page.locator("#sizhu-grid .sizhu-fuxing").first().textContent()).toContain("正官");
 
     expect(await page.locator("#result-tips").count()).toBe(0);
-    expect(await page.locator("#dayun-grid .pillar-card").count()).toBe(10);
-    expect(await page.locator("#liunian-grid .pillar-card").count()).toBe(10);
-    expect(await page.locator("#dayun-grid .pillar-card.is-selected").count()).toBe(1);
+    expect(await page.locator("#dayun-grid .zhu-card").count()).toBe(10);
+    expect(await page.locator("#liunian-grid .zhu-card").count()).toBe(10);
+    expect(await page.locator("#dayun-grid .zhu-card.is-selected").count()).toBe(1);
 
-    const selectedStartYear = Number(await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-start-year"));
-    const visibleYears = await page.locator("#liunian-grid .pillar-year").evaluateAll((els) =>
+    const selectedStartYear = Number(await page.locator("#dayun-grid .zhu-card.is-selected").getAttribute("data-start-year"));
+    const visibleYears = await page.locator("#liunian-grid .zhu-year").evaluateAll((els) =>
       els.map((el) => el.firstChild!.textContent!.trim()),
     );
     expect(visibleYears).toEqual(Array.from({ length: 10 }, (_, i) => String(selectedStartYear + i)));
@@ -423,11 +423,11 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.click('button[type="submit"]');
     await page.waitForSelector("#result-dayun:not([hidden])", { timeout: 5000 });
 
-    const selectedIndex = await page.locator("#dayun-grid .pillar-card.is-selected").getAttribute("data-index");
+    const selectedIndex = await page.locator("#dayun-grid .zhu-card.is-selected").getAttribute("data-index");
     expect(selectedIndex).toBe("0");
     expect(await page.locator("#dayun-grid .current-dayun-badge").count()).toBe(0);
-    const firstStartYear = Number(await page.locator("#dayun-grid .pillar-card").first().getAttribute("data-start-year"));
-    const visibleYears = await page.locator("#liunian-grid .pillar-year").evaluateAll((els) =>
+    const firstStartYear = Number(await page.locator("#dayun-grid .zhu-card").first().getAttribute("data-start-year"));
+    const visibleYears = await page.locator("#liunian-grid .zhu-year").evaluateAll((els) =>
       els.map((el) => el.firstChild!.textContent!.trim()),
     );
     expect(visibleYears[0]).toBe(String(firstStartYear));
@@ -467,7 +467,7 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
       const button = buttons.nth(index);
       const startYear = Number(await button.getAttribute("data-start-year"));
       expect(await button.getAttribute("aria-pressed")).toBe("true");
-      expect(await page.locator("#liunian-grid .pillar-year").first().evaluate((el) => el.firstChild!.textContent!.trim())).toBe(String(startYear));
+      expect(await page.locator("#liunian-grid .zhu-year").first().evaluate((el) => el.firstChild!.textContent!.trim())).toBe(String(startYear));
     }
 
     await buttons.nth(1).click();
@@ -494,23 +494,23 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
 
     const firstDayun = page.locator("#dayun-grid .dayun-card").first();
-    expect(await firstDayun.locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
-    expect(await firstDayun.locator(":scope > .pillar-age").textContent()).toBe("8~17岁");
+    expect(await firstDayun.locator(":scope > .zhu-year").textContent()).toMatch(/^\d{4}$/);
+    expect(await firstDayun.locator(":scope > .zhu-age").textContent()).toBe("8~17岁");
     expect(await page.locator("#dayun-info").textContent()).toBe("方向：逆行；起运 8岁0月");
     expect(await page.locator("#dayun-grid").textContent()).not.toMatch(/\d+月/);
     expect(await firstDayun.textContent()).not.toMatch(/第\s*\d+|起运：|藏干|副星|\d{4}年\d+月/);
-    expect(await firstDayun.locator(".pillar-row").count()).toBe(2);
+    expect(await firstDayun.locator(".zhu-row").count()).toBe(2);
 
     expect(await page.locator("#liunian-grid button").count()).toBe(0);
     expect(await page.locator("#liunian-grid .liunian-card").count()).toBe(10);
-    expect(await page.locator("#liunian-grid .liunian-card .pillar-row").count()).toBe(20);
+    expect(await page.locator("#liunian-grid .liunian-card .zhu-row").count()).toBe(20);
     expect(await page.locator("#liunian-grid .current-year-badge").count()).toBe(1);
 
     const abbreviationByShishen = {
       "比肩": "比", "劫财": "劫", "食神": "食", "伤官": "伤", "偏财": "才",
       "正财": "财", "七杀": "杀", "正官": "官", "偏印": "枭", "正印": "印",
     };
-    const abbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
+    const abbreviations = await page.locator("#dayun-grid .zhu-shishen-short, #liunian-grid .zhu-shishen-short").allTextContents();
     const selectedDayun = responseData.dayun.zhu.find((zhu) => zhu.isCurrent) ?? responseData.dayun.zhu[0];
     const expectedAbbreviations = [
       ...responseData.dayun.zhu.flatMap((zhu) => [abbreviationByShishen[zhu.tianganShishen], abbreviationByShishen[zhu.dizhiShishen]]),
@@ -518,19 +518,19 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     ];
     expect(abbreviations).toEqual(expectedAbbreviations);
 
-    const rowOrder = await page.locator("#dayun-grid .pillar-row, #liunian-grid .pillar-row").evaluateAll((rows) => rows.map((row) => ({
+    const rowOrder = await page.locator("#dayun-grid .zhu-row, #liunian-grid .zhu-row").evaluateAll((rows) => rows.map((row) => ({
       classes: Array.from(row.children, (child) => child.className),
       flexDirection: getComputedStyle(row).flexDirection,
     })));
-    expect(rowOrder.every((row) => row.flexDirection === "row" && row.classes[0] === "pillar-character" && row.classes[1] === "pillar-shishen-short")).toBe(true);
+    expect(rowOrder.every((row) => row.flexDirection === "row" && row.classes[0] === "zhu-character" && row.classes[1] === "zhu-shishen-short")).toBe(true);
 
-    const styles = await page.locator("#dayun-grid .pillar-row").first().evaluate((row) => {
-      const character = getComputedStyle(row.querySelector(".pillar-character")!);
-      const shishen = getComputedStyle(row.querySelector(".pillar-shishen-short")!);
+    const styles = await page.locator("#dayun-grid .zhu-row").first().evaluate((row) => {
+      const character = getComputedStyle(row.querySelector(".zhu-character")!);
+      const shishen = getComputedStyle(row.querySelector(".zhu-shishen-short")!);
       return { characterSize: parseFloat(character.fontSize), shishenSize: parseFloat(shishen.fontSize), shishenColor: shishen.color };
     });
     expect(styles.shishenSize).toBeLessThan(styles.characterSize);
-    const colors = await page.locator(".pillar-shishen-short").evaluateAll((els) => [...new Set(els.map((el) => getComputedStyle(el).color))]);
+    const colors = await page.locator(".zhu-shishen-short").evaluateAll((els) => [...new Set(els.map((el) => getComputedStyle(el).color))]);
     expect(colors).toEqual([styles.shishenColor]);
 
     await page.close();
@@ -672,11 +672,11 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
     const buttons = page.locator("#dayun-grid .dayun-card");
     expect(await buttons.count()).toBe(10);
     expect(await page.locator("#liunian-grid .liunian-card").count()).toBe(10);
-    expect(await buttons.first().locator(":scope > .pillar-year").textContent()).toMatch(/^\d{4}$/);
-    expect(await buttons.first().locator(":scope > .pillar-age").textContent()).toBe("8~17岁");
-    expect(await buttons.first().locator(".pillar-row").count()).toBe(2);
-    expect(await page.locator("#liunian-grid .liunian-card .pillar-row").count()).toBe(20);
-    const narrowAbbreviations = await page.locator("#dayun-grid .pillar-shishen-short, #liunian-grid .pillar-shishen-short").allTextContents();
+    expect(await buttons.first().locator(":scope > .zhu-year").textContent()).toMatch(/^\d{4}$/);
+    expect(await buttons.first().locator(":scope > .zhu-age").textContent()).toBe("8~17岁");
+    expect(await buttons.first().locator(".zhu-row").count()).toBe(2);
+    expect(await page.locator("#liunian-grid .liunian-card .zhu-row").count()).toBe(20);
+    const narrowAbbreviations = await page.locator("#dayun-grid .zhu-shishen-short, #liunian-grid .zhu-shishen-short").allTextContents();
     expect(narrowAbbreviations).toHaveLength(40);
     expect(narrowAbbreviations.every((value) => ["比", "劫", "食", "伤", "才", "财", "杀", "官", "枭", "印"].includes(value))).toBe(true);
 
@@ -684,7 +684,7 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
       const button = buttons.nth(index);
       const startYear = await button.getAttribute("data-start-year");
       expect(await button.getAttribute("aria-pressed")).toBe("true");
-      expect(await page.locator("#liunian-grid .pillar-year").first().evaluate((el) => el.firstChild!.textContent!.trim())).toBe(startYear);
+      expect(await page.locator("#liunian-grid .zhu-year").first().evaluate((el) => el.firstChild!.textContent!.trim())).toBe(startYear);
     }
 
     await buttons.nth(1).click();

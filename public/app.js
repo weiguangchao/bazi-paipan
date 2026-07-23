@@ -274,7 +274,7 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
   function renderSizhu(sizhu) {
     var grid = document.getElementById("sizhu-grid");
     grid.innerHTML = "";
-    var pillars = [
+    var sizhuItems = [
       { label: "年柱", data: sizhu.year },
       { label: "月柱", data: sizhu.month },
       { label: "日柱", data: sizhu.day },
@@ -282,33 +282,33 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
     ];
 
     grid.className = "sizhu-table";
-    grid.appendChild(createSizhuRow("日期", pillars, function (pillar) {
-      return createTextCell("sizhu-column-label", pillar.label);
+    grid.appendChild(createSizhuRow("日期", sizhuItems, function (zhu) {
+      return createTextCell("sizhu-column-label", zhu.label);
     }));
-    grid.appendChild(createSizhuRow("主星", pillars, function (pillar) {
-      return createTextCell("sizhu-shishen", pillar.data.shishen);
+    grid.appendChild(createSizhuRow("主星", sizhuItems, function (zhu) {
+      return createTextCell("sizhu-shishen", zhu.data.shishen);
     }));
-    grid.appendChild(createSizhuRow("天干", pillars, function (pillar) {
-      return createWuxingCell("sizhu-gan", pillar.data.ganzhi.charAt(0));
+    grid.appendChild(createSizhuRow("天干", sizhuItems, function (zhu) {
+      return createWuxingCell("sizhu-gan", zhu.data.ganzhi.charAt(0));
     }));
-    grid.appendChild(createSizhuRow("地支", pillars, function (pillar) {
-      return createWuxingCell("sizhu-zhi", pillar.data.ganzhi.charAt(1));
+    grid.appendChild(createSizhuRow("地支", sizhuItems, function (zhu) {
+      return createWuxingCell("sizhu-zhi", zhu.data.ganzhi.charAt(1));
     }));
-    grid.appendChild(createSizhuRow("藏干", pillars, function (pillar) {
-      return createCangganCell("sizhu-canggan", pillar.data.canggan, "tiangan");
+    grid.appendChild(createSizhuRow("藏干", sizhuItems, function (zhu) {
+      return createCangganCell("sizhu-canggan", zhu.data.canggan, "tiangan");
     }));
-    grid.appendChild(createSizhuRow("副星", pillars, function (pillar) {
-      return createCangganCell("sizhu-fuxing", pillar.data.canggan, "shishen");
+    grid.appendChild(createSizhuRow("副星", sizhuItems, function (zhu) {
+      return createCangganCell("sizhu-fuxing", zhu.data.canggan, "shishen");
     }));
     document.getElementById("result-sizhu").hidden = false;
   }
 
-  function createSizhuRow(label, pillars, createValueCell) {
+  function createSizhuRow(label, sizhuItems, createValueCell) {
     var row = document.createElement("div");
     row.className = "sizhu-row";
     row.appendChild(createTextCell("sizhu-row-label", label));
-    pillars.forEach(function (pillar) {
-      row.appendChild(createValueCell(pillar));
+    sizhuItems.forEach(function (zhu) {
+      row.appendChild(createValueCell(zhu));
     });
     return row;
   }
@@ -348,23 +348,23 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
     return "water";
   }
 
-  function createPillarRow(character, fullShishen) {
+  function createZhuRow(character, fullShishen) {
     var row = document.createElement("div");
-    row.className = "pillar-row";
+    row.className = "zhu-row";
     var characterElement = document.createElement("span");
-    characterElement.className = "pillar-character";
+    characterElement.className = "zhu-character";
     characterElement.textContent = character;
     var shishenElement = document.createElement("span");
-    shishenElement.className = "pillar-shishen-short";
+    shishenElement.className = "zhu-shishen-short";
     shishenElement.textContent = shishenAbbreviations[fullShishen];
     row.appendChild(characterElement);
     row.appendChild(shishenElement);
     return row;
   }
 
-  function createPillarYear(yearValue, badgeText, badgeClassName) {
+  function createZhuYear(yearValue, badgeText, badgeClassName) {
     var year = document.createElement("div");
-    year.className = "pillar-label pillar-year";
+    year.className = "zhu-label zhu-year";
     year.appendChild(document.createTextNode(String(yearValue)));
     if (badgeText) {
       var badge = document.createElement("span");
@@ -378,7 +378,7 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
   function createDayunCard(zhu, index, selected) {
     var card = document.createElement("button");
     card.type = "button";
-    card.className = "pillar-card dayun-card";
+    card.className = "zhu-card dayun-card";
     card.dataset.index = String(index);
     card.dataset.startYear = String(zhu.startYear);
     card.setAttribute("aria-pressed", selected ? "true" : "false");
@@ -386,24 +386,24 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
     card.setAttribute("aria-label", zhu.startYear + "年大运，年龄" + ageRange + (zhu.isCurrent ? "，当前" : ""));
     if (selected) card.classList.add("is-selected");
 
-    var year = createPillarYear(zhu.startYear, zhu.isCurrent ? "当前" : "", "current-dayun-badge");
+    var year = createZhuYear(zhu.startYear, zhu.isCurrent ? "当前" : "", "current-dayun-badge");
     var age = document.createElement("div");
-    age.className = "pillar-age";
+    age.className = "zhu-age";
     age.textContent = ageRange;
     card.appendChild(year);
     card.appendChild(age);
-    card.appendChild(createPillarRow(zhu.ganzhi.charAt(0), zhu.tianganShishen));
-    card.appendChild(createPillarRow(zhu.ganzhi.charAt(1), zhu.dizhiShishen));
+    card.appendChild(createZhuRow(zhu.ganzhi.charAt(0), zhu.tianganShishen));
+    card.appendChild(createZhuRow(zhu.ganzhi.charAt(1), zhu.dizhiShishen));
     return card;
   }
 
   function createLiunianCard(item) {
     var card = document.createElement("div");
-    card.className = "pillar-card liunian-card";
-    var year = createPillarYear(item.year, item.isCurrentYear ? "今年" : "", "current-year-badge");
+    card.className = "zhu-card liunian-card";
+    var year = createZhuYear(item.year, item.isCurrentYear ? "今年" : "", "current-year-badge");
     card.appendChild(year);
-    card.appendChild(createPillarRow(item.ganzhi.charAt(0), item.tianganShishen));
-    card.appendChild(createPillarRow(item.ganzhi.charAt(1), item.dizhiShishen));
+    card.appendChild(createZhuRow(item.ganzhi.charAt(0), item.tianganShishen));
+    card.appendChild(createZhuRow(item.ganzhi.charAt(1), item.dizhiShishen));
     return card;
   }
 

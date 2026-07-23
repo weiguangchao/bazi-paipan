@@ -59,10 +59,10 @@ export interface PaipanResult {
 
 // 锚点：2000-01-01 日柱为戊午，六十甲子序号 54（甲子=0）
 // 真值来源：Deep Oracle 排盘 https://www.deeporacle.ai/zh-TW/bazi/chart/2000/1/1
-const DAY_PILLAR_ANCHOR_YEAR = 2000;
-const DAY_PILLAR_ANCHOR_MONTH = 1; // 1 月
-const DAY_PILLAR_ANCHOR_DAY = 1;
-const DAY_PILLAR_ANCHOR_INDEX = 54;
+const RIZHU_ANCHOR_YEAR = 2000;
+const RIZHU_ANCHOR_MONTH = 1; // 1 月
+const RIZHU_ANCHOR_DAY = 1;
+const RIZHU_ANCHOR_INDEX = 54;
 
 /** 北京时间 UTC+8 偏移（毫秒） */
 const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
@@ -86,9 +86,9 @@ function daysSinceAnchor(year: number, month: number, day: number): number {
   // Date.UTC 第二参 monthIndex 从 0 起 -- 月需要 -1
   const target = Date.UTC(year, month - 1, day);
   const anchor = Date.UTC(
-    DAY_PILLAR_ANCHOR_YEAR,
-    DAY_PILLAR_ANCHOR_MONTH - 1,
-    DAY_PILLAR_ANCHOR_DAY,
+    RIZHU_ANCHOR_YEAR,
+    RIZHU_ANCHOR_MONTH - 1,
+    RIZHU_ANCHOR_DAY,
   );
   return Math.round((target - anchor) / 86_400_000);
 }
@@ -177,7 +177,7 @@ function stripBirthplace(input: PaipanInput): PaipanInput {
  * 干支年序号 = (公历年 - 4) mod 60（甲子=0）。
  * 返回 [年柱, 年干序号]。
  */
-function computeYearPillar(input: PaipanInput, birthUtc: number): [Ganzhi, number] {
+function computeNianzhu(input: PaipanInput, birthUtc: number): [Ganzhi, number] {
   const lichunUtc = getLichunMoment(input.year);
   // 出生在立春之前 -> 归上一公历年
   const ganzhiYear = birthUtc < lichunUtc ? input.year - 1 : input.year;
@@ -191,7 +191,7 @@ function computeYearPillar(input: PaipanInput, birthUtc: number): [Ganzhi, numbe
  * 月干由年柱对应的年干经五虎遁推出。立春前出生归上一干支年，月干随之用
  * 上一年的年干推算，与年柱归属保持一致。
  */
-function computeMonthPillar(
+function computeYuezhu(
   input: PaipanInput,
   birthUtc: number,
   yearTianganIndex: number,
@@ -241,7 +241,7 @@ function zishiTianganIndex(dayTianganIndex: number): number {
  * 子时依早晚子时（ADR-0002）--日柱已按公历日对齐子正（00:00），故日干随历法日
  * 自然切换：23:00-00:00 晚子时用当日日干、00:00-01:00 早子时用次日（历法当日）日干。
  */
-function computeHourPillar(hour: number, dayTianganIndex: number): Ganzhi {
+function computeShizhu(hour: number, dayTianganIndex: number): Ganzhi {
   const dizhiIndex = hourDizhiIndex(hour);
   const tianganIndex = (zishiTianganIndex(dayTianganIndex) + dizhiIndex) % 10;
   return ganzhiFromCharacters(tiangan[tianganIndex]!, dizhi[dizhiIndex]!);
@@ -274,17 +274,17 @@ export function paipan(input: PaipanInput): PaipanResult {
   const { effective, longitudeCorrectionApplied } = resolveEffectiveInput(input);
   const offset = daysSinceAnchor(effective.year, effective.month, effective.day);
   const birthUtc = inputToUtcMs(effective);
-  const [nianzhu, yearTianganIndex] = computeYearPillar(effective, birthUtc);
+  const [nianzhu, yearTianganIndex] = computeNianzhu(effective, birthUtc);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
   // 不包装会让天干/地支取到 undefined。dayTianganIndex 与 日柱 复用同一归一化结果。
-  const dayIndex = (((DAY_PILLAR_ANCHOR_INDEX + offset) % 60) + 60) % 60;
+  const dayIndex = (((RIZHU_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayTianganIndex = dayIndex % 10;
-  const yuezhu = computeMonthPillar(effective, birthUtc, yearTianganIndex);
+  const yuezhu = computeYuezhu(effective, birthUtc, yearTianganIndex);
   const result: PaipanResult = {
     nianzhu,
     yuezhu,
     rizhu: liushijiazi(dayIndex),
-    shizhu: computeHourPillar(effective.hour, dayTianganIndex),
+    shizhu: computeShizhu(effective.hour, dayTianganIndex),
     nearZizheng: isNearZizheng(effective.hour, effective.minute),
     longitudeCorrectionApplied,
   };

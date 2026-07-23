@@ -122,9 +122,9 @@ function computeStartYearMonth(
 }
 
 /** 从月柱干支拆出月干序号与月支序号。 */
-function splitPillar(pillar: Ganzhi): { tianganIndex: number; dizhiIndex: number } {
-  const tianganIndex = tiangan.indexOf(ganzhiTiangan(pillar));
-  const dizhiIndex = dizhi.indexOf(ganzhiDizhi(pillar));
+function splitZhu(zhu: Ganzhi): { tianganIndex: number; dizhiIndex: number } {
+  const tianganIndex = tiangan.indexOf(ganzhiTiangan(zhu));
+  const dizhiIndex = dizhi.indexOf(ganzhiDizhi(zhu));
   return { tianganIndex, dizhiIndex };
 }
 
@@ -153,7 +153,7 @@ export function dayun(
   const diffMs = forward ? jieMs - birthUtc : birthUtc - jieMs;
   const qiyunsui = calculateQiyunsui(diffMs);
 
-  const { tianganIndex: monthTianganIndex, dizhiIndex: monthDizhiIndex } = splitPillar(yuezhu);
+  const { tianganIndex: monthTianganIndex, dizhiIndex: monthDizhiIndex } = splitZhu(yuezhu);
   const step = forward ? 1 : -1;
   const zhu: Dayunzhu[] = [];
   for (let i = 0; i < 10; i++) {
