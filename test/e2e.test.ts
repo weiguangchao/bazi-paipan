@@ -37,7 +37,107 @@ async function expectCityUnselected(page: Page) {
   expect(await page.locator("#city option").textContent()).toBe("请先选择省份");
 }
 
+async function submitBirthData(page: Page, date: string, time: string) {
+  await page.fill("#date", date);
+  await page.fill("#time", time);
+  await page.click('button[type="submit"]');
+  await page.waitForSelector("#result-ganzhi-relations:not([hidden])", { timeout: 5000 });
+}
+
+async function expectRealGanzhiRelations(viewport: { width: number; height: number }) {
+  const nonEmptyPage = await newPage(viewport);
+  await submitBirthData(nonEmptyPage, "2000-01-01", "12:00");
+  expect(await nonEmptyPage.locator("#result-ganzhi-relations h2").textContent()).toBe("干支留意");
+  expect(await nonEmptyPage.locator("#ganzhi-relations .relation-row-label").allTextContents())
+    .toEqual(["天干留意", "地支留意"]);
+  expect(await nonEmptyPage.locator("#ganzhi-relations .relation-tag").allTextContents())
+    .toEqual(["子午冲"]);
+  expect(await nonEmptyPage.locator("#result-sizhu").isVisible()).toBe(true);
+  expect(await nonEmptyPage.locator("#result-dayun").isVisible()).toBe(true);
+  expect(await nonEmptyPage.locator("#result-liunian").isVisible()).toBe(true);
+  expect(await nonEmptyPage.locator(".result-panel > section").evaluateAll((sections) =>
+    sections.map((section) => section.id)
+  )).toEqual([
+    "result-sizhu",
+    "result-ganzhi-relations",
+    "result-dayun",
+    "result-liunian",
+  ]);
+  await nonEmptyPage.close();
+
+  const emptyPage = await newPage(viewport);
+  await submitBirthData(emptyPage, "2000-01-09", "02:00");
+  expect(await emptyPage.locator("#ganzhi-relations .relation-row-label").allTextContents())
+    .toEqual(["天干留意", "地支留意"]);
+  expect(await emptyPage.locator("#ganzhi-relations .relation-empty").allTextContents())
+    .toEqual(["无须留意", "无须留意"]);
+  await emptyPage.close();
+}
+
+async function expectDenseGanzhiRelations(
+  viewport: { width: number; height: number },
+  shouldWrap: boolean,
+) {
+  const baseResponse = await fetch(baseUrl + "/api/paipan", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date: "2000-01-01", time: "12:00", gender: "男", province: "", city: "",
+    }),
+  }).then((response) => response.json());
+  const tiangan = [
+    { type: "tianganxiangke", members: ["己", "壬"], text: "己克壬" },
+    { type: "tianganxiangke", members: ["庚", "甲"], text: "庚克甲" },
+    { type: "tianganxiangke", members: ["辛", "乙"], text: "辛克乙" },
+    { type: "tianganwuhe", members: ["甲", "己"], text: "甲己合" },
+    { type: "tianganwuhe", members: ["丙", "辛"], text: "丙辛合" },
+  ];
+  const dizhi = [
+    { type: "dizhiliuchong", members: ["子", "午"], text: "子午冲" },
+    { type: "dizhiliuchong", members: ["卯", "酉"], text: "卯酉冲" },
+    { type: "dizhiliuhe", members: ["辰", "酉"], text: "辰酉合" },
+    { type: "dizhisanhe", members: ["申", "子", "辰"], text: "申子辰三合" },
+    { type: "dizhibansanhe", members: ["亥", "未"], text: "亥未半三合" },
+    { type: "dizhibansanhe", members: ["寅", "戌"], text: "寅戌半三合" },
+  ];
+  baseResponse.data.ganzhiRelations = { tiangan, dizhi };
+
+  const page = await browser.newPage({ viewport });
+  await page.route("**/api/paipan", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify(baseResponse),
+  }));
+  await page.goto(baseUrl + "/");
+  await page.waitForLoadState("networkidle");
+  await submitBirthData(page, "2000-01-01", "12:00");
+
+  expect(await page.locator("#ganzhi-relations .relation-tag").allTextContents())
+    .toEqual([...tiangan, ...dizhi].map((item) => item.text));
+  expect(await page.locator("#ganzhi-relations .relation-row-label").allTextContents())
+    .toEqual(["天干留意", "地支留意"]);
+  expect(await page.locator("#ganzhi-relations h4").count()).toBe(0);
+  expect(await page.locator("#ganzhi-relations .relation-tag").evaluateAll((tags) =>
+    tags.every((tag) => getComputedStyle(tag).whiteSpace === "nowrap")
+  )).toBe(true);
+
+  const wrapped = await page.locator("#ganzhi-relations .relation-tag-list").evaluateAll((lists) =>
+    lists.some((list) => new Set(Array.from(list.children, (tag) => (tag as HTMLElement).offsetTop)).size > 1)
+  );
+  if (shouldWrap) expect(wrapped).toBe(true);
+  const noPageOverflow = await page.evaluate(() =>
+    document.documentElement.scrollWidth <= document.documentElement.clientWidth
+  );
+  expect(noPageOverflow).toBe(true);
+  await page.close();
+}
+
 describe("E2E - 桌面 viewport (1280x900)", () => {
+  it("干支留意真实非空、空状态与密集 API 顺序", async () => {
+    await expectRealGanzhiRelations({ width: 1280, height: 900 });
+    await expectDenseGanzhiRelations({ width: 1280, height: 900 }, false);
+  }, 20_000);
+
   it("命盘链接恢复基础出生资料但不自动排盘", async () => {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     let paipanRequests = 0;
@@ -539,6 +639,11 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
 });
 
 describe("E2E - 窄屏 viewport (375x812)", () => {
+  it("干支留意保留双行结构、密集标签整项换行且无横向溢出", async () => {
+    await expectRealGanzhiRelations({ width: 375, height: 812 });
+    await expectDenseGanzhiRelations({ width: 375, height: 812 }, true);
+  }, 20_000);
+
   it("窄屏可完成填写与排盘阅读，无横向溢出", async () => {
     const page = await newPage({ width: 375, height: 812 });
 

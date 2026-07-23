@@ -230,7 +230,45 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
   function renderResult(data) {
     emptyState.hidden = true;
     renderSizhu(data.sizhu);
+    renderGanzhiRelations(data.ganzhiRelations);
     renderDayun(data.dayun);
+  }
+
+  function renderGanzhiRelations(ganzhiRelations) {
+    var container = document.getElementById("ganzhi-relations");
+    container.innerHTML = "";
+    [
+      { label: "天干留意", items: ganzhiRelations.tiangan },
+      { label: "地支留意", items: ganzhiRelations.dizhi },
+    ].forEach(function (rowData) {
+      var row = document.createElement("div");
+      row.className = "relation-tag-row";
+
+      var label = document.createElement("h3");
+      label.className = "relation-row-label";
+      label.textContent = rowData.label;
+      row.appendChild(label);
+
+      var list = document.createElement("div");
+      list.className = "relation-tag-list";
+      if (rowData.items.length === 0) {
+        var empty = document.createElement("span");
+        empty.className = "relation-empty";
+        empty.textContent = "无须留意";
+        list.appendChild(empty);
+      } else {
+        rowData.items.forEach(function (item) {
+          var tag = document.createElement("span");
+          tag.className = "relation-tag";
+          tag.dataset.type = item.type;
+          tag.textContent = item.text;
+          list.appendChild(tag);
+        });
+      }
+      row.appendChild(list);
+      container.appendChild(row);
+    });
+    document.getElementById("result-ganzhi-relations").hidden = false;
   }
 
   function renderSizhu(sizhu) {

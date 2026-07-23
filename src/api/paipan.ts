@@ -9,6 +9,10 @@ import { findLongitude, type Birthplace } from "../birthplace.js";
 import { getBeijingYearMonth } from "../beijing-time.js";
 import type { Gender } from "../dayun.js";
 import { ganzhiDizhi, ganzhiTiangan, type Ganzhi, type Tiangan } from "../ganzhi.js";
+import {
+  ganzhiRelations,
+  type GanzhiRelationsResult,
+} from "../ganzhi-relations.js";
 import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../../public/birth-date.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
@@ -80,6 +84,7 @@ export interface LiunianItemOut {
 export interface PaipanData {
   input: { date: string; time: string; gender: string; province: string; city: string };
   sizhu: SizhuOut;
+  ganzhiRelations: GanzhiRelationsResult;
   tips: TipOut[];
   dayun: DayunOut;
 }
@@ -223,6 +228,12 @@ export function computePaipan(
     day: pillarToOut(result.rizhu, dayMasterTiangan, true),
     hour: pillarToOut(result.shizhu, dayMasterTiangan, false),
   };
+  const ganzhiRelationsResult = ganzhiRelations({
+    nianzhu: result.nianzhu,
+    yuezhu: result.yuezhu,
+    rizhu: result.rizhu,
+    shizhu: result.shizhu,
+  });
 
   const tips: TipOut[] = [];
   if (result.nearZizheng) {
@@ -253,7 +264,7 @@ export function computePaipan(
     ok: true,
     data: {
       input: { date: input.date, time: input.time, gender: input.gender, province: input.province ?? "", city: input.city ?? "" },
-      sizhu, tips, dayun: dayunOut,
+      sizhu, ganzhiRelations: ganzhiRelationsResult, tips, dayun: dayunOut,
     },
   };
 }

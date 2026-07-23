@@ -104,9 +104,43 @@ describe("POST /api/paipan - 成功响应", () => {
       city: "",
     });
     expect(status).toBe(200);
-    // 时柱戊午（钟表时，未做经度修正）
+    expect(body.data.sizhu.year.ganzhi).toBe("己卯");
+    expect(body.data.sizhu.month.ganzhi).toBe("丙子");
+    expect(body.data.sizhu.day.ganzhi).toBe("戊午");
     expect(body.data.sizhu.hour.ganzhi).toBe("戊午");
     expect(body.data.tips.some((t: any) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
+    expect(body.data.dayun.direction).toBe("逆");
+    expect(body.data.dayun.zhu).toHaveLength(10);
+    for (const dayunzhu of body.data.dayun.zhu) {
+      expect(dayunzhu.liunian).toHaveLength(10);
+      expect(dayunzhu.liunian[0].year).toBe(dayunzhu.startYear);
+      expect(dayunzhu.liunian[9].year).toBe(dayunzhu.startYear + 9);
+    }
+    expect(body.data.liunian).toBeUndefined();
+    expect(body.data.ganzhiRelations).toEqual({
+      tiangan: [],
+      dizhi: [{
+        type: "dizhiliuchong",
+        members: ["子", "午"],
+        text: "子午冲",
+      }],
+    });
+  });
+
+  it("无命中时仍返回必有的干支关系空数组", async () => {
+    const { status, body } = await postPaipan({
+      date: "2000-01-09",
+      time: "02:00",
+      gender: "男",
+      province: "",
+      city: "",
+    });
+    expect(status).toBe(200);
+    expect(body.data.sizhu.year.ganzhi).toBe("己卯");
+    expect(body.data.sizhu.month.ganzhi).toBe("丁丑");
+    expect(body.data.sizhu.day.ganzhi).toBe("丙寅");
+    expect(body.data.sizhu.hour.ganzhi).toBe("己丑");
+    expect(body.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
   });
 
   it("当前大运按北京时间起运月份切换", async () => {
