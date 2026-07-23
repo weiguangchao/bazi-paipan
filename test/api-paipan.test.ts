@@ -156,12 +156,84 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(body.data.liunian).toBeUndefined();
     expect(body.data.ganzhiRelations).toEqual({
       tiangan: [],
-      dizhi: [{
-        type: "dizhiliuchong",
-        members: ["子", "午"],
-        text: "子午冲",
-      }],
+      dizhi: [
+        {
+          type: "dizhiliuchong",
+          members: ["子", "午"],
+          text: "子午冲",
+        },
+        {
+          type: "dizhixiangxing",
+          members: ["子", "卯"],
+          text: "子卯刑",
+        },
+        {
+          type: "dizhixiangxing",
+          members: ["午", "午"],
+          text: "午午自刑",
+        },
+      ],
     });
+  });
+
+  it.each([
+    {
+      date: "1990-01-01",
+      time: "16:00",
+      sizhu: ["己巳", "丙子", "丙寅", "丙申"],
+      dizhi: [
+        { type: "dizhiliuchong", members: ["寅", "申"], text: "寅申冲" },
+        { type: "dizhiliuhe", members: ["巳", "申"], text: "巳申合" },
+        { type: "dizhibansanhe", members: ["申", "子"], text: "申子半三合" },
+        { type: "dizhixiangxing", members: ["寅", "巳", "申"], text: "寅巳申三刑" },
+      ],
+    },
+    {
+      date: "1990-01-06",
+      time: "20:00",
+      sizhu: ["己巳", "丁丑", "辛未", "戊戌"],
+      dizhi: [
+        { type: "dizhiliuchong", members: ["丑", "未"], text: "丑未冲" },
+        { type: "dizhibansanhe", members: ["巳", "丑"], text: "巳丑半三合" },
+        { type: "dizhixiangxing", members: ["丑", "戌", "未"], text: "丑戌未三刑" },
+      ],
+    },
+    {
+      date: "2000-01-01",
+      time: "12:00",
+      sizhu: ["己卯", "丙子", "戊午", "戊午"],
+      dizhi: [
+        { type: "dizhiliuchong", members: ["子", "午"], text: "子午冲" },
+        { type: "dizhixiangxing", members: ["子", "卯"], text: "子卯刑" },
+        { type: "dizhixiangxing", members: ["午", "午"], text: "午午自刑" },
+      ],
+    },
+    {
+      date: "2000-01-09",
+      time: "02:00",
+      sizhu: ["己卯", "丁丑", "丙寅", "己丑"],
+      dizhi: [],
+    },
+  ])("$date $time 男按公开契约返回精确地支关系", async ({ date, time, sizhu, dizhi }) => {
+    const { status, body } = await postPaipan({
+      date,
+      time,
+      gender: "男",
+      province: "",
+      city: "",
+    });
+
+    expect(status).toBe(200);
+    expect([
+      body.data.sizhu.year.ganzhi,
+      body.data.sizhu.month.ganzhi,
+      body.data.sizhu.day.ganzhi,
+      body.data.sizhu.hour.ganzhi,
+    ]).toEqual(sizhu);
+    expect(body.data.ganzhiRelations.dizhi).toEqual(dizhi);
+    if (dizhi.length === 0) {
+      expect(body.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
+    }
   });
 
   it("无命中时仍返回必有的干支关系空数组", async () => {

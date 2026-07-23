@@ -74,7 +74,10 @@ async function expectRealGanzhiRelations(viewport: { width: number; height: numb
   expect(await nonEmptyPage.locator("#ganzhi-relations .relation-row-label").allTextContents())
     .toEqual(["天干留意", "地支留意"]);
   expect(await nonEmptyPage.locator("#ganzhi-relations .relation-tag").allTextContents())
-    .toEqual(["子午冲"]);
+    .toEqual(["子午冲", "子卯刑", "午午自刑"]);
+  expect(await nonEmptyPage.locator("#ganzhi-relations .relation-tag").evaluateAll((tags) =>
+    tags.map((tag) => tag.getAttribute("data-type"))
+  )).toEqual(["dizhiliuchong", "dizhixiangxing", "dizhixiangxing"]);
   expect(await nonEmptyPage.locator("#result-sizhu").isVisible()).toBe(true);
   expect(await nonEmptyPage.locator("#result-dayun").isVisible()).toBe(true);
   expect(await nonEmptyPage.locator("#result-liunian").isVisible()).toBe(true);
@@ -123,6 +126,9 @@ async function expectDenseGanzhiRelations(
     { type: "dizhisanhe", members: ["申", "子", "辰"], text: "申子辰三合" },
     { type: "dizhibansanhe", members: ["亥", "未"], text: "亥未半三合" },
     { type: "dizhibansanhe", members: ["寅", "戌"], text: "寅戌半三合" },
+    { type: "dizhixiangxing", members: ["寅", "巳", "申"], text: "寅巳申三刑" },
+    { type: "dizhixiangxing", members: ["寅", "巳"], text: "寅刑巳" },
+    { type: "dizhixiangxing", members: ["午", "午"], text: "午午自刑" },
   ];
   baseResponse.data.ganzhiRelations = { tiangan, dizhi };
 
@@ -138,6 +144,9 @@ async function expectDenseGanzhiRelations(
 
   expect(await page.locator("#ganzhi-relations .relation-tag").allTextContents())
     .toEqual([...tiangan, ...dizhi].map((item) => item.text));
+  expect(await page.locator("#ganzhi-relations .relation-tag").evaluateAll((tags) =>
+    tags.map((tag) => tag.getAttribute("data-type"))
+  )).toEqual([...tiangan, ...dizhi].map((item) => item.type));
   expect(await page.locator("#ganzhi-relations .relation-row-label").allTextContents())
     .toEqual(["天干留意", "地支留意"]);
   expect(await page.locator("#ganzhi-relations h4").count()).toBe(0);
@@ -161,8 +170,11 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await expectPersonalInfo({ width: 1280, height: 900 });
   });
 
-  it("干支留意真实非空、空状态与密集 API 顺序", async () => {
+  it("干支留意真实非空与空状态", async () => {
     await expectRealGanzhiRelations({ width: 1280, height: 900 });
+  }, 20_000);
+
+  it("干支留意密集 API 顺序及类型标记", async () => {
     await expectDenseGanzhiRelations({ width: 1280, height: 900 }, false);
   }, 20_000);
 
@@ -671,8 +683,11 @@ describe("E2E - 窄屏 viewport (375x812)", () => {
     await expectPersonalInfo({ width: 375, height: 812 });
   });
 
-  it("干支留意保留双行结构、密集标签整项换行且无横向溢出", async () => {
+  it("干支留意真实非空与空状态", async () => {
     await expectRealGanzhiRelations({ width: 375, height: 812 });
+  }, 20_000);
+
+  it("干支留意保留双行结构、密集标签整项换行且无横向溢出", async () => {
     await expectDenseGanzhiRelations({ width: 375, height: 812 }, true);
   }, 20_000);
 

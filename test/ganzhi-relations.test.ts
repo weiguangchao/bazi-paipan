@@ -65,6 +65,106 @@ const dizhibansanheCases = [
   ["巳", "酉"], ["酉", "丑"], ["巳", "丑"],
 ] as const satisfies readonly (readonly [Dizhi, Dizhi])[];
 
+const dizhixiangxingCases = [
+  {
+    name: "寅巳申三刑",
+    input: ["寅", "巳", "申"],
+    expectedDizhi: [
+      { type: "dizhiliuchong", members: ["寅", "申"], text: "寅申冲" },
+      { type: "dizhiliuhe", members: ["巳", "申"], text: "巳申合" },
+      { type: "dizhixiangxing", members: ["寅", "巳", "申"], text: "寅巳申三刑" },
+    ],
+  },
+  {
+    name: "丑戌未三刑",
+    input: ["丑", "戌", "未"],
+    expectedDizhi: [
+      { type: "dizhiliuchong", members: ["丑", "未"], text: "丑未冲" },
+      { type: "dizhixiangxing", members: ["丑", "戌", "未"], text: "丑戌未三刑" },
+    ],
+  },
+  {
+    name: "寅刑巳",
+    input: ["寅", "巳"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["寅", "巳"], text: "寅刑巳" },
+    ],
+  },
+  {
+    name: "巳刑申受巳申合抑制",
+    input: ["巳", "申"],
+    expectedDizhi: [
+      { type: "dizhiliuhe", members: ["巳", "申"], text: "巳申合" },
+    ],
+    suppressed: { type: "dizhixiangxing", members: ["巳", "申"], text: "巳刑申" },
+  },
+  {
+    name: "申刑寅受寅申冲抑制",
+    input: ["申", "寅"],
+    expectedDizhi: [
+      { type: "dizhiliuchong", members: ["寅", "申"], text: "寅申冲" },
+    ],
+    suppressed: { type: "dizhixiangxing", members: ["申", "寅"], text: "申刑寅" },
+  },
+  {
+    name: "丑刑戌",
+    input: ["丑", "戌"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["丑", "戌"], text: "丑刑戌" },
+    ],
+  },
+  {
+    name: "戌刑未",
+    input: ["戌", "未"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["戌", "未"], text: "戌刑未" },
+    ],
+  },
+  {
+    name: "未刑丑受丑未冲抑制",
+    input: ["未", "丑"],
+    expectedDizhi: [
+      { type: "dizhiliuchong", members: ["丑", "未"], text: "丑未冲" },
+    ],
+    suppressed: { type: "dizhixiangxing", members: ["未", "丑"], text: "未刑丑" },
+  },
+  {
+    name: "子卯刑",
+    input: ["子", "卯"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["子", "卯"], text: "子卯刑" },
+    ],
+  },
+  {
+    name: "辰辰自刑",
+    input: ["辰"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["辰", "辰"], text: "辰辰自刑" },
+    ],
+  },
+  {
+    name: "午午自刑",
+    input: ["午"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["午", "午"], text: "午午自刑" },
+    ],
+  },
+  {
+    name: "酉酉自刑",
+    input: ["酉"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["酉", "酉"], text: "酉酉自刑" },
+    ],
+  },
+  {
+    name: "亥亥自刑",
+    input: ["亥"],
+    expectedDizhi: [
+      { type: "dizhixiangxing", members: ["亥", "亥"], text: "亥亥自刑" },
+    ],
+  },
+] as const;
+
 function binaryItem(
   type: GanzhiRelationItem["type"],
   members: readonly [Tiangan, Tiangan] | readonly [Dizhi, Dizhi],
@@ -73,7 +173,7 @@ function binaryItem(
   return { type, members, text: members.join("") + suffix };
 }
 
-describe("干支关系 - 53 项规范关系", () => {
+describe("干支关系 - 66 项规范关系", () => {
   it.each(tianganxiangkeCases)("%s克%s", (first, second) => {
     const result = ganzhiRelations(inputFrom([
       ganzhiForTiangan(first),
@@ -113,9 +213,17 @@ describe("干支关系 - 53 项规范关系", () => {
       ganzhiForDizhi(first),
       ganzhiForDizhi(second),
     ]));
-    expect(result.dizhi).toEqual([
+    const expected: GanzhiRelationItem[] = [
       binaryItem("dizhiliuchong", [first, second], "冲"),
-    ]);
+    ];
+    if (first === "辰") {
+      expected.push({
+        type: "dizhixiangxing",
+        members: ["辰", "辰"],
+        text: "辰辰自刑",
+      });
+    }
+    expect(result.dizhi).toEqual(expected);
   });
 
   it.each(dizhiliuheCases)("%s%s合", (first, second) => {
@@ -123,9 +231,17 @@ describe("干支关系 - 53 项规范关系", () => {
       ganzhiForDizhi(first),
       ganzhiForDizhi(second),
     ]));
-    expect(result.dizhi).toEqual([
+    const expected: GanzhiRelationItem[] = [
       binaryItem("dizhiliuhe", [first, second], "合"),
-    ]);
+    ];
+    if (first === "辰" || first === "午") {
+      expected.push({
+        type: "dizhixiangxing",
+        members: [first, first],
+        text: `${first}${first}自刑`,
+      });
+    }
+    expect(result.dizhi).toEqual(expected);
   });
 
   it.each(dizhisanheCases)("%s%s%s三合且排除内部半三合", (first, second, third) => {
@@ -134,11 +250,19 @@ describe("干支关系 - 53 项规范关系", () => {
       ganzhiForDizhi(second),
       ganzhiForDizhi(third),
     ]));
-    expect(result.dizhi).toEqual([{
+    const expected: GanzhiRelationItem[] = [{
       type: "dizhisanhe",
       members: [first, second, third],
       text: `${first}${second}${third}三合`,
-    }]);
+    }];
+    if (first === "亥") {
+      expected.push({
+        type: "dizhixiangxing",
+        members: ["亥", "亥"],
+        text: "亥亥自刑",
+      });
+    }
+    expect(result.dizhi).toEqual(expected);
   });
 
   it.each(dizhibansanheCases)("%s%s半三合", (first, second) => {
@@ -146,9 +270,25 @@ describe("干支关系 - 53 项规范关系", () => {
       ganzhiForDizhi(first),
       ganzhiForDizhi(second),
     ]));
-    expect(result.dizhi).toEqual([
+    const expected: GanzhiRelationItem[] = [
       binaryItem("dizhibansanhe", [first, second], "半三合"),
-    ]);
+    ];
+    if (first === "亥" || first === "午" || first === "酉") {
+      expected.push({
+        type: "dizhixiangxing",
+        members: [first, first],
+        text: `${first}${first}自刑`,
+      });
+    }
+    expect(result.dizhi).toEqual(expected);
+  });
+
+  it.each(dizhixiangxingCases)("$name", (testCase) => {
+    const result = ganzhiRelations(inputFrom(testCase.input.map(ganzhiForDizhi)));
+    expect(result.dizhi).toEqual(testCase.expectedDizhi);
+    if ("suppressed" in testCase) {
+      expect(result.dizhi).not.toContainEqual(testCase.suppressed);
+    }
   });
 });
 
@@ -181,6 +321,80 @@ describe("干支关系 - 聚合、互斥与稳定排序", () => {
     }
   });
 
+  it("含完整三刑的密集命例全部 24 种柱位排列结果一致", () => {
+    const expected = {
+      tiangan: [],
+      dizhi: [
+        { type: "dizhiliuchong", members: ["寅", "申"], text: "寅申冲" },
+        { type: "dizhiliuhe", members: ["巳", "申"], text: "巳申合" },
+        { type: "dizhibansanhe", members: ["申", "子"], text: "申子半三合" },
+        { type: "dizhixiangxing", members: ["寅", "巳", "申"], text: "寅巳申三刑" },
+      ],
+    };
+
+    const assignments = permutations(["己巳", "丙子", "丙寅", "丙申"] as const);
+    expect(assignments).toHaveLength(24);
+    for (const assignment of assignments) {
+      expect(ganzhiRelations(inputFrom(assignment))).toEqual(expected);
+    }
+  });
+
+  it.each(["辰", "午", "酉", "亥"] as const)(
+    "%s自刑出现一次不成立，出现二、三、四次均只输出一次",
+    (value) => {
+      const expected = {
+        type: "dizhixiangxing",
+        members: [value, value],
+        text: `${value}${value}自刑`,
+      };
+      for (const count of [1, 2, 3, 4]) {
+        const filler = ["子", "丑", "寅", "卯"]
+          .filter((candidate) => candidate !== value)
+          .slice(0, 4 - count) as Dizhi[];
+        const input = [
+          ...Array.from({ length: count }, () => ganzhiForDizhi(value)),
+          ...filler.map(ganzhiForDizhi),
+        ];
+        const matches = ganzhiRelations(inputFrom(input)).dizhi
+          .filter((relation) => relation.text === expected.text);
+        expect(matches).toEqual(count === 1 ? [] : [expected]);
+      }
+    },
+  );
+
+  it.each(["子", "丑", "寅", "卯"] as const)("%s重复四次不误报自刑", (value) => {
+    expect(ganzhiRelations(inputFrom([ganzhiForDizhi(value)])).dizhi)
+      .not.toContainEqual({
+        type: "dizhixiangxing",
+        members: [value, value],
+        text: `${value}${value}自刑`,
+      });
+  });
+
+  it("不同相刑配对与冲、自刑按规范顺序并存", () => {
+    expect(ganzhiRelations(inputFrom([
+      ganzhiForDizhi("午"),
+      ganzhiForDizhi("午"),
+      ganzhiForDizhi("子"),
+      ganzhiForDizhi("卯"),
+    ])).dizhi).toEqual([
+      { type: "dizhiliuchong", members: ["子", "午"], text: "子午冲" },
+      { type: "dizhixiangxing", members: ["子", "卯"], text: "子卯刑" },
+      { type: "dizhixiangxing", members: ["午", "午"], text: "午午自刑" },
+    ]);
+  });
+
+  it("重复柱位组合不重复输出同一两支相刑", () => {
+    expect(ganzhiRelations(inputFrom([
+      ganzhiForDizhi("寅"),
+      ganzhiForDizhi("寅"),
+      ganzhiForDizhi("巳"),
+      ganzhiForDizhi("巳"),
+    ])).dizhi).toEqual([
+      { type: "dizhixiangxing", members: ["寅", "巳"], text: "寅刑巳" },
+    ]);
+  });
+
   it("重复天干只输出一个关系", () => {
     expect(ganzhiRelations(inputFrom(["甲子", "己丑", "甲寅", "己卯"])).tiangan)
       .toEqual([{ type: "tianganwuhe", members: ["甲", "己"], text: "甲己合" }]);
@@ -196,7 +410,7 @@ describe("干支关系 - 聚合、互斥与稳定排序", () => {
   });
 
   it("不同干支但无命中返回两个空数组", () => {
-    expect(ganzhiRelations(inputFrom(["甲子", "丙寅", "丁卯", "乙巳"])))
+    expect(ganzhiRelations(inputFrom(["甲子", "丙寅", "乙酉", "丁未"])))
       .toEqual({ tiangan: [], dizhi: [] });
   });
 

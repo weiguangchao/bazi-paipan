@@ -13,7 +13,8 @@ export type GanzhiRelationType =
   | "dizhiliuchong"
   | "dizhiliuhe"
   | "dizhisanhe"
-  | "dizhibansanhe";
+  | "dizhibansanhe"
+  | "dizhixiangxing";
 
 export interface GanzhiRelationItem {
   readonly type: GanzhiRelationType;
@@ -119,6 +120,22 @@ const dizhibansanheTable = [
   relationItem("dizhibansanhe", ["巳", "丑"], "巳丑半三合"),
 ] as const satisfies readonly DizhiBinaryRelation[];
 
+const dizhixiangxingTable = [
+  relationItem("dizhixiangxing", ["寅", "巳", "申"], "寅巳申三刑"),
+  relationItem("dizhixiangxing", ["丑", "戌", "未"], "丑戌未三刑"),
+  relationItem("dizhixiangxing", ["寅", "巳"], "寅刑巳"),
+  relationItem("dizhixiangxing", ["巳", "申"], "巳刑申"),
+  relationItem("dizhixiangxing", ["申", "寅"], "申刑寅"),
+  relationItem("dizhixiangxing", ["丑", "戌"], "丑刑戌"),
+  relationItem("dizhixiangxing", ["戌", "未"], "戌刑未"),
+  relationItem("dizhixiangxing", ["未", "丑"], "未刑丑"),
+  relationItem("dizhixiangxing", ["子", "卯"], "子卯刑"),
+  relationItem("dizhixiangxing", ["辰", "辰"], "辰辰自刑"),
+  relationItem("dizhixiangxing", ["午", "午"], "午午自刑"),
+  relationItem("dizhixiangxing", ["酉", "酉"], "酉酉自刑"),
+  relationItem("dizhixiangxing", ["亥", "亥"], "亥亥自刑"),
+] as const satisfies readonly (DizhiBinaryRelation | DizhiTernaryRelation)[];
+
 function relationItem<
   Type extends GanzhiRelationType,
   Members extends GanzhiRelationItem["members"],
@@ -135,9 +152,9 @@ function includesAll<T>(values: ReadonlySet<T>, members: readonly T[]): boolean 
   return members.every((member) => values.has(member));
 }
 
-function sameMemberSet(
-  first: readonly [Tiangan, Tiangan],
-  second: readonly [Tiangan, Tiangan],
+function sameMemberSet<T>(
+  first: readonly [T, T],
+  second: readonly [T, T],
 ): boolean {
   return first.every((member) => second.includes(member));
 }
@@ -155,7 +172,12 @@ export function ganzhiRelations(input: GanzhiRelationsInput): GanzhiRelationsRes
   }
 
   const tianganValues = new Set(values.map(ganzhiTiangan));
-  const dizhiValues = new Set(values.map(ganzhiDizhi));
+  const dizhi = values.map(ganzhiDizhi);
+  const dizhiValues = new Set(dizhi);
+  const dizhiOccurrences = new Map<Dizhi, number>();
+  for (const value of dizhi) {
+    dizhiOccurrences.set(value, (dizhiOccurrences.get(value) ?? 0) + 1);
+  }
 
   const tianganwuhe = tianganwuheTable.filter(
     (relation) => includesAll(tianganValues, relation.members),
@@ -174,14 +196,46 @@ export function ganzhiRelations(input: GanzhiRelationsInput): GanzhiRelationsRes
       includesAll(dizhiValues, relation.members)
       && !dizhisanhe.some((matched) => includesAll(new Set(matched.members), relation.members)),
   );
+  const dizhiliuchong = dizhiliuchongTable.filter(
+    (relation) => includesAll(dizhiValues, relation.members),
+  );
+  const dizhiliuhe = dizhiliuheTable.filter(
+    (relation) => includesAll(dizhiValues, relation.members),
+  );
+  const matchedDizhixiangxing = dizhixiangxingTable.filter((relation) => {
+    if (relation.members.length === 2 && relation.members[0] === relation.members[1]) {
+      return (dizhiOccurrences.get(relation.members[0]) ?? 0) >= 2;
+    }
+    return includesAll(dizhiValues, relation.members);
+  });
+  const dizhixiangxing = matchedDizhixiangxing.filter((relation) => {
+    if (relation.members.length === 3) {
+      return true;
+    }
+    if (relation.members[0] === relation.members[1]) {
+      return true;
+    }
+    const members: readonly [Dizhi, Dizhi] = relation.members;
+    if (matchedDizhixiangxing.some(
+      (matched) =>
+        matched.members.length === 3
+        && includesAll(new Set<Dizhi>(matched.members), members),
+    )) {
+      return false;
+    }
+    return ![...dizhiliuchong, ...dizhiliuhe].some(
+      (matched) => sameMemberSet(matched.members, members),
+    );
+  });
 
   return {
     tiangan: [...tianganxiangke, ...tianganwuhe],
     dizhi: [
-      ...dizhiliuchongTable.filter((relation) => includesAll(dizhiValues, relation.members)),
-      ...dizhiliuheTable.filter((relation) => includesAll(dizhiValues, relation.members)),
+      ...dizhiliuchong,
+      ...dizhiliuhe,
       ...dizhisanhe,
       ...dizhibansanhe,
+      ...dizhixiangxing,
     ],
   };
 }
