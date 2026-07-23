@@ -421,9 +421,9 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     const rowLabels = await page.$$eval("#sizhu-grid .sizhu-row-label", els =>
       els.map(e => e.textContent)
     );
-    expect(rowLabels).toEqual(["日期", "主星", "天干", "地支", "藏干", "副星"]);
-    expect(await page.locator("#sizhu-grid .sizhu-canggan").first().textContent()).toContain("乙");
-    expect(await page.locator("#sizhu-grid .sizhu-fuxing").first().textContent()).toContain("正官");
+    expect(rowLabels).toEqual(["日期", "十神", "天干", "地支", "藏干"]);
+    expect(await page.locator("#sizhu-grid .sizhu-shishen").nth(2).textContent()).toBe("日主");
+    expect(await page.locator("#sizhu-grid .sizhu-canggan").first().textContent()).toBe("乙正官");
 
     expect(await page.locator("#result-tips").count()).toBe(0);
     expect(await page.locator("#dayun-grid .zhu-card").count()).toBe(10);
@@ -444,7 +444,7 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
     await page.click('button[type="submit"]');
     await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
 
-    const cangganAfterContent = await page.locator("#sizhu-grid .sizhu-canggan > div").evaluateAll((els) =>
+    const cangganAfterContent = await page.locator("#sizhu-grid .sizhu-canggan > div > span:first-child").evaluateAll((els) =>
       els.map((el) => getComputedStyle(el, "::after").content),
     );
     expect(cangganAfterContent).toEqual(cangganAfterContent.map(() => "none"));
@@ -453,6 +453,46 @@ describe("E2E - 桌面 viewport (1280x900)", () => {
       els.map((el) => getComputedStyle(el, "::after").content),
     );
     expect(ganzhiAfterContent.every((content) => content !== "none")).toBe(true);
+
+    await page.close();
+  });
+
+  it("四柱藏干按 API 顺序逐行合并显示", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
+
+    const rizhuCangganLines = page.locator("#sizhu-grid .sizhu-canggan").nth(2).locator(":scope > div");
+    expect(await rizhuCangganLines.allTextContents()).toEqual(["丁正印", "己劫财"]);
+    expect(await rizhuCangganLines.locator(":scope > span").allTextContents()).toEqual([
+      "丁", "正印", "己", "劫财",
+    ]);
+    const lineTops = await rizhuCangganLines.evaluateAll((lines) =>
+      lines.map((line) => line.getBoundingClientRect().top)
+    );
+    expect(lineTops[1]).toBeGreaterThan(lineTops[0]!);
+
+    await page.close();
+  });
+
+  it("四柱藏干合并条目仅为天干保留五行色", async () => {
+    const page = await newPage({ width: 1280, height: 900 });
+    await page.click('button[type="submit"]');
+    await page.waitForSelector("#result-sizhu:not([hidden])", { timeout: 5000 });
+
+    const firstCangganLine = page.locator("#sizhu-grid .sizhu-canggan").first().locator(":scope > div");
+    expect(await firstCangganLine.locator(":scope > span").allTextContents()).toEqual(["乙", "正官"]);
+
+    const colors = await firstCangganLine.evaluate((line) => {
+      const [tiangan, shishen] = Array.from(line.children);
+      return {
+        cell: getComputedStyle(line.parentElement!).color,
+        tiangan: getComputedStyle(tiangan).color,
+        shishen: getComputedStyle(shishen).color,
+      };
+    });
+    expect(colors.tiangan).not.toBe(colors.shishen);
+    expect(colors.shishen).toBe(colors.cell);
 
     await page.close();
   });

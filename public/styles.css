@@ -284,8 +284,7 @@ button[type="submit"]:hover { opacity: 0.9; }
   align-items: center;
   justify-content: center;
 }
-.sizhu-shishen,
-.sizhu-fuxing {
+.sizhu-shishen {
   font-size: 1rem;
   line-height: 1.35;
 }
@@ -345,7 +344,7 @@ button[type="submit"]:hover { opacity: 0.9; }
   .zhu-character { font-size: 1.2rem; }
   .sizhu-cell { padding: 8px 3px; }
   .sizhu-row-label, .sizhu-column-label { font-size: 0.78rem; }
-  .sizhu-shishen, .sizhu-fuxing, .sizhu-canggan { font-size: 0.82rem; }
+  .sizhu-shishen, .sizhu-canggan { font-size: 0.82rem; }
   .sizhu-gan, .sizhu-zhi { font-size: 1.45rem; }
   .relation-tag-row { grid-template-columns: 86px minmax(0, 1fr); }
   .relation-row-label { padding-inline: 6px; }

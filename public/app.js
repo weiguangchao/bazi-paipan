@@ -311,7 +311,7 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
     grid.appendChild(createSizhuRow("日期", sizhuItems, function (zhu) {
       return createTextCell("sizhu-column-label", zhu.label);
     }));
-    grid.appendChild(createSizhuRow("主星", sizhuItems, function (zhu) {
+    grid.appendChild(createSizhuRow("十神", sizhuItems, function (zhu) {
       return createTextCell("sizhu-shishen", zhu.data.shishen);
     }));
     grid.appendChild(createSizhuRow("天干", sizhuItems, function (zhu) {
@@ -321,10 +321,7 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
       return createWuxingCell("sizhu-zhi", zhu.data.ganzhi.charAt(1));
     }));
     grid.appendChild(createSizhuRow("藏干", sizhuItems, function (zhu) {
-      return createCangganCell("sizhu-canggan", zhu.data.canggan, "tiangan");
-    }));
-    grid.appendChild(createSizhuRow("副星", sizhuItems, function (zhu) {
-      return createCangganCell("sizhu-fuxing", zhu.data.canggan, "shishen");
+      return createCangganCell("sizhu-canggan", zhu.data.canggan);
     }));
     document.getElementById("result-sizhu").hidden = false;
   }
@@ -352,15 +349,18 @@ import { isAfterBirthDateLimit, parseBirthDate } from "./birth-date.js";
     return cell;
   }
 
-  function createCangganCell(className, canggan, field) {
+  function createCangganCell(className, canggan) {
     var cell = document.createElement("div");
     cell.className = "sizhu-cell " + className;
     canggan.forEach(function (item) {
       var line = document.createElement("div");
-      if (field === "tiangan") {
-        line.className = "element-" + getWuxing(item.tiangan);
-      }
-      line.textContent = item[field];
+      var tiangan = document.createElement("span");
+      var shishen = document.createElement("span");
+      tiangan.className = "element-" + getWuxing(item.tiangan);
+      tiangan.textContent = item.tiangan;
+      shishen.textContent = item.shishen;
+      line.appendChild(tiangan);
+      line.appendChild(shishen);
       cell.appendChild(line);
     });
     return cell;
