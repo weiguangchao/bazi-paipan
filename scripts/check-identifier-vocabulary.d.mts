@@ -1,4 +1,4 @@
-export interface DeprecatedPinyinViolation {
+export interface DeprecatedVocabularyViolation {
   identifier: string;
   context?: string;
   naming?: string;
@@ -8,13 +8,13 @@ export interface DeprecatedPinyinViolation {
   column: number;
 }
 
-export function findDeprecatedPinyinIdentifiers(
+export function findDeprecatedVocabularyIdentifiers(
   source: string,
   fileName?: string,
-): DeprecatedPinyinViolation[];
-export function findDeprecatedPinyinNaming(
+): DeprecatedVocabularyViolation[];
+export function findDeprecatedVocabularyNaming(
   source: string,
   fileName?: string,
-): DeprecatedPinyinViolation[];
-export function formatDeprecatedPinyinViolation(file: string, violation: DeprecatedPinyinViolation): string;
+): DeprecatedVocabularyViolation[];
+export function formatDeprecatedVocabularyViolation(file: string, violation: DeprecatedVocabularyViolation): string;
 export function checkIdentifierVocabulary(root?: string): void;

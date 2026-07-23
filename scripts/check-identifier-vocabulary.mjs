@@ -19,14 +19,30 @@ const cssSelectorMethods = new Set([
   "click",
   "closest",
   "fill",
+  "focus",
+  "getAttribute",
+  "hover",
+  "innerHTML",
+  "innerText",
   "inputValue",
+  "isChecked",
+  "isDisabled",
+  "isEditable",
+  "isEnabled",
+  "isHidden",
   "isVisible",
   "locator",
   "matches",
+  "press",
   "querySelector",
   "querySelectorAll",
   "selectOption",
+  "setChecked",
+  "setInputFiles",
+  "tap",
   "textContent",
+  "type",
+  "uncheck",
   "waitForSelector",
 ]);
 const directDomNameMethods = new Set(["getElementById", "getElementsByClassName"]);
@@ -41,7 +57,7 @@ function maskComments(source, pattern) {
   return source.replace(pattern, (comment) => comment.replace(/[^\n]/g, " "));
 }
 
-export function findDeprecatedPinyinIdentifiers(source, fileName = "fixture.ts") {
+export function findDeprecatedVocabularyIdentifiers(source, fileName = "fixture.ts") {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
   const violations = [];
 
@@ -86,7 +102,51 @@ function calledMethodName(expression) {
   return undefined;
 }
 
-function findDeprecatedPinyinDomSelectors(source, fileName) {
+function findDeprecatedSelectorNamings(selector) {
+  const namings = [];
+  const seen = new Set();
+
+  function add(naming, index) {
+    const key = `${index}:${naming}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    namings.push({ naming, index });
+  }
+
+  for (const attributeMatch of selector.matchAll(
+    /\[\s*([-\w]+)[^\]]*?=\s*(?:"([^"]*)"|'([^']*)')/g,
+  )) {
+    const attributeName = attributeMatch[1].toLowerCase();
+    if (
+      attributeName !== "class"
+      && attributeName !== "id"
+      && !attributeName.startsWith("data-")
+    ) {
+      continue;
+    }
+    const value = attributeMatch[2] ?? attributeMatch[3] ?? "";
+    const valueOffset = attributeMatch[0].indexOf(value);
+    for (const valueMatch of value.matchAll(/[-\w]*pillar[-\w]*/gi)) {
+      add(valueMatch[0], attributeMatch.index + valueOffset + valueMatch.index);
+    }
+  }
+
+  const unquotedSelector = selector.replace(
+    /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g,
+    (quoted) => quoted.replace(/[^\n]/g, " "),
+  );
+  for (const namingMatch of unquotedSelector.matchAll(/[-\w]*pillar[-\w]*/gi)) {
+    const prefixIndex = namingMatch.index - 1;
+    const prefix = prefixIndex >= 0 && /[.#:]/.test(unquotedSelector[prefixIndex])
+      ? unquotedSelector[prefixIndex]
+      : "";
+    add(prefix + namingMatch[0], namingMatch.index - prefix.length);
+  }
+
+  return namings.sort((left, right) => left.index - right.index);
+}
+
+function findDeprecatedVocabularyDomSelectors(source, fileName) {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
   const violations = [];
 
@@ -99,20 +159,23 @@ function findDeprecatedPinyinDomSelectors(source, fileName) {
         && (ts.isStringLiteral(firstArgument) || ts.isNoSubstitutionTemplateLiteral(firstArgument))
       ) {
         const selector = firstArgument.text;
-        const matches = cssSelectorMethods.has(methodName)
-          ? selector.matchAll(/[.#][-\w]*pillar[-\w]*/gi)
+        const namings = cssSelectorMethods.has(methodName)
+          ? findDeprecatedSelectorNamings(selector)
           : directDomNameMethods.has(methodName)
-            ? selector.matchAll(/[-\w]*pillar[-\w]*/gi)
+            ? [...selector.matchAll(/[-\w]*pillar[-\w]*/gi)].map((match) => ({
+                naming: match[0],
+                index: match.index,
+              }))
             : [];
-        for (const namingMatch of matches) {
-          const deprecatedMatch = /pillar/i.exec(namingMatch[0]);
+        for (const namingMatch of namings) {
+          const deprecatedMatch = /pillar/i.exec(namingMatch.naming);
           const position = sourceFile.getLineAndCharacterOfPosition(
             firstArgument.getStart(sourceFile) + 1 + namingMatch.index,
           );
           violations.push({
-            identifier: namingMatch[0],
+            identifier: namingMatch.naming,
             context: "DOM selector",
-            naming: namingMatch[0],
+            naming: namingMatch.naming,
             deprecatedToken: deprecatedMatch[0],
             canonicalToken: "zhu",
             line: position.line + 1,
@@ -128,7 +191,7 @@ function findDeprecatedPinyinDomSelectors(source, fileName) {
   return violations;
 }
 
-function findDeprecatedPinyinHtmlNaming(source) {
+function findDeprecatedVocabularyHtmlNaming(source) {
   const searchable = maskComments(source, /<!--[\s\S]*?-->/g);
   const violations = [];
   const attributePattern = /\b(class|id)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
@@ -154,20 +217,20 @@ function findDeprecatedPinyinHtmlNaming(source) {
   return violations;
 }
 
-function findDeprecatedPinyinCssNaming(source) {
+function findDeprecatedVocabularyCssNaming(source) {
   const searchable = maskComments(source, /\/\*[\s\S]*?\*\//g);
   const violations = [];
 
   for (const ruleMatch of searchable.matchAll(/([^{}]+)\{/g)) {
     const selector = ruleMatch[1];
     if (selector.trimStart().startsWith("@")) continue;
-    for (const namingMatch of selector.matchAll(/[.#][-\w]*pillar[-\w]*/gi)) {
-      const deprecatedMatch = /pillar/i.exec(namingMatch[0]);
+    for (const namingMatch of findDeprecatedSelectorNamings(selector)) {
+      const deprecatedMatch = /pillar/i.exec(namingMatch.naming);
       const index = ruleMatch.index + namingMatch.index;
       violations.push({
-        identifier: namingMatch[0],
+        identifier: namingMatch.naming,
         context: "CSS selector",
-        naming: namingMatch[0],
+        naming: namingMatch.naming,
         deprecatedToken: deprecatedMatch[0],
         canonicalToken: "zhu",
         ...sourcePosition(source, index),
@@ -177,21 +240,21 @@ function findDeprecatedPinyinCssNaming(source) {
   return violations;
 }
 
-export function findDeprecatedPinyinNaming(source, fileName = "fixture.ts") {
+export function findDeprecatedVocabularyNaming(source, fileName = "fixture.ts") {
   const normalizedFileName = fileName.toLowerCase();
   if (normalizedFileName.endsWith(".html")) {
-    return findDeprecatedPinyinHtmlNaming(source);
+    return findDeprecatedVocabularyHtmlNaming(source);
   }
   if (normalizedFileName.endsWith(".css")) {
-    return findDeprecatedPinyinCssNaming(source);
+    return findDeprecatedVocabularyCssNaming(source);
   }
   return [
-    ...findDeprecatedPinyinIdentifiers(source, fileName),
-    ...findDeprecatedPinyinDomSelectors(source, fileName),
+    ...findDeprecatedVocabularyIdentifiers(source, fileName),
+    ...findDeprecatedVocabularyDomSelectors(source, fileName),
   ].sort((left, right) => left.line - right.line || left.column - right.column);
 }
 
-export function formatDeprecatedPinyinViolation(file, violation) {
+export function formatDeprecatedVocabularyViolation(file, violation) {
   if (violation.deprecatedToken.toLowerCase() === "pillar") {
     return `${file}:${violation.line}:${violation.column} deprecated domain token pillar in ${violation.context} ${violation.naming}; use zhu or a more specific canonical token`;
   }
@@ -199,7 +262,7 @@ export function formatDeprecatedPinyinViolation(file, violation) {
 }
 
 export function checkIdentifierVocabulary(root = process.cwd()) {
-  checkCoveredNaming(root, findDeprecatedPinyinNaming, formatDeprecatedPinyinViolation);
+  checkCoveredNaming(root, findDeprecatedVocabularyNaming, formatDeprecatedVocabularyViolation);
 }
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {

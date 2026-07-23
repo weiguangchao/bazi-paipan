@@ -1,7 +1,16 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
-const executableExtensions = new Set([".ts", ".js", ".cjs", ".mjs"]);
+const executableExtensions = new Set([
+  ".ts",
+  ".mts",
+  ".cts",
+  ".tsx",
+  ".js",
+  ".mjs",
+  ".cjs",
+  ".jsx",
+]);
 const namingExtensions = new Set([...executableExtensions, ".html", ".css"]);
 const ignoredPaths = new Set(["src/data/cities.generated.ts"]);
 
@@ -12,18 +21,19 @@ function collectFiles(directory) {
   });
 }
 
-export function collectCoveredExecutableFiles(root = process.cwd()) {
+function collectCoveredFiles(root, extensions) {
   return ["src", "test", "scripts", "public"]
     .flatMap((directory) => collectFiles(path.join(root, directory)))
-    .filter((file) => executableExtensions.has(path.extname(file)))
+    .filter((file) => extensions.has(path.extname(file)))
     .filter((file) => !ignoredPaths.has(path.relative(root, file)));
 }
 
+export function collectCoveredExecutableFiles(root = process.cwd()) {
+  return collectCoveredFiles(root, executableExtensions);
+}
+
 export function collectCoveredNamingFiles(root = process.cwd()) {
-  return ["src", "test", "scripts", "public"]
-    .flatMap((directory) => collectFiles(path.join(root, directory)))
-    .filter((file) => namingExtensions.has(path.extname(file)))
-    .filter((file) => !ignoredPaths.has(path.relative(root, file)));
+  return collectCoveredFiles(root, namingExtensions);
 }
 
 function checkFiles(root, files, findViolations, formatViolation) {
