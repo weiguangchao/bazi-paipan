@@ -6,7 +6,7 @@ let server: PaipanServer;
 let baseUrl: string;
 
 beforeAll(async () => {
-  server = await serve({ port: 3987, onReady: () => {} });
+  server = await serve({ port: 3987 });
   baseUrl = "http://127.0.0.1:" + server.port;
 });
 

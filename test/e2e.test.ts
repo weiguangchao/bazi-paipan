@@ -10,7 +10,7 @@ let baseUrl: string;
 
 beforeAll(async () => {
   browser = await chromium.launch({ headless: true });
-  server = await serve({ port: 4933, onReady: () => {} });
+  server = await serve({ port: 4933 });
   baseUrl = "http://127.0.0.1:" + server.port;
 });
 

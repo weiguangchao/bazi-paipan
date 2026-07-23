@@ -6,8 +6,6 @@ import { createServer, wrapServer, type PaipanServer } from "./http-server.js";
 
 export interface ServeOptions {
   port?: number;
-  /** 浏览器打开意图回调（测试 mock，不依赖真实桌面浏览器）。 */
-  onReady?: (url: string) => void;
 }
 
 export function serve(opts: ServeOptions = {}): Promise<PaipanServer> {
@@ -28,7 +26,6 @@ export function serve(opts: ServeOptions = {}): Promise<PaipanServer> {
       server.removeListener("error", onError);
       const url = "http://127.0.0.1:" + port;
       console.log("bazi serve 运行于 " + url);
-      if (opts.onReady) opts.onReady(url);
       resolve(wrapServer(server, port));
     });
   });

@@ -5,7 +5,6 @@
 
 import { Command } from "commander";
 import { serve } from "./serve.js";
-import { spawn } from "node:child_process";
 
 const program = new Command();
 
@@ -25,10 +24,7 @@ program
       process.exit(1);
     }
     try {
-      const server = await serve({
-        port,
-        onReady: (url) => openBrowser(url),
-      });
+      const server = await serve({ port });
       // Ctrl-C 干净关闭
       process.on("SIGINT", () => {
         server.close().then(() => process.exit(0));
@@ -48,27 +44,3 @@ if (process.argv.slice(2).length === 0) {
 }
 
 program.parse(process.argv);
-
-/**
- * 打开浏览器（跨平台 best-effort，失败不影响服务）。
- */
-function openBrowser(url: string): void {
-  const platform = process.platform;
-  let cmd: string;
-  let args: string[];
-  if (platform === "darwin") {
-    cmd = "open";
-    args = [url];
-  } else if (platform === "win32") {
-    cmd = "cmd";
-    args = ["/c", "start", "", url];
-  } else {
-    cmd = "xdg-open";
-    args = [url];
-  }
-  try {
-    spawn(cmd, args, { detached: true, stdio: "ignore" }).unref();
-  } catch {
-    // 打开失败不影响服务运行
-  }
-}
