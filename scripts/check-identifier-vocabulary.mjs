@@ -14,6 +14,8 @@ const deprecatedPinyinTokens = new Map([
   ["QiYun", "qiyun"],
 ]);
 const cssSelectorMethods = new Set([
+  "$",
+  "$$",
   "$eval",
   "$$eval",
   "click",
@@ -105,6 +107,11 @@ function calledMethodName(expression) {
 function findDeprecatedSelectorNamings(selector) {
   const namings = [];
   const seen = new Set();
+  const namingSelector = selector.replace(
+    /(^|>>)(\s*text\s*=\s*)(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|.*?)(?=\s*>>|$)/gi,
+    (textSelector, prefix) =>
+      prefix + textSelector.slice(prefix.length).replace(/[^\n]/g, " "),
+  );
 
   function add(naming, index) {
     const key = `${index}:${naming}`;
@@ -113,7 +120,7 @@ function findDeprecatedSelectorNamings(selector) {
     namings.push({ naming, index });
   }
 
-  for (const attributeMatch of selector.matchAll(
+  for (const attributeMatch of namingSelector.matchAll(
     /\[\s*([-\w]+)[^\]]*?=\s*(?:"([^"]*)"|'([^']*)')/g,
   )) {
     const attributeName = attributeMatch[1].toLowerCase();
@@ -131,7 +138,7 @@ function findDeprecatedSelectorNamings(selector) {
     }
   }
 
-  const unquotedSelector = selector.replace(
+  const unquotedSelector = namingSelector.replace(
     /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g,
     (quoted) => quoted.replace(/[^\n]/g, " "),
   );

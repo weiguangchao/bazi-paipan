@@ -92,6 +92,8 @@ describe("标识符术语守卫", () => {
       'document.querySelector("#pillar-grid .PillarCard");',
       'page.locator(".compact-PILLAR-row");',
       'page.hover(\'[id="pillar-grid"]\');',
+      'page.$(".pillar-card");',
+      'page.$$("#PillarGrid");',
     ].join("\n");
 
     expect(findDeprecatedVocabularyNaming(source, "fixture.ts")).toEqual([
@@ -99,6 +101,8 @@ describe("标识符术语守卫", () => {
       expect.objectContaining({ context: "DOM selector", naming: ".PillarCard", line: 1 }),
       expect.objectContaining({ context: "DOM selector", naming: ".compact-PILLAR-row", line: 2 }),
       expect.objectContaining({ context: "DOM selector", naming: "pillar-grid", line: 3 }),
+      expect.objectContaining({ context: "DOM selector", naming: ".pillar-card", line: 4 }),
+      expect.objectContaining({ context: "DOM selector", naming: "#PillarGrid", line: 5 }),
     ]);
   });
 
@@ -149,6 +153,7 @@ describe("标识符术语守卫", () => {
       'it("Pillar cards stay readable", () => {',
       '  const heading = "Pillar details";',
       '  page.getByText("Pillar details");',
+      '  page.locator("text=Pillar details");',
       "});",
     ].join("\n");
     const html = [
