@@ -165,6 +165,47 @@ async function expectDenseGanzhiRelations(
   await page.close();
 }
 
+describe("E2E - 大运流年卡片密度", () => {
+  it("桌面完整显示十张，窄屏至少完整显示四张", async () => {
+    const cases = [
+      { viewport: { width: 1280, height: 900 }, minimumVisibleCards: 10, allCardsFit: true },
+      { viewport: { width: 375, height: 812 }, minimumVisibleCards: 4, allCardsFit: false },
+    ];
+
+    for (const testCase of cases) {
+      const page = await newPage(testCase.viewport);
+      await page.click('button[type="submit"]');
+      await page.waitForSelector("#dayun-grid .dayun-card", { timeout: 5000 });
+
+      for (const selector of ["#dayun-grid", "#liunian-grid"]) {
+        const layout = await page.locator(selector).evaluate((element) => {
+          const gridRect = element.getBoundingClientRect();
+          const cards = Array.from(element.querySelectorAll(".zhu-card"));
+          return {
+            cardCount: cards.length,
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
+            fullyVisibleCards: cards.filter((card) => {
+              const cardRect = card.getBoundingClientRect();
+              return cardRect.left >= gridRect.left && cardRect.right <= gridRect.right + 0.5;
+            }).length,
+          };
+        });
+        expect(layout.cardCount).toBe(10);
+        expect(layout.fullyVisibleCards).toBeGreaterThanOrEqual(testCase.minimumVisibleCards);
+        if (testCase.allCardsFit) {
+          expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+        }
+      }
+
+      expect(await page.evaluate(() =>
+        document.documentElement.scrollWidth <= document.documentElement.clientWidth
+      )).toBe(true);
+      await page.close();
+    }
+  }, 20_000);
+});
+
 describe("E2E - 桌面 viewport (1280x900)", () => {
   it("个人栏位于四柱前并展示 API 返回的生肖与星座", async () => {
     await expectPersonalInfo({ width: 1280, height: 900 });
