@@ -29,6 +29,13 @@ describe("干支规范值", () => {
     expect(values.every(isGanzhi)).toBe(true);
   });
 
+  it.each([0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    "拒绝不能生成合法干支的索引 %s",
+    (index) => {
+      expect(() => liushijiazi(index)).toThrow(RangeError);
+    },
+  );
+
   it.each([
     ["甲丑", "天干地支奇偶不匹配"],
     ["", "缺字"],

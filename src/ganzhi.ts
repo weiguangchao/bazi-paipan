@@ -26,6 +26,9 @@ export type Ganzhi =
 
 /** 六十甲子：天干与地支同步推进，60 组合一循环 */
 export function liushijiazi(index: number): Ganzhi {
+  if (!Number.isInteger(index)) {
+    throw new RangeError(`liushijiazi index 必须是整数：${String(index)}`);
+  }
   const i = ((index % 60) + 60) % 60;
   const tianganCharacter = tiangan[i % 10]!;
   const dizhiCharacter = dizhi[i % 12]!;
