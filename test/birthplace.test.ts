@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { findLongitude } from "../src/birthplace.js";
+import { findLongitude } from "@/domain/birth/birthplace";
 
 describe("出生地经度查找 (T5)", () => {
   // 真值取自 city-geo 数据源（见 cities.generated.ts）：成都 ~104.08°

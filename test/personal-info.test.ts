@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { personalInfo } from "../src/personal-info.js";
+import { personalInfo } from "@/domain/birth/personal-info";
 
 describe("个人信息 - 生肖", () => {
   it.each([

@@ -1,6 +1,6 @@
 // 干支关系留意栏：天干/地支留意 tag 列表。纯展示，数据由 API 计算。
 // 词汇遵循 CONTEXT.md（干支关系、天干相克、天干五合、地支六冲、地支六合、地支三合、地支半三合、地支相刑）。
-import type { GanzhiRelationsResult } from "@/ganzhi-relations";
+import type { GanzhiRelationsResult } from "@/domain/ganzhi/ganzhi-relations";
 import { cn } from "@/lib/utils";
 
 interface GanzhiRelationsProps {

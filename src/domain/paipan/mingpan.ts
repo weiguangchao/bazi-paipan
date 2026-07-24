@@ -5,17 +5,17 @@
 // 调用方（adapter）不再自行取日主、不再重复附加十神。命盘不读时钟，当前年月由调用方注入。
 // 遵循 ADR-0001/0002/0003/0004，领域规则全部委托既有纯函数（paipan/shishen/ganzhiRelations/...）。
 
-import { paipan } from "./paipan.js";
-import { liunian } from "./liunian.js";
-import { shishen, cangganTable } from "./shishen.js";
-import { ganzhiDizhi, ganzhiTiangan, type Ganzhi, type Tiangan } from "./ganzhi.js";
+import { paipan } from "@/domain/paipan/paipan";
+import { liunian } from "@/domain/paipan/liunian";
+import { shishen, cangganTable } from "@/domain/ganzhi/shishen";
+import { ganzhiDizhi, ganzhiTiangan, type Ganzhi, type Tiangan } from "@/domain/ganzhi/ganzhi";
 import {
   ganzhiRelations,
   type GanzhiRelationsResult,
-} from "./ganzhi-relations.js";
-import { personalInfo, type PersonalInfo } from "./personal-info.js";
-import type { CurrentYearMonth } from "./birth-date.js";
-import type { BirthProfile } from "./birth-profile.js";
+} from "@/domain/ganzhi/ganzhi-relations";
+import { personalInfo, type PersonalInfo } from "@/domain/birth/personal-info";
+import type { CurrentYearMonth } from "@/domain/birth/birth-date";
+import type { BirthProfile } from "@/domain/birth/birth-profile";
 
 /** 藏干及其相对日主的十神。 */
 export interface CangganOut {
@@ -62,17 +62,11 @@ export interface DayunOut {
   zhu: DayunzhuOut[];
 }
 
-/** 提示语义标志（code 常量）。判定在命盘，文案映射在 UI（见 App.tsx）。 */
-export const NEAR_ZI_ZHENG = "NEAR_ZI_ZHENG";
-export const NO_LONGITUDE_CORRECTION = "NO_LONGITUDE_CORRECTION";
-export const TRUE_SOLAR_TIME = "TRUE_SOLAR_TIME";
-
-/** 完整命盘：四柱、大运、干支关系、生肖星座、提示语义标志。 */
+/** 完整命盘：四柱、大运、干支关系、生肖星座。 */
 export interface Mingpan {
   personal: PersonalInfo;
   sizhu: SizhuOut;
   ganzhiRelations: GanzhiRelationsResult;
-  tips: string[];
   dayun: DayunOut;
 }
 
@@ -142,33 +136,16 @@ function dayunZhu(
   };
 }
 
-/** 提示语义标志：判定在命盘（产出 code 数组），文案映射留在 UI。 */
-function buildTips(result: {
-  nearZizheng: boolean;
-  longitudeCorrectionApplied: boolean;
-}): string[] {
-  const tips: string[] = [];
-  if (result.nearZizheng) {
-    tips.push(NEAR_ZI_ZHENG);
-  }
-  if (!result.longitudeCorrectionApplied) {
-    tips.push(NO_LONGITUDE_CORRECTION);
-  } else {
-    tips.push(TRUE_SOLAR_TIME);
-  }
-  return tips;
-}
-
 /**
  * 命盘纯函数：typed 出生资料 + 当前年月 → 完整命盘。
  * 一次产出四柱（含天干十神与藏干十神）、大运（含各柱十神与大运关联流年含十神）、
- * 干支关系、生肖星座、提示语义标志。日主推导与十神附加在此统一完成。
+ * 干支关系、生肖星座。日主推导与十神附加在此统一完成。
  */
-export async function mingpan(
+export function mingpan(
   input: BirthProfile,
   now: CurrentYearMonth,
-): Promise<Mingpan> {
-  const result = await paipan(input);
+): Mingpan {
+  const result = paipan(input);
   const dayMaster = ganzhiTiangan(result.rizhu);
 
   const personal = personalInfo({ year: input.year, month: input.month, day: input.day });
@@ -187,8 +164,6 @@ export async function mingpan(
     shizhu: result.shizhu,
   });
 
-  const tips = buildTips(result);
-
   const dayun = result.dayun!;
   const { year: currentYear, month: currentMonth } = now;
   const dayunOut: DayunOut = {
@@ -199,5 +174,5 @@ export async function mingpan(
     ),
   };
 
-  return { personal, sizhu, ganzhiRelations: ganzhiRelationsResult, tips, dayun: dayunOut };
+  return { personal, sizhu, ganzhiRelations: ganzhiRelationsResult, dayun: dayunOut };
 }

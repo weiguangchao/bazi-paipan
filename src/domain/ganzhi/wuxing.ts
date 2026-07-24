@@ -6,7 +6,7 @@
 // 地支五行以藏表方式锁定，辰戌丑未归土、亥子归水、寅卯归木、巳午归火、申酉归金。
 // 非法字符显式抛错，不静默兜底。
 
-import { tiangan, dizhi, type Tiangan, type Dizhi } from "./ganzhi.js";
+import { tiangan, dizhi, type Tiangan, type Dizhi } from "@/domain/ganzhi/ganzhi";
 
 /** 五行：木、火、土、金、水。 */
 export type Wuxing = "木" | "火" | "土" | "金" | "水";

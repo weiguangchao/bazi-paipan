@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { findLongitude } from "../src/birthplace.js";
-import { trueSolarTimeOffsetMinutes } from "../src/solar-time.js";
+import { findLongitude } from "@/domain/birth/birthplace";
+import { trueSolarTimeOffsetMinutes } from "@/domain/time/solar-time";
 
 // 问真对照回归测试集（issue #18）。
 //

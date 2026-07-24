@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { shishen, cangganTable } from "../src/shishen.js";
-import { dizhi, type Dizhi, type Tiangan } from "../src/ganzhi.js";
+import { shishen, cangganTable } from "@/domain/ganzhi/shishen";
+import { dizhi, type Dizhi, type Tiangan } from "@/domain/ganzhi/ganzhi";
 
 // 十神纯函数：对日主 + 任意干支返回 { 天干十神, 藏干十神[] }。
 // 五行：甲乙木、丙丁火、戊己土、庚辛金、壬癸水；阴阳按天干序号偶阳奇阴。

@@ -1,6 +1,6 @@
 // 个人信息展示：生肖、星座。纯展示组件，数据由 API 计算。
 // 词汇遵循 CONTEXT.md（生肖、星座）。
-import type { PersonalInfo as PersonalInfoData } from "@/personal-info";
+import type { PersonalInfo as PersonalInfoData } from "@/domain/birth/personal-info";
 
 export function PersonalInfo({ data }: { data: PersonalInfoData }) {
   const items = [

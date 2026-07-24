@@ -1,13 +1,8 @@
-// 排盘表单：出生资料录入。App 传入 defaultValues（URL 恢复），提交时调用 onSubmit。
+// 排盘表单：纯展示组件。状态与逻辑由父组件（App 通过 usePaipanForm）注入。
 // 日期用 shadcn Date of Birth 变体（Popover + Calendar dropdown），时间用 Input type="time"，
 // 性别用 RadioGroup，省市用 BirthplaceSelect。表单错误在内部闭合。
-import { useState } from "react";
 import { CalendarIcon } from "lucide-react";
 import { zhCN } from "date-fns/locale";
-import { computePaipan, type PaipanData } from "@/api/paipan";
-import { getBirthDateLimit } from "@/birth-date";
-import { getBeijingYearMonth } from "@/beijing-time";
-import { parse } from "@/birth-profile";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,85 +10,57 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { BirthplaceSelect } from "@/components/BirthplaceSelect";
+import { BirthplaceSelect } from "@/components/paipan-form/BirthplaceSelect";
 
-export interface BirthData {
-  date: string; // YYYY-MM-DD
-  time: string; // HH:mm
+export interface PaipanFormValues {
+  date: string;
+  time: string;
   gender: string;
   province: string;
   city: string;
 }
 
 interface FormPanelProps {
-  defaultValues?: Partial<BirthData>;
-  onSubmit: (data: PaipanData) => void;
+  values: PaipanFormValues;
+  errors: Record<string, string>;
+  generalError: string;
+  submitting: boolean;
+  selectedDate: Date | undefined;
+  dateOpen: boolean;
+  dateLimit: { year: number; month: number; day: number };
+  onSubmit: (e: React.FormEvent) => void;
+  onDateChange: (date: Date | undefined) => void;
+  onTimeChange: (time: string) => void;
+  onGenderChange: (gender: string) => void;
+  onBirthplaceChange: (province: string, city: string) => void;
+  onDateOpenChange: (open: boolean) => void;
 }
 
-export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
-  const now = getBeijingYearMonth();
-  const limit = getBirthDateLimit(now);
-
-  const initialDate = defaultValues?.date ? new Date(defaultValues.date + "T00:00:00") : undefined;
-  const validInitial = initialDate && !isNaN(initialDate.getTime()) ? initialDate : undefined;
-
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(validInitial);
-  const [time, setTime] = useState(defaultValues?.time ?? "00:00");
-  const [gender, setGender] = useState(defaultValues?.gender ?? "男");
-  const [province, setProvince] = useState(defaultValues?.province ?? "");
-  const [city, setCity] = useState(defaultValues?.city ?? "");
-  const [birthplaceReady, setBirthplaceReady] = useState(true);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [generalError, setGeneralError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErrors({});
-    setGeneralError("");
-
-    const dateString = selectedDate
-      ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
-      : "";
-
-    const strings = { date: dateString, time, gender, province, city };
-    const parsed = parse(strings, now);
-    if (!parsed.ok) {
-      setErrors(parsed.fields);
-      setGeneralError(Object.values(parsed.fields)[0] ?? "");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const result = await computePaipan(strings, now);
-
-      if (!result.ok) {
-        setErrors(result.error.fields);
-        setGeneralError(result.error.message);
-        return;
-      }
-
-      onSubmit(result.data);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  function handleBirthplaceChange(p: string, c: string) {
-    setProvince(p);
-    setCity(c);
-  }
-
-  const submitDisabled = !birthplaceReady;
+export function FormPanel({
+  values,
+  errors,
+  generalError,
+  submitting,
+  selectedDate,
+  dateOpen,
+  dateLimit,
+  onSubmit,
+  onDateChange,
+  onTimeChange,
+  onGenderChange,
+  onBirthplaceChange,
+  onDateOpenChange,
+}: FormPanelProps) {
+  const { time, gender, province, city } = values;
+  const limit = dateLimit;
+  const submitDisabled = false;
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4" noValidate>
+    <form onSubmit={onSubmit} className="grid gap-4" noValidate>
       {/* 出生日期 */}
       <div className="grid gap-2">
         <Label htmlFor="date-trigger" className="text-muted-foreground">出生日期</Label>
-        <Popover open={dateOpen} onOpenChange={setDateOpen}>
+        <Popover open={dateOpen} onOpenChange={onDateOpenChange}>
           <PopoverTrigger asChild>
             <Button
               id="date-trigger"
@@ -114,11 +81,7 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={(date: Date | undefined) => {
-                setSelectedDate(date);
-                setDateOpen(false);
-                if (errors.date) setErrors((p) => ({ ...p, date: "" }));
-              }}
+              onSelect={onDateChange}
               captionLayout="dropdown"
               startMonth={new Date(1900, 0)}
               endMonth={new Date(limit.year, limit.month - 1)}
@@ -137,10 +100,7 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
           id="time"
           type="time"
           value={time}
-          onChange={(e) => {
-            setTime(e.target.value);
-            if (errors.time) setErrors((p) => ({ ...p, time: "" }));
-          }}
+          onChange={(e) => onTimeChange(e.target.value)}
           className={cn("[&::-webkit-calendar-picker-indicator]:appearance-none", errors.time && "border-destructive")}
         />
         {errors.time && <p className="text-xs text-destructive">{errors.time}</p>}
@@ -151,10 +111,7 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
         <Label className="text-muted-foreground">性别</Label>
         <RadioGroup
           value={gender}
-          onValueChange={(v) => {
-            setGender(v);
-            if (errors.gender) setErrors((p) => ({ ...p, gender: "" }));
-          }}
+          onValueChange={onGenderChange}
           className="flex flex-row gap-6"
         >
           <div className="flex items-center gap-2">
@@ -171,11 +128,10 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
 
       {/* 出生地 */}
       <BirthplaceSelect
-        defaultProvince={defaultValues?.province}
-        defaultCity={defaultValues?.city}
+        defaultProvince={province || undefined}
+        defaultCity={city || undefined}
         errors={errors}
-        onChange={handleBirthplaceChange}
-        onReadyChange={setBirthplaceReady}
+        onChange={onBirthplaceChange}
       />
 
       <Button type="submit" disabled={submitDisabled || submitting} className="w-full">

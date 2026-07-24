@@ -4,7 +4,7 @@
 // 平太阳时 = 钟表时 + 经度修正（不含均时差，代表匀速平太阳层级）。
 // 真太阳时 = 钟表时 + 经度修正 + 均时差（视太阳过当地子午线的时刻，传统八字采用）。
 
-import { equationOfTimeMinutes } from "./eot.js";
+import { equationOfTimeMinutes } from "@/domain/time/eot";
 
 /** 经度修正中枢线（钟表时所对应的东八区中央经线）。120°E。 */
 export const referenceLongitude = 120;

@@ -3,8 +3,8 @@
 // 五行归属查询委托核心模块（src/wuxing.ts），本模块只做 Wuxing → CSS class 映射。
 // 天干地支与十神全名用中文字面量匹配，不用对象属性名（ASCII 守卫要求）。
 
-import { characterWuxing, type Wuxing } from "../wuxing.js";
-import type { Tiangan, Dizhi } from "../ganzhi.js";
+import { characterWuxing, type Wuxing } from "@/domain/ganzhi/wuxing";
+import type { Tiangan, Dizhi } from "@/domain/ganzhi/ganzhi";
 
 export type WuxingClass = "wood" | "fire" | "earth" | "metal" | "water";
 

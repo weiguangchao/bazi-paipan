@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { longitudeCorrectionMinutes, applyLongitudeCorrection, referenceLongitude, minutesPerDegree, trueSolarTimeOffsetMinutes, applyTrueSolarTime } from "../src/solar-time.js";
-import { equationOfTimeMinutes } from "../src/eot.js";
+import { longitudeCorrectionMinutes, applyLongitudeCorrection, referenceLongitude, minutesPerDegree, trueSolarTimeOffsetMinutes, applyTrueSolarTime } from "@/domain/time/solar-time";
+import { equationOfTimeMinutes } from "@/domain/time/eot";
 
 describe("经度修正 - 偏移量计算 (T5)", () => {
   // CONTEXT.md：经度修正 = (经度 − 120°) × 4 分钟/度

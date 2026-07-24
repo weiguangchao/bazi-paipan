@@ -4,8 +4,8 @@ import {
   dizhiWuxing,
   characterWuxing,
   type Wuxing,
-} from "../src/wuxing.js";
-import { tiangan, dizhi } from "../src/ganzhi.js";
+} from "@/domain/ganzhi/wuxing";
+import { tiangan, dizhi } from "@/domain/ganzhi/ganzhi";
 
 // 五行查询：核心唯一定义五行归属。
 // 天干：甲乙木、丙丁火、戊己土、庚辛金、壬癸水。

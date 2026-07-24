@@ -2,8 +2,8 @@
 // 当前（isCurrent）仅决定初始选中与 badge，与选中态解耦。流年纯展示不可点。
 // 词汇遵循 CONTEXT.md（大运、大运柱、起运、流年、流年柱、十神）。
 import { useState } from "react";
-import type { DayunOut } from "@/api/paipan";
-import { getWuxing, shishenAbbreviation, wuxingTextColors } from "@/lib/wuxing";
+import type { DayunOut } from "@/domain/paipan/mingpan";
+import { getWuxing, shishenAbbreviation, wuxingTextColors } from "@/utils/wuxing";
 import { cn } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 

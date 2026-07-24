@@ -6,15 +6,6 @@
 /** 北京时间 UTC+8 偏移（毫秒）。用于在 Web API 边缘按中国历法判断"今年"。 */
 export const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
-/**
- * 按北京时间（UTC+8）读取机器时钟，返回今年公历年。
- * 跨时区/跨年仍按中国历法判断今年--例如 UTC 凌晨 16:00（北京次日 00:00）
- * 已切到北京新年。
- */
-export function getBeijingYear(): number {
-  return getBeijingYearMonth().year;
-}
-
 /** 按北京时间（UTC+8）读取机器时钟，返回当前公历年月。 */
 export function getBeijingYearMonth(): { year: number; month: number } {
   const now = Date.now();

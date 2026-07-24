@@ -3,7 +3,7 @@ import {
   ganzhiRelations,
   type GanzhiRelationsInput,
   type GanzhiRelationItem,
-} from "../src/ganzhi-relations.js";
+} from "@/domain/ganzhi/ganzhi-relations";
 import {
   ganzhiDizhi,
   ganzhiTiangan,
@@ -11,7 +11,7 @@ import {
   type Dizhi,
   type Ganzhi,
   type Tiangan,
-} from "../src/ganzhi.js";
+} from "@/domain/ganzhi/ganzhi";
 
 const allGanzhi = Array.from({ length: 60 }, (_, index) => liushijiazi(index));
 

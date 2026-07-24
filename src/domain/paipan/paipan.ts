@@ -11,10 +11,11 @@ import {
   ganzhiFromCharacters,
   JIE_TERM_INDEXES,
   type Ganzhi,
-} from "./ganzhi.js";
-import { applyTrueSolarTime } from "./solar-time.js";
-import { findLongitude, type Birthplace } from "./birthplace.js";
-import { dayun, type Gender, type DayunResult } from "./dayun.js";
+} from "@/domain/ganzhi/ganzhi";
+import { applyTrueSolarTime } from "@/domain/time/solar-time";
+import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
+import { dayun, type Gender, type DayunResult } from "@/domain/paipan/dayun";
+import { getLichunMoment, getSolarTermMoment } from "@/domain/time/jieqi";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
 export interface PaipanInput {
@@ -179,9 +180,8 @@ function stripBirthplace(input: PaipanInput): PaipanInput {
 function computeNianzhu(
   input: PaipanInput,
   birthUtc: number,
-  jieqiModule: { getLichunMoment: typeof import("./jieqi.js")["getLichunMoment"] },
 ): [Ganzhi, number] {
-  const lichunUtc = jieqiModule.getLichunMoment(input.year);
+  const lichunUtc = getLichunMoment(input.year);
   // 出生在立春之前 -> 归上一公历年
   const ganzhiYear = birthUtc < lichunUtc ? input.year - 1 : input.year;
   const index = (((ganzhiYear - 4) % 60) + 60) % 60;
@@ -198,14 +198,13 @@ function computeYuezhu(
   input: PaipanInput,
   birthUtc: number,
   yearTianganIndex: number,
-  jieqiModule: { getSolarTermMoment: typeof import("./jieqi.js")["getSolarTermMoment"] },
 ): Ganzhi {
   // 候选：本公历年与上一公历年的所有"节"交节时刻。取 <= birth 的最近一个。
   let bestJieIdx = -1;
   let bestMs = Number.NEGATIVE_INFINITY;
   for (const year of [input.year - 1, input.year]) {
     for (let i = 0; i < JIE_TERM_INDEXES.length; i++) {
-      const ms = jieqiModule.getSolarTermMoment(year, JIE_TERM_INDEXES[i]!);
+      const ms = getSolarTermMoment(year, JIE_TERM_INDEXES[i]!);
       if (ms <= birthUtc && ms > bestMs) {
         bestMs = ms;
         bestJieIdx = i;
@@ -274,17 +273,16 @@ function isNearZizheng(hour: number, minute: number): boolean {
  * - 大运从月柱出发排 10 柱，方向按阳男阴女顺/阴男阳女逆；起运岁按出生时刻到
  *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
-export async function paipan(input: PaipanInput): Promise<PaipanResult> {
+export function paipan(input: PaipanInput): PaipanResult {
   const { effective, longitudeCorrectionApplied } = resolveEffectiveInput(input);
   const offset = daysSinceAnchor(effective.year, effective.month, effective.day);
   const birthUtc = inputToUtcMs(effective);
-  const jieqiModule = await import("./jieqi.js");
-  const [nianzhu, yearTianganIndex] = computeNianzhu(effective, birthUtc, jieqiModule);
+  const [nianzhu, yearTianganIndex] = computeNianzhu(effective, birthUtc);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
   // 不包装会让天干/地支取到 undefined。dayTianganIndex 与 日柱 复用同一归一化结果。
   const dayIndex = (((RIZHU_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayTianganIndex = dayIndex % 10;
-  const yuezhu = computeYuezhu(effective, birthUtc, yearTianganIndex, jieqiModule);
+  const yuezhu = computeYuezhu(effective, birthUtc, yearTianganIndex);
   const result: PaipanResult = {
     nianzhu,
     yuezhu,
@@ -294,14 +292,14 @@ export async function paipan(input: PaipanInput): Promise<PaipanResult> {
     longitudeCorrectionApplied,
   };
   if (input.gender !== undefined) {
-    result.dayun = await dayun(
+    result.dayun = dayun({
       yuezhu,
       yearTianganIndex,
-      input.gender,
+      gender: input.gender,
       birthUtc,
-      effective.year,
-      effective.month,
-    );
+      birthYear: effective.year,
+      birthMonth: effective.month,
+    });
   }
   return result;
 }

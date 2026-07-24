@@ -2,7 +2,7 @@
 // 数据资产 src/data/cities.generated.ts（约 340 条），由 scripts/build-cities-data.cjs
 // 从 modood/Administrative-divisions-of-China (WTFPL) + 88250/city-geo (MulanPSL-2.0) 生成。
 
-import { CITIES } from "./data/cities.generated.js";
+import { CITIES } from "@/data/cities.generated";
 
 /** 出生地：省 + 地级市（均使用全名，与数据源一致，如 "四川省"/"成都市"）。 */
 export interface Birthplace {

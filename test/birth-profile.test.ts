@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { fromUrlParams, toUrlParams, parse, type BirthDataInput } from "../src/birth-profile.js";
+import { parse, type BirthDataInput } from "@/domain/birth/birth-profile";
+import { fromUrlParams, toUrlParams } from "@/pages/paipan/url-params";
 
 const NOW = { year: 2026, month: 7 };
 
@@ -94,5 +95,67 @@ describe("parse - 字段级错误与 typed 值", () => {
     expect(r.fields.gender).toBeDefined();
     expect(r.fields.province).toBeDefined();
     expect(r.fields.city).toBeDefined();
+  });
+});
+
+describe("parse - 字段校验失败（从 api 层迁入）", () => {
+  it("无效日期 -> fields.date", () => {
+    const r = parse({ date: "2000-13-45", time: "12:00", gender: "男", province: "", city: "" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.date).toBeDefined();
+  });
+
+  it("无效时间 -> fields.time", () => {
+    const r = parse({ date: "2000-01-01", time: "25:99", gender: "男", province: "", city: "" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.time).toBeDefined();
+  });
+
+  it("缺失性别 -> fields.gender", () => {
+    const r = parse({ date: "2000-01-01", time: "12:00", gender: "", province: "", city: "" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.gender).toBeDefined();
+  });
+
+  it("超出 100 年边界 -> fields.date", () => {
+    const r = parse({ date: "2200-01-01", time: "12:00", gender: "男", province: "", city: "" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.date).toBeDefined();
+    expect(r.fields.date).toMatch(/100/);
+  });
+
+  it("未知省份 -> fields.province", () => {
+    const r = parse({ date: "2000-01-01", time: "12:00", gender: "男", province: "火星省", city: "某市" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.province).toBeDefined();
+    expect(r.fields.city).toBeUndefined();
+  });
+
+  it("省市不匹配 -> fields.city", () => {
+    const r = parse({ date: "2000-01-01", time: "12:00", gender: "男", province: "四川省", city: "不存在的市" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.city).toBeDefined();
+    expect(r.fields.province).toBeUndefined();
+  });
+
+  it("只给省不给市 -> fields 同时标记", () => {
+    const r = parse({ date: "2000-01-01", time: "12:00", gender: "男", province: "四川省", city: "" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.province).toBeDefined();
+    expect(r.fields.city).toBeDefined();
+  });
+
+  it("字段错误时 fields 只含 invalid 字段", () => {
+    const r = parse({ date: "2000-01-01", time: "12:00", gender: "男", province: "火星省", city: "某市" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(Object.keys(r.fields)).toEqual(["province"]);
   });
 });

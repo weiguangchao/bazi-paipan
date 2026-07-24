@@ -15,7 +15,8 @@ import {
   ganzhiTiangan,
   JIE_TERM_INDEXES,
   type Ganzhi,
-} from "./ganzhi.js";
+} from "@/domain/ganzhi/ganzhi";
+import { getSolarTermMoment } from "@/domain/time/jieqi";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
 export type Gender = "男" | "女";
@@ -74,11 +75,11 @@ export function determineDayunDirection(gender: Gender, yearTianganIndex: number
  * 找出生时刻方向侧最近一次"节"（交节时刻）：forward=true 取下一节（严格大于出生时刻），
  * forward=false 取上一节（严格小于出生时刻）。
  */
-function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean, jieqiModule: { getSolarTermMoment: typeof import("./jieqi.js")["getSolarTermMoment"] }): number {
+function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean): number {
   let best = forward ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
   for (const year of [birthYear - 1, birthYear, birthYear + 1]) {
     for (const termIndex of JIE_TERM_INDEXES) {
-      const ms = jieqiModule.getSolarTermMoment(year, termIndex);
+      const ms = getSolarTermMoment(year, termIndex);
       if (forward) {
         if (ms > birthUtc && ms < best) best = ms;
       } else {
@@ -127,29 +128,33 @@ function splitZhu(zhu: Ganzhi): { tianganIndex: number; dizhiIndex: number } {
   return { tianganIndex, dizhiIndex };
 }
 
+/** 大运输入：单一对象参数，含月柱、年干序号、性别与出生时刻。 */
+export interface DayunInput {
+  /** 月柱 起点干支（如 "戊寅"）。 */
+  yuezhu: Ganzhi;
+  /** 年干序号（0=甲…9=癸），用于判定阳阴年。 */
+  yearTianganIndex: number;
+  /** 性别。 */
+  gender: Gender;
+  /** 出生时刻 UTC 毫秒（已做经度修正后的真太阳时；无出生地则钟表时）。 */
+  birthUtc: number;
+  /** 出生公历年（用于圈定候选节范围）。 */
+  birthYear: number;
+  /** 出生公历月（用于起运年月起算）。 */
+  birthMonth: number;
+}
+
 /**
  * 大运纯函数。
  *
- * @param 月柱 起点干支（如 "戊寅"）
- * @param yearGanIndex 年干序号（0=甲…9=癸），用于判定阳阴年
- * @param gender 性别
- * @param birthUtc 出生时刻 UTC 毫秒（已做经度修正后的真太阳时；无出生地则钟表时）
- * @param birthYear 出生公历年（用于圈定候选节范围）
- * @param birthMonth 出生公历月（用于起运年月起算）
+ * @param input 月柱、年干序号、性别、出生时刻、出生年月
  * @returns 大运完整结果（方向 + 起运岁 + 10 柱）
  */
-export async function dayun(
-  yuezhu: Ganzhi,
-  yearTianganIndex: number,
-  gender: Gender,
-  birthUtc: number,
-  birthYear: number,
-  birthMonth: number,
-): Promise<DayunResult> {
-  const jieqiModule = await import("./jieqi.js");
+export function dayun(input: DayunInput): DayunResult {
+  const { yuezhu, yearTianganIndex, gender, birthUtc, birthYear, birthMonth } = input;
   const direction = determineDayunDirection(gender, yearTianganIndex);
   const forward = direction === "顺";
-  const jieMs = findAdjacentJie(birthUtc, birthYear, forward, jieqiModule);
+  const jieMs = findAdjacentJie(birthUtc, birthYear, forward);
   const diffMs = forward ? jieMs - birthUtc : birthUtc - jieMs;
   const qiyunsui = calculateQiyunsui(diffMs);
 

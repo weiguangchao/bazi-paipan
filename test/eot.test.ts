@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { equationOfTimeMinutes } from "../src/eot.js";
+import { equationOfTimeMinutes } from "@/domain/time/eot";
 
 // 均时差纯函数：输入出生 UTC 时刻（毫秒时间戳），输出均时差分钟数
 // （视太阳时 − 平太阳时，可为负、为分数）。按 UTC 日期计算，与经度无关。

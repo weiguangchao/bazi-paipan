@@ -1,18 +1,19 @@
-// 出生资料统一模块：单个 typed 出生资料值对象 + 字符串校验与 URL 序列化。
+// 出生资料统一模块：单个 typed 出生资料值对象 + 字符串校验。
 // 词汇遵循 CONTEXT.md（出生资料、性别、出生地）。
 //
 // 校验逻辑（性别、日期、时间、省市同时性、出生地查找、出生日期上限）集中在此处的 parse，
-// adapter 与表单共用一处。URL 参数格式不变（date/time/gender/province/city），
-// URL 恢复时无效参数被静默忽略。模块不读时钟，当前年月由调用方注入。
+// adapter 与表单共用一处。模块不读时钟，当前年月由调用方注入。
+// 时间解析（parseTime）在 birth-time，URL 序列化在 pages/paipan/url-params。
 
 import {
   parseBirthDate,
   isAfterBirthDateLimit,
   getBirthDateLimit,
   type CurrentYearMonth,
-} from "./birth-date.js";
-import { findLongitude, type Birthplace } from "./birthplace.js";
-import type { Gender } from "./dayun.js";
+} from "@/domain/birth/birth-date";
+import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
+import { parseTime } from "@/domain/birth/birth-time";
+import type { Gender } from "@/domain/paipan/dayun";
 
 /** 出生资料字符串表单（网页提交 / URL 参数）。省市可同时为空或同时给出。 */
 export interface BirthDataInput {
@@ -38,18 +39,6 @@ export interface BirthProfile {
 export type ParseResult =
   | { ok: true; value: BirthProfile }
   | { ok: false; fields: Record<string, string> };
-
-const TIME_PATTERN = /^(\d{2}):(\d{2})$/;
-
-/** 解析 HH:mm 为时分；非法或越界返回 null。parse 与 fromUrlParams 共用。 */
-function parseTime(value: string): { hour: number; minute: number } | null {
-  const match = TIME_PATTERN.exec(value);
-  if (!match) return null;
-  const hour = parseInt(match[1]!, 10);
-  const minute = parseInt(match[2]!, 10);
-  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
-  return { hour, minute };
-}
 
 /**
  * 校验出生资料字符串并转为 typed 值。失败返回字段级错误（字段名 → 中文消息）。
@@ -117,37 +106,4 @@ export function parse(input: BirthDataInput, now: CurrentYearMonth): ParseResult
     ok: true,
     value: { year, month, day, hour, minute, gender: input.gender as Gender, birthplace },
   };
-}
-
-/**
- * 从 URL 参数恢复出生资料字符串默认值；无效参数静默忽略（返回 undefined）。
- * 不做出生地查找与日期上限校验——这些在排盘提交时由 parse 兜底。
- */
-export function fromUrlParams(params: URLSearchParams): Partial<BirthDataInput> {
-  const date = params.get("date");
-  const time = params.get("time");
-  const gender = params.get("gender");
-  const province = params.get("province");
-  const city = params.get("city");
-
-  return {
-    date: date && parseBirthDate(date) !== null ? date : undefined,
-    time: time && parseTime(time) !== null ? time : undefined,
-    gender: gender === "男" || gender === "女" ? gender : undefined,
-    province: province || undefined,
-    city: city || undefined,
-  };
-}
-
-/** 把出生资料字符串序列化为 URL 参数；省市同时给时才写入，格式保持向后兼容。 */
-export function toUrlParams(input: BirthDataInput): URLSearchParams {
-  const params = new URLSearchParams();
-  params.set("date", input.date);
-  params.set("time", input.time);
-  params.set("gender", input.gender);
-  if (input.province && input.city) {
-    params.set("province", input.province);
-    params.set("city", input.city);
-  }
-  return params;
 }

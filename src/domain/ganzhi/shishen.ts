@@ -6,8 +6,8 @@
 //   七杀、正官（克我）、偏印、正印（生我）。
 // 阴阳按天干序号偶阳奇阴；同阴阳取前者、异阴阳取后者。
 // 藏干表锁定（不标本气/中气/余气），每个地支 1-3 个藏干。
-// 日主位标 "日主" 是 API 适配层叠加（见 src/api/paipan.ts），纯函数始终返回十神规则结果。
-// 排盘核心与排盘Result 不动：日主从 日柱 天干读，十神作为 API/组合层后置步骤。
+// 日主位标 "日主" 是命盘层叠加（见 mingpan.ts），纯函数始终返回十神规则结果。
+// 排盘核心与排盘Result 不动：日主从 日柱 天干读，十神作为命盘层后置步骤。
 
 import {
   tiangan,
@@ -16,7 +16,7 @@ import {
   type Dizhi,
   type Ganzhi,
   type Tiangan,
-} from "./ganzhi.js";
+} from "@/domain/ganzhi/ganzhi";
 
 /** 天干五行序号：0=木、1=火、2=土、3=金、4=水。甲乙木、丙丁火、戊己土、庚辛金、壬癸水。 */
 function tianganWuxingIndex(tianganCharacter: Tiangan): number {

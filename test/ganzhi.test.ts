@@ -9,7 +9,7 @@ import {
   type Dizhi,
   type Ganzhi,
   type Tiangan,
-} from "../src/ganzhi.js";
+} from "@/domain/ganzhi/ganzhi";
 
 describe("干支规范值", () => {
   it("窄类型由规范值函数公开", () => {

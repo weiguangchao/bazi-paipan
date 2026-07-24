@@ -5,7 +5,7 @@ import {
   type Dizhi,
   type Ganzhi,
   type Tiangan,
-} from "./ganzhi.js";
+} from "@/domain/ganzhi/ganzhi";
 
 export type GanzhiRelationType =
   | "tianganxiangke"
