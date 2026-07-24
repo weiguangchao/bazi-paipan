@@ -62,17 +62,17 @@ export interface DayunOut {
   zhu: DayunzhuOut[];
 }
 
-export interface TipOut {
-  code: string;
-  message: string;
-}
+/** 提示语义标志（code 常量）。判定在命盘，文案映射在 UI（见 App.tsx）。 */
+export const NEAR_ZI_ZHENG = "NEAR_ZI_ZHENG";
+export const NO_LONGITUDE_CORRECTION = "NO_LONGITUDE_CORRECTION";
+export const TRUE_SOLAR_TIME = "TRUE_SOLAR_TIME";
 
 /** 完整命盘：四柱、大运、干支关系、生肖星座、提示语义标志。 */
 export interface Mingpan {
   personal: PersonalInfo;
   sizhu: SizhuOut;
   ganzhiRelations: GanzhiRelationsResult;
-  tips: TipOut[];
+  tips: string[];
   dayun: DayunOut;
 }
 
@@ -142,19 +142,19 @@ function dayunZhu(
   };
 }
 
-/** 提示语义标志：判定在命盘、文案随 code 一并产出（文案归属 UI 见 #108）。 */
+/** 提示语义标志：判定在命盘（产出 code 数组），文案映射留在 UI。 */
 function buildTips(result: {
   nearZizheng: boolean;
   longitudeCorrectionApplied: boolean;
-}): TipOut[] {
-  const tips: TipOut[] = [];
+}): string[] {
+  const tips: string[] = [];
   if (result.nearZizheng) {
-    tips.push({ code: "NEAR_ZI_ZHENG", message: "出生时刻近子正（00:00），已按早晚子时归属日柱与时柱；若实际时刻略有出入，排盘结果可能不同。" });
+    tips.push(NEAR_ZI_ZHENG);
   }
   if (!result.longitudeCorrectionApplied) {
-    tips.push({ code: "NO_LONGITUDE_CORRECTION", message: "未做经度修正，真太阳时可能偏移。给出出生省市可按出生地经度修正为真太阳时。" });
+    tips.push(NO_LONGITUDE_CORRECTION);
   } else {
-    tips.push({ code: "TRUE_SOLAR_TIME", message: "已按出生地经度修正与均时差合成为真太阳时排盘。" });
+    tips.push(TRUE_SOLAR_TIME);
   }
   return tips;
 }

@@ -46,7 +46,7 @@ describe("computePaipan - 成功响应", () => {
 
     // tips：给出出生地 -> TRUE_SOLAR_TIME 提示
     expect(data.tips).toBeInstanceOf(Array);
-    expect(data.tips.some((t) => t.code === "TRUE_SOLAR_TIME")).toBe(true);
+    expect(data.tips.includes("TRUE_SOLAR_TIME")).toBe(true);
 
     // dayun：方向、起运岁、10 柱
     expect(data.dayun.direction).toBe("逆"); // 1999己卯阴年男 -> 逆
@@ -130,7 +130,7 @@ describe("computePaipan - 成功响应", () => {
     expect(result.data.sizhu.month.ganzhi).toBe("丙子");
     expect(result.data.sizhu.day.ganzhi).toBe("戊午");
     expect(result.data.sizhu.hour.ganzhi).toBe("戊午");
-    expect(result.data.tips.some((t) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
+    expect(result.data.tips.includes("NO_LONGITUDE_CORRECTION")).toBe(true);
     expect(result.data.dayun.direction).toBe("逆");
     expect(result.data.dayun.zhu).toHaveLength(10);
     for (const dayunzhu of result.data.dayun.zhu) {

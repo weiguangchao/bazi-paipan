@@ -5,11 +5,23 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { PaipanData } from "@/api/paipan";
 import { fromUrlParams, toUrlParams } from "@/birth-profile";
+import {
+  NEAR_ZI_ZHENG,
+  NO_LONGITUDE_CORRECTION,
+  TRUE_SOLAR_TIME,
+} from "@/mingpan";
 import { FormPanel, type BirthData } from "@/components/FormPanel";
 import { PersonalInfo } from "@/components/PersonalInfo";
 import { SizhuTable } from "@/components/SizhuTable";
 import { GanzhiRelations } from "@/components/GanzhiRelations";
 import { DayunPanel } from "@/components/DayunPanel";
+
+// 提示文案映射：判定（code）在命盘模块，文案措辞在 UI 层。
+const tipMessages: Record<string, string> = {
+  [NEAR_ZI_ZHENG]: "出生时刻近子正（00:00），已按早晚子时归属日柱与时柱；若实际时刻略有出入，排盘结果可能不同。",
+  [NO_LONGITUDE_CORRECTION]: "未做经度修正，真太阳时可能偏移。给出出生省市可按出生地经度修正为真太阳时。",
+  [TRUE_SOLAR_TIME]: "已按出生地经度修正与均时差合成为真太阳时排盘。",
+};
 
 export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -58,8 +70,8 @@ export default function App() {
               <section className="rounded-xl border border-border bg-card p-5">
                 <h2 className="mb-4 text-lg font-semibold text-accent">提示</h2>
                 <ul className="grid gap-2">
-                  {paipanData.tips.map((tip) => (
-                    <li key={tip.code} className="text-sm text-muted-foreground">{tip.message}</li>
+                  {paipanData.tips.map((code) => (
+                    <li key={code} className="text-sm text-muted-foreground">{tipMessages[code]}</li>
                   ))}
                 </ul>
               </section>

@@ -11,7 +11,6 @@ import type {
   LiunianItemOut,
   DayunzhuOut,
   DayunOut,
-  TipOut,
   Mingpan,
 } from "../mingpan.js";
 import {
@@ -28,7 +27,6 @@ export type {
   LiunianItemOut,
   DayunzhuOut,
   DayunOut,
-  TipOut,
   Mingpan,
 };
 
@@ -47,7 +45,7 @@ export interface PaipanData {
   personal: Mingpan["personal"];
   sizhu: SizhuOut;
   ganzhiRelations: Mingpan["ganzhiRelations"];
-  tips: TipOut[];
+  tips: string[];
   dayun: DayunOut;
 }
 
