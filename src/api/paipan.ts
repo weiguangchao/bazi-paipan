@@ -14,7 +14,7 @@ import {
   type GanzhiRelationsResult,
 } from "../ganzhi-relations.js";
 import { personalInfo, type PersonalInfo } from "../personal-info.js";
-import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../../public/birth-date.js";
+import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../birth-date.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
 export interface PaipanInput {

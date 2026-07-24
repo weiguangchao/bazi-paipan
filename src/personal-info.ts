@@ -1,4 +1,4 @@
-import type { BirthDateParts } from "../public/birth-date.js";
+import type { BirthDateParts } from "./birth-date.js";
 
 const shengxiaoCycle = [
   "鼠", "牛", "虎", "兔", "龙", "蛇",
