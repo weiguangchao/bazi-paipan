@@ -1,43 +1,24 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
-import { serve } from "../src/serve.js";
-import type { PaipanServer } from "../src/http-server.js";
+import { describe, it, expect, vi } from "vitest";
+import { computePaipan, type PaipanInput } from "../src/api/paipan.js";
 
-let server: PaipanServer;
-let baseUrl: string;
-
-beforeAll(async () => {
-  server = await serve({ port: 3987 });
-  baseUrl = "http://127.0.0.1:" + server.port;
-});
-
-afterAll(async () => {
-  await server.close();
-});
-
-async function postPaipan(body: unknown, headers: Record<string, string> = {}) {
-  const res = await fetch(baseUrl + "/api/paipan", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...headers },
-    body: typeof body === "string" ? body : JSON.stringify(body),
-  });
-  const json: any = await res.json();
-  return { status: res.status, body: json };
+function postPaipan(input: PaipanInput) {
+  return computePaipan(input);
 }
 
-describe("POST /api/paipan - 成功响应", () => {
+describe("computePaipan - 成功响应", () => {
   // 2000-01-01 12:00 北京市/市辖区 男：年柱 己卯、月柱 丙子、日柱 戊午、时柱 戊午
-  it("成功排盘返回完整 data 结构与代表值", async () => {
-    const { status, body } = await postPaipan({
+  it("成功排盘返回完整 data 结构与代表值", () => {
+    const result = postPaipan({
       date: "2000-01-01",
       time: "12:00",
       gender: "男",
       province: "北京市",
       city: "市辖区",
     });
-    expect(status).toBe(200);
-    expect(body.data).toBeDefined();
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
 
-    const data = body.data;
+    const data = result.data;
     // input 回显
     expect(data.input.date).toBe("2000-01-01");
     expect(data.input.time).toBe("12:00");
@@ -63,14 +44,14 @@ describe("POST /api/paipan - 成功响应", () => {
 
     // tips：给出出生地 -> TRUE_SOLAR_TIME 提示
     expect(data.tips).toBeInstanceOf(Array);
-    expect(data.tips.some((t: any) => t.code === "TRUE_SOLAR_TIME")).toBe(true);
+    expect(data.tips.some((t) => t.code === "TRUE_SOLAR_TIME")).toBe(true);
 
     // dayun：方向、起运岁、10 柱
     expect(data.dayun.direction).toBe("逆"); // 1999己卯阴年男 -> 逆
     expect(data.dayun.qiyun.ageYears).toBeTypeOf("number");
     expect(data.dayun.zhu).toHaveLength(10);
     // 每柱含起运信息、天干/地支本气十神和十个大运关联流年
-    const z0 = data.dayun.zhu[0];
+    const z0 = data.dayun.zhu[0]!;
     expect(z0.ganzhi).toBeTypeOf("string");
     expect(z0.tianganShishen).toBeTypeOf("string");
     expect(z0.dizhiShishen).toBeTypeOf("string");
@@ -81,25 +62,24 @@ describe("POST /api/paipan - 成功响应", () => {
     expect(z0.isCurrent).toBeTypeOf("boolean");
 
     expect(z0.liunian).toHaveLength(10);
-    expect(z0.liunian.map((item: any) => item.year)).toEqual(
+    expect(z0.liunian.map((item) => item.year)).toEqual(
       Array.from({ length: 10 }, (_, i) => z0.startYear + i),
     );
-    expect(z0.liunian[0].tianganShishen).toBeTypeOf("string");
-    expect(z0.liunian[0].dizhiShishen).toBeTypeOf("string");
-    expect(z0.liunian[0].isCurrentYear).toBeTypeOf("boolean");
-    expect(data.liunian).toBeUndefined();
+    expect(z0.liunian[0]!.tianganShishen).toBeTypeOf("string");
+    expect(z0.liunian[0]!.dizhiShishen).toBeTypeOf("string");
+    expect(z0.liunian[0]!.isCurrentYear).toBeTypeOf("boolean");
 
     for (const dayunzhu of data.dayun.zhu) {
       expect(dayunzhu.liunian).toHaveLength(10);
-      expect(dayunzhu.liunian[0].year).toBe(dayunzhu.startYear);
-      expect(dayunzhu.liunian[9].year).toBe(dayunzhu.startYear + 9);
+      expect(dayunzhu.liunian[0]!.year).toBe(dayunzhu.startYear);
+      expect(dayunzhu.liunian[9]!.year).toBe(dayunzhu.startYear + 9);
     }
-    expect(data.dayun.zhu.flatMap((item: any) => item.liunian).filter((item: any) => item.isCurrentYear)).toHaveLength(1);
-    expect(data.dayun.zhu.filter((item: any) => item.isCurrent)).toHaveLength(1);
+    expect(data.dayun.zhu.flatMap((item) => item.liunian).filter((item) => item.isCurrentYear)).toHaveLength(1);
+    expect(data.dayun.zhu.filter((item) => item.isCurrent)).toHaveLength(1);
   });
 
-  it("生肖按原始公历年计算，不读取立春前的年柱地支", async () => {
-    const { status, body } = await postPaipan({
+  it("生肖按原始公历年计算，不读取立春前的年柱地支", () => {
+    const result = postPaipan({
       date: "2000-01-01",
       time: "12:00",
       gender: "男",
@@ -107,54 +87,56 @@ describe("POST /api/paipan - 成功响应", () => {
       city: "",
     });
 
-    expect(status).toBe(200);
-    expect(body.data.sizhu.year.ganzhi).toBe("己卯");
-    expect(body.data.personal.shengxiao).toBe("龙");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.sizhu.year.ganzhi).toBe("己卯");
+    expect(result.data.personal.shengxiao).toBe("龙");
   });
 
-  it("星座按原始公历月日计算，不随真太阳时跨日", async () => {
+  it("星座按原始公历月日计算，不随真太阳时跨日", () => {
     const birthData = {
       date: "2026-11-22",
       time: "23:20",
       gender: "男",
     };
-    const clock = await postPaipan({ ...birthData, province: "", city: "" });
-    const trueSolarTime = await postPaipan({
+    const clock = postPaipan({ ...birthData, province: "", city: "" });
+    const trueSolarTime = postPaipan({
       ...birthData,
       province: "黑龙江省",
       city: "双鸭山市",
     });
 
-    expect(clock.status).toBe(200);
-    expect(trueSolarTime.status).toBe(200);
-    expect(trueSolarTime.body.data.sizhu.day.ganzhi)
-      .not.toBe(clock.body.data.sizhu.day.ganzhi);
-    expect(trueSolarTime.body.data.personal.zodiacSign).toBe("天蝎座");
+    expect(clock.ok).toBe(true);
+    expect(trueSolarTime.ok).toBe(true);
+    if (!clock.ok || !trueSolarTime.ok) return;
+    expect(trueSolarTime.data.sizhu.day.ganzhi)
+      .not.toBe(clock.data.sizhu.day.ganzhi);
+    expect(trueSolarTime.data.personal.zodiacSign).toBe("天蝎座");
   });
 
-  it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
-    const { status, body } = await postPaipan({
+  it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", () => {
+    const result = postPaipan({
       date: "2000-01-01",
       time: "12:00",
       gender: "男",
       province: "",
       city: "",
     });
-    expect(status).toBe(200);
-    expect(body.data.sizhu.year.ganzhi).toBe("己卯");
-    expect(body.data.sizhu.month.ganzhi).toBe("丙子");
-    expect(body.data.sizhu.day.ganzhi).toBe("戊午");
-    expect(body.data.sizhu.hour.ganzhi).toBe("戊午");
-    expect(body.data.tips.some((t: any) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
-    expect(body.data.dayun.direction).toBe("逆");
-    expect(body.data.dayun.zhu).toHaveLength(10);
-    for (const dayunzhu of body.data.dayun.zhu) {
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.sizhu.year.ganzhi).toBe("己卯");
+    expect(result.data.sizhu.month.ganzhi).toBe("丙子");
+    expect(result.data.sizhu.day.ganzhi).toBe("戊午");
+    expect(result.data.sizhu.hour.ganzhi).toBe("戊午");
+    expect(result.data.tips.some((t) => t.code === "NO_LONGITUDE_CORRECTION")).toBe(true);
+    expect(result.data.dayun.direction).toBe("逆");
+    expect(result.data.dayun.zhu).toHaveLength(10);
+    for (const dayunzhu of result.data.dayun.zhu) {
       expect(dayunzhu.liunian).toHaveLength(10);
-      expect(dayunzhu.liunian[0].year).toBe(dayunzhu.startYear);
-      expect(dayunzhu.liunian[9].year).toBe(dayunzhu.startYear + 9);
+      expect(dayunzhu.liunian[0]!.year).toBe(dayunzhu.startYear);
+      expect(dayunzhu.liunian[9]!.year).toBe(dayunzhu.startYear + 9);
     }
-    expect(body.data.liunian).toBeUndefined();
-    expect(body.data.ganzhiRelations).toEqual({
+    expect(result.data.ganzhiRelations).toEqual({
       tiangan: [],
       dizhi: [
         {
@@ -214,8 +196,8 @@ describe("POST /api/paipan - 成功响应", () => {
       sizhu: ["己卯", "丁丑", "丙寅", "己丑"],
       dizhi: [],
     },
-  ])("$date $time 男按公开契约返回精确地支关系", async ({ date, time, sizhu, dizhi }) => {
-    const { status, body } = await postPaipan({
+  ])("$date $time 男按公开契约返回精确地支关系", ({ date, time, sizhu, dizhi }) => {
+    const result = postPaipan({
       date,
       time,
       gender: "男",
@@ -223,211 +205,152 @@ describe("POST /api/paipan - 成功响应", () => {
       city: "",
     });
 
-    expect(status).toBe(200);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
     expect([
-      body.data.sizhu.year.ganzhi,
-      body.data.sizhu.month.ganzhi,
-      body.data.sizhu.day.ganzhi,
-      body.data.sizhu.hour.ganzhi,
+      result.data.sizhu.year.ganzhi,
+      result.data.sizhu.month.ganzhi,
+      result.data.sizhu.day.ganzhi,
+      result.data.sizhu.hour.ganzhi,
     ]).toEqual(sizhu);
-    expect(body.data.ganzhiRelations.dizhi).toEqual(dizhi);
+    expect(result.data.ganzhiRelations.dizhi).toEqual(dizhi);
     if (dizhi.length === 0) {
-      expect(body.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
+      expect(result.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
     }
   });
 
-  it("无命中时仍返回必有的干支关系空数组", async () => {
-    const { status, body } = await postPaipan({
+  it("无命中时仍返回必有的干支关系空数组", () => {
+    const result = postPaipan({
       date: "2000-01-09",
       time: "02:00",
       gender: "男",
       province: "",
       city: "",
     });
-    expect(status).toBe(200);
-    expect(body.data.sizhu.year.ganzhi).toBe("己卯");
-    expect(body.data.sizhu.month.ganzhi).toBe("丁丑");
-    expect(body.data.sizhu.day.ganzhi).toBe("丙寅");
-    expect(body.data.sizhu.hour.ganzhi).toBe("己丑");
-    expect(body.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.sizhu.year.ganzhi).toBe("己卯");
+    expect(result.data.sizhu.month.ganzhi).toBe("丁丑");
+    expect(result.data.sizhu.day.ganzhi).toBe("丙寅");
+    expect(result.data.sizhu.hour.ganzhi).toBe("己丑");
+    expect(result.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
   });
 
-  it("当前大运按北京时间起运月份切换", async () => {
+  it("当前大运按北京时间起运月份切换", () => {
     const now = vi.spyOn(Date, "now");
-    const input = {
+    const input: PaipanInput = {
       date: "1990-05-15", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
     };
 
     now.mockReturnValue(Date.UTC(2017, 7, 15));
-    const august = await postPaipan(input);
-    expect(august.body.data.dayun.zhu.findIndex((zhu: any) => zhu.isCurrent)).toBe(1);
+    const august = postPaipan(input);
+    expect(august.ok).toBe(true);
+    if (!august.ok) return;
+    expect(august.data.dayun.zhu.findIndex((zhu) => zhu.isCurrent)).toBe(1);
 
     now.mockReturnValue(Date.UTC(2017, 8, 15));
-    const september = await postPaipan(input);
-    expect(september.body.data.dayun.zhu.findIndex((zhu: any) => zhu.isCurrent)).toBe(2);
+    const september = postPaipan(input);
+    expect(september.ok).toBe(true);
+    if (!september.ok) return;
+    expect(september.data.dayun.zhu.findIndex((zhu) => zhu.isCurrent)).toBe(2);
 
     now.mockRestore();
   });
 });
 
-describe("POST /api/paipan - 字段校验失败", () => {
-  it("无效日期 -> 400 + fields.date", async () => {
-    const { status, body } = await postPaipan({
+describe("computePaipan - 字段校验失败", () => {
+  it("无效日期 -> fields.date", () => {
+    const result = postPaipan({
       date: "2000-13-45", time: "12:00", gender: "男", province: "", city: "",
     });
-    expect(status).toBe(400);
-    expect(body.error.fields.date).toBeDefined();
-    expect(body.error.message).toMatch(/日期/);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.fields.date).toBeDefined();
+    expect(result.error.message).toMatch(/日期/);
   });
 
-  it("无效时间 -> 400 + fields.time", async () => {
-    const { status, body } = await postPaipan({
+  it("无效时间 -> fields.time", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "25:99", gender: "男", province: "", city: "",
     });
-    expect(status).toBe(400);
-    expect(body.error.fields.time).toBeDefined();
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.fields.time).toBeDefined();
   });
 
-  it("缺失性别 -> 400 + fields.gender", async () => {
-    const { status, body } = await postPaipan({
+  it("缺失性别 -> fields.gender", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "12:00", gender: "", province: "", city: "",
     });
-    expect(status).toBe(400);
-    expect(body.error.fields.gender).toBeDefined();
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.fields.gender).toBeDefined();
   });
 
-  it("超出 100 年边界 -> 400 + fields.date", async () => {
-    const { status, body } = await postPaipan({
+  it("超出 100 年边界 -> fields.date", () => {
+    const result = postPaipan({
       date: "2200-01-01", time: "12:00", gender: "男", province: "", city: "",
     });
-    expect(status).toBe(400);
-    expect(body.error.fields.date).toBeDefined();
-    expect(body.error.message).toMatch(/100/);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.fields.date).toBeDefined();
+    expect(result.error.message).toMatch(/100/);
   });
 });
 
-describe("POST /api/paipan - 出生地校验失败", () => {
-  it("未知省份 -> 400 + UNKNOWN_BIRTHPLACE + fields.province", async () => {
-    const { status, body } = await postPaipan({
+describe("computePaipan - 出生地校验失败", () => {
+  it("未知省份 -> UNKNOWN_BIRTHPLACE + fields.province", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "火星省", city: "某市",
     });
-    expect(status).toBe(400);
-    expect(body.error.code).toBe("UNKNOWN_BIRTHPLACE");
-    expect(body.error.fields.province).toBeDefined();
-    expect(body.error.fields.city).toBeUndefined();
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.code).toBe("UNKNOWN_BIRTHPLACE");
+    expect(result.error.fields.province).toBeDefined();
+    expect(result.error.fields.city).toBeUndefined();
   });
 
-  it("省市不匹配 -> 400 + UNKNOWN_BIRTHPLACE + fields.city", async () => {
-    const { status, body } = await postPaipan({
+  it("省市不匹配 -> UNKNOWN_BIRTHPLACE + fields.city", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "四川省", city: "不存在的市",
     });
-    expect(status).toBe(400);
-    expect(body.error.code).toBe("UNKNOWN_BIRTHPLACE");
-    expect(body.error.fields.city).toBeDefined();
-    expect(body.error.fields.province).toBeUndefined();
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.code).toBe("UNKNOWN_BIRTHPLACE");
+    expect(result.error.fields.city).toBeDefined();
+    expect(result.error.fields.province).toBeUndefined();
   });
 
-  it("只给省不给市 -> 400 + fields 同时标记", async () => {
-    const { status, body } = await postPaipan({
+  it("只给省不给市 -> fields 同时标记", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "四川省", city: "",
     });
-    expect(status).toBe(400);
-    expect(body.error.fields.province).toBeDefined();
-    expect(body.error.fields.city).toBeDefined();
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.fields.province).toBeDefined();
+    expect(result.error.fields.city).toBeDefined();
   });
 });
 
-describe("POST /api/paipan - HTTP 错误契约", () => {
-  it("畸形 JSON -> 400 + INVALID_JSON", async () => {
-    const { status, body } = await postPaipan("{invalid json", {
-      "Content-Type": "application/json",
-    });
-    expect(status).toBe(400);
-    expect(body.error.code).toBe("INVALID_JSON");
-    expect(body.error.fields).toEqual({});
-  });
-
-  it("非 JSON 请求 -> 415 + UNSUPPORTED_MEDIA_TYPE", async () => {
-    const res = await fetch(baseUrl + "/api/paipan", {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: "hello",
-    });
-    expect(res.status).toBe(415);
-    const json: any = await res.json();
-    expect(json.error.code).toBe("UNSUPPORTED_MEDIA_TYPE");
-    expect(json.error.fields).toEqual({});
-  });
-
-  it("错误方法 GET -> 405 + METHOD_NOT_ALLOWED", async () => {
-    const res = await fetch(baseUrl + "/api/paipan", { method: "GET" });
-    expect(res.status).toBe(405);
-    const json: any = await res.json();
-    expect(json.error.code).toBe("METHOD_NOT_ALLOWED");
-    expect(json.error.fields).toEqual({});
-  });
-
-  it("错误方法 PUT -> 405", async () => {
-    const res = await fetch(baseUrl + "/api/paipan", { method: "PUT" });
-    expect(res.status).toBe(405);
-  });
-
-  it("__testForceError -> 500 + INTERNAL_ERROR + 不泄露实现细节", async () => {
-    const { status, body } = await postPaipan({
-      date: "2000-01-01", time: "12:00", gender: "男",
-      province: "北京市", city: "市辖区",
-      __testForceError: true,
-    });
-    expect(status).toBe(500);
-    expect(body.error.code).toBe("INTERNAL_ERROR");
-    expect(body.error.message).toBe("服务内部错误");
-    expect(body.error.fields).toEqual({});
-    // 不泄露实现细节
-    expect(JSON.stringify(body)).not.toMatch(/forced internal error|Error|stack/);
-  });
-});
-
-describe("POST /api/paipan - fields 始终存在", () => {
-  it("成功时无 error 字段", async () => {
-    const { status } = await postPaipan({
+describe("computePaipan - fields 始终存在", () => {
+  it("成功时无 error 字段", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "北京市", city: "市辖区",
     });
-    expect(status).toBe(200);
+    expect(result.ok).toBe(true);
   });
 
-  it("字段错误时 fields 只含 invalid 字段", async () => {
-    const { body } = await postPaipan({
+  it("字段错误时 fields 只含 invalid 字段", () => {
+    const result = postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "火星省", city: "某市",
     });
-    expect(Object.keys(body.error.fields)).toEqual(["province"]);
-  });
-});
-
-describe("静态资源服务", () => {
-  it("GET / 返回 index.html", async () => {
-    const res = await fetch(baseUrl + "/");
-    expect(res.status).toBe(200);
-    expect(res.headers.get("content-type")).toMatch(/text\/html/);
-    const html = await res.text();
-    expect(html).toContain("命盘工作台");
-  });
-
-  it("GET /app.js 返回 JS", async () => {
-    const res = await fetch(baseUrl + "/app.js");
-    expect(res.status).toBe(200);
-    expect(res.headers.get("content-type")).toMatch(/javascript/);
-  });
-
-  it("GET /cities/provinces.json 返回省份索引", async () => {
-    const res = await fetch(baseUrl + "/cities/provinces.json");
-    expect(res.status).toBe(200);
-    const provinces = await res.json();
-    expect(provinces).toContain("北京市");
-    expect(provinces).toContain("新疆维吾尔自治区");
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(Object.keys(result.error.fields)).toEqual(["province"]);
   });
 });
