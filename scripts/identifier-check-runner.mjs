@@ -15,7 +15,13 @@ const namingExtensions = new Set([...executableExtensions, ".html", ".css"]);
 const ignoredPaths = new Set(["src/data/cities.generated.ts"]);
 
 function collectFiles(directory) {
-  return readdirSync(directory).flatMap((entry) => {
+  let entries;
+  try {
+    entries = readdirSync(directory);
+  } catch {
+    return [];
+  }
+  return entries.flatMap((entry) => {
     const file = path.join(directory, entry);
     return statSync(file).isDirectory() ? collectFiles(file) : [file];
   });
