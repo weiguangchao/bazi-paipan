@@ -1,7 +1,7 @@
 {
   "name": "bazi-paipan",
   "version": "0.1.0",
-  "description": "八字排盘 CLI - 输入出生年月日时，算出四柱八字与大运",
+  "description": "八字排盘 Web - 输入出生年月日时，算出四柱八字与大运",
   "type": "module",
   "scripts": {
     "dev": "vite",
