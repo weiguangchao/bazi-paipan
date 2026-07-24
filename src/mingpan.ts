@@ -5,7 +5,7 @@
 // 调用方（adapter）不再自行取日主、不再重复附加十神。命盘不读时钟，当前年月由调用方注入。
 // 遵循 ADR-0001/0002/0003/0004，领域规则全部委托既有纯函数（paipan/shishen/ganzhiRelations/...）。
 
-import { paipan, type PaipanInput } from "./paipan.js";
+import { paipan } from "./paipan.js";
 import { liunian } from "./liunian.js";
 import { shishen, cangganTable } from "./shishen.js";
 import { ganzhiDizhi, ganzhiTiangan, type Ganzhi, type Tiangan } from "./ganzhi.js";
@@ -15,6 +15,7 @@ import {
 } from "./ganzhi-relations.js";
 import { personalInfo, type PersonalInfo } from "./personal-info.js";
 import type { CurrentYearMonth } from "./birth-date.js";
+import type { BirthProfile } from "./birth-profile.js";
 
 /** 藏干及其相对日主的十神。 */
 export interface CangganOut {
@@ -164,7 +165,7 @@ function buildTips(result: {
  * 干支关系、生肖星座、提示语义标志。日主推导与十神附加在此统一完成。
  */
 export async function mingpan(
-  input: PaipanInput,
+  input: BirthProfile,
   now: CurrentYearMonth,
 ): Promise<Mingpan> {
   const result = await paipan(input);

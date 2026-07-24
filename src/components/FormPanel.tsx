@@ -7,6 +7,7 @@ import { zhCN } from "date-fns/locale";
 import { computePaipan, type PaipanData } from "@/api/paipan";
 import { getBirthDateLimit } from "@/birth-date";
 import { getBeijingYearMonth } from "@/beijing-time";
+import { parse } from "@/birth-profile";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -56,15 +57,17 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
       ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
       : "";
 
+    const strings = { date: dateString, time, gender, province, city };
+    const parsed = parse(strings, now);
+    if (!parsed.ok) {
+      setErrors(parsed.fields);
+      setGeneralError(Object.values(parsed.fields)[0] ?? "");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const result = await computePaipan({
-        date: dateString,
-        time,
-        gender,
-        province,
-        city,
-      }, now);
+      const result = await computePaipan(strings, now);
 
       if (!result.ok) {
         setErrors(result.error.fields);

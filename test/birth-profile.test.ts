@@ -1,0 +1,98 @@
+import { describe, it, expect } from "vitest";
+import { fromUrlParams, toUrlParams, parse, type BirthDataInput } from "../src/birth-profile.js";
+
+const NOW = { year: 2026, month: 7 };
+
+describe("fromUrlParams - 无效参数静默忽略", () => {
+  it("合法参数恢复为字符串默认值", () => {
+    const params = new URLSearchParams({
+      date: "2000-01-01", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
+    });
+    expect(fromUrlParams(params)).toEqual({
+      date: "2000-01-01", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
+    });
+  });
+
+  it("非法日期被忽略为 undefined", () => {
+    const params = new URLSearchParams({ date: "2200-13-45", time: "12:00", gender: "男" });
+    expect(fromUrlParams(params).date).toBeUndefined();
+  });
+
+  it("非法时间被忽略为 undefined", () => {
+    const params = new URLSearchParams({ date: "2000-01-01", time: "25:99", gender: "男" });
+    expect(fromUrlParams(params).time).toBeUndefined();
+  });
+
+  it("非法性别被忽略为 undefined", () => {
+    const params = new URLSearchParams({ date: "2000-01-01", time: "12:00", gender: "X" });
+    expect(fromUrlParams(params).gender).toBeUndefined();
+  });
+
+  it("缺失参数恢复为 undefined，其余有效参数仍恢复", () => {
+    const params = new URLSearchParams({ time: "08:30" });
+    const restored = fromUrlParams(params);
+    expect(restored.time).toBe("08:30");
+    expect(restored.date).toBeUndefined();
+    expect(restored.gender).toBeUndefined();
+    expect(restored.province).toBeUndefined();
+    expect(restored.city).toBeUndefined();
+  });
+
+  it("空省市恢复为 undefined", () => {
+    const params = new URLSearchParams({ date: "2000-01-01", time: "12:00", gender: "女", province: "", city: "" });
+    const restored = fromUrlParams(params);
+    expect(restored.province).toBeUndefined();
+    expect(restored.city).toBeUndefined();
+  });
+});
+
+describe("toUrlParams - 序列化与格式", () => {
+  it("写入 date/time/gender，省市同时给时才写入", () => {
+    const input: BirthDataInput = {
+      date: "2000-01-01", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
+    };
+    const params = toUrlParams(input);
+    expect(params.get("date")).toBe("2000-01-01");
+    expect(params.get("time")).toBe("12:00");
+    expect(params.get("gender")).toBe("男");
+    expect(params.get("province")).toBe("北京市");
+    expect(params.get("city")).toBe("市辖区");
+  });
+
+  it("省市缺失时不写入 province/city", () => {
+    const input: BirthDataInput = { date: "2000-01-01", time: "12:00", gender: "女", province: "", city: "" };
+    const params = toUrlParams(input);
+    expect(params.has("province")).toBe(false);
+    expect(params.has("city")).toBe(false);
+  });
+
+  it("与 fromUrlParams 往返一致（合法值）", () => {
+    const input: BirthDataInput = {
+      date: "1990-05-15", time: "16:00", gender: "男", province: "北京市", city: "市辖区",
+    };
+    expect(fromUrlParams(toUrlParams(input))).toEqual({ ...input, province: "北京市", city: "市辖区" });
+  });
+});
+
+describe("parse - 字段级错误与 typed 值", () => {
+  it("成功返回 typed 出生资料", () => {
+    const r = parse({ date: "2000-01-01", time: "12:00", gender: "男", province: "北京市", city: "市辖区" }, NOW);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.value).toEqual({
+      year: 2000, month: 1, day: 1, hour: 12, minute: 0,
+      gender: "男", birthplace: { province: "北京市", city: "市辖区" },
+    });
+  });
+
+  it("失败返回字段级错误，不含 typed 值", () => {
+    const r = parse({ date: "2000-13-45", time: "25:99", gender: "", province: "四川省", city: "" }, NOW);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.fields.date).toBeDefined();
+    expect(r.fields.time).toBeDefined();
+    expect(r.fields.gender).toBeDefined();
+    expect(r.fields.province).toBeDefined();
+    expect(r.fields.city).toBeDefined();
+  });
+});

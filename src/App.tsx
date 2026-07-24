@@ -4,45 +4,22 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { PaipanData } from "@/api/paipan";
+import { fromUrlParams, toUrlParams } from "@/birth-profile";
 import { FormPanel, type BirthData } from "@/components/FormPanel";
 import { PersonalInfo } from "@/components/PersonalInfo";
 import { SizhuTable } from "@/components/SizhuTable";
 import { GanzhiRelations } from "@/components/GanzhiRelations";
 import { DayunPanel } from "@/components/DayunPanel";
 
-function readDefaultValues(params: URLSearchParams): Partial<BirthData> {
-  const date = params.get("date");
-  const time = params.get("time");
-  const gender = params.get("gender");
-  const province = params.get("province");
-  const city = params.get("city");
-
-  return {
-    date: date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : undefined,
-    time: time && /^([01]\d|2[0-3]):[0-5]\d$/.test(time) ? time : undefined,
-    gender: gender === "男" || gender === "女" ? gender : undefined,
-    province: province || undefined,
-    city: city || undefined,
-  };
-}
-
 export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [paipanData, setPaipanData] = useState<PaipanData | null>(null);
 
-  const defaultValues = readDefaultValues(searchParams);
+  const defaultValues = fromUrlParams(searchParams) as Partial<BirthData>;
 
   function handleSubmit(data: PaipanData) {
     setPaipanData(data);
-    const params = new URLSearchParams();
-    params.set("date", data.input.date);
-    params.set("time", data.input.time);
-    params.set("gender", data.input.gender);
-    if (data.input.province && data.input.city) {
-      params.set("province", data.input.province);
-      params.set("city", data.input.city);
-    }
-    setSearchParams(params, { replace: true });
+    setSearchParams(toUrlParams(data.input), { replace: true });
   }
 
   return (
