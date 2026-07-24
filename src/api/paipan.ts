@@ -149,9 +149,9 @@ function liunianzhuToOut(
   };
 }
 
-export function computePaipan(
+export async function computePaipan(
   input: PaipanInput,
-): { ok: true; data: PaipanData } | { ok: false; error: PaipanError } {
+): Promise<{ ok: true; data: PaipanData } | { ok: false; error: PaipanError }> {
   const fields: Record<string, string> = {};
 
   if (input.gender !== "男" && input.gender !== "女") {
@@ -222,7 +222,7 @@ export function computePaipan(
   const domainInput: DomainPaipanInput = { year, month, day, hour, minute, birthplace, gender: input.gender as Gender };
   const personal = personalInfo({ year, month, day });
 
-  const result = paipan(domainInput);
+  const result = await paipan(domainInput);
   const dayMasterTiangan = ganzhiTiangan(result.rizhu);
 
   const sizhu: SizhuOut = {

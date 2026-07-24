@@ -7,8 +7,8 @@ function postPaipan(input: PaipanInput) {
 
 describe("computePaipan - 成功响应", () => {
   // 2000-01-01 12:00 北京市/市辖区 男：年柱 己卯、月柱 丙子、日柱 戊午、时柱 戊午
-  it("成功排盘返回完整 data 结构与代表值", () => {
-    const result = postPaipan({
+  it("成功排盘返回完整 data 结构与代表值", async () => {
+    const result = await postPaipan({
       date: "2000-01-01",
       time: "12:00",
       gender: "男",
@@ -78,8 +78,8 @@ describe("computePaipan - 成功响应", () => {
     expect(data.dayun.zhu.filter((item) => item.isCurrent)).toHaveLength(1);
   });
 
-  it("生肖按原始公历年计算，不读取立春前的年柱地支", () => {
-    const result = postPaipan({
+  it("生肖按原始公历年计算，不读取立春前的年柱地支", async () => {
+    const result = await postPaipan({
       date: "2000-01-01",
       time: "12:00",
       gender: "男",
@@ -93,14 +93,14 @@ describe("computePaipan - 成功响应", () => {
     expect(result.data.personal.shengxiao).toBe("龙");
   });
 
-  it("星座按原始公历月日计算，不随真太阳时跨日", () => {
+  it("星座按原始公历月日计算，不随真太阳时跨日", async () => {
     const birthData = {
       date: "2026-11-22",
       time: "23:20",
       gender: "男",
     };
-    const clock = postPaipan({ ...birthData, province: "", city: "" });
-    const trueSolarTime = postPaipan({
+    const clock = await postPaipan({ ...birthData, province: "", city: "" });
+    const trueSolarTime = await postPaipan({
       ...birthData,
       province: "黑龙江省",
       city: "双鸭山市",
@@ -114,8 +114,8 @@ describe("computePaipan - 成功响应", () => {
     expect(trueSolarTime.data.personal.zodiacSign).toBe("天蝎座");
   });
 
-  it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", () => {
-    const result = postPaipan({
+  it("空省市 -> 钟表时排盘，NO_LONGITUDE_CORRECTION 提示", async () => {
+    const result = await postPaipan({
       date: "2000-01-01",
       time: "12:00",
       gender: "男",
@@ -196,8 +196,8 @@ describe("computePaipan - 成功响应", () => {
       sizhu: ["己卯", "丁丑", "丙寅", "己丑"],
       dizhi: [],
     },
-  ])("$date $time 男按公开契约返回精确地支关系", ({ date, time, sizhu, dizhi }) => {
-    const result = postPaipan({
+  ])("$date $time 男按公开契约返回精确地支关系", async ({ date, time, sizhu, dizhi }) => {
+    const result = await postPaipan({
       date,
       time,
       gender: "男",
@@ -219,8 +219,8 @@ describe("computePaipan - 成功响应", () => {
     }
   });
 
-  it("无命中时仍返回必有的干支关系空数组", () => {
-    const result = postPaipan({
+  it("无命中时仍返回必有的干支关系空数组", async () => {
+    const result = await postPaipan({
       date: "2000-01-09",
       time: "02:00",
       gender: "男",
@@ -236,20 +236,20 @@ describe("computePaipan - 成功响应", () => {
     expect(result.data.ganzhiRelations).toEqual({ tiangan: [], dizhi: [] });
   });
 
-  it("当前大运按北京时间起运月份切换", () => {
+  it("当前大运按北京时间起运月份切换", async () => {
     const now = vi.spyOn(Date, "now");
     const input: PaipanInput = {
       date: "1990-05-15", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
     };
 
     now.mockReturnValue(Date.UTC(2017, 7, 15));
-    const august = postPaipan(input);
+    const august = await postPaipan(input);
     expect(august.ok).toBe(true);
     if (!august.ok) return;
     expect(august.data.dayun.zhu.findIndex((zhu) => zhu.isCurrent)).toBe(1);
 
     now.mockReturnValue(Date.UTC(2017, 8, 15));
-    const september = postPaipan(input);
+    const september = await postPaipan(input);
     expect(september.ok).toBe(true);
     if (!september.ok) return;
     expect(september.data.dayun.zhu.findIndex((zhu) => zhu.isCurrent)).toBe(2);
@@ -259,8 +259,8 @@ describe("computePaipan - 成功响应", () => {
 });
 
 describe("computePaipan - 字段校验失败", () => {
-  it("无效日期 -> fields.date", () => {
-    const result = postPaipan({
+  it("无效日期 -> fields.date", async () => {
+    const result = await postPaipan({
       date: "2000-13-45", time: "12:00", gender: "男", province: "", city: "",
     });
     expect(result.ok).toBe(false);
@@ -269,8 +269,8 @@ describe("computePaipan - 字段校验失败", () => {
     expect(result.error.message).toMatch(/日期/);
   });
 
-  it("无效时间 -> fields.time", () => {
-    const result = postPaipan({
+  it("无效时间 -> fields.time", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "25:99", gender: "男", province: "", city: "",
     });
     expect(result.ok).toBe(false);
@@ -278,8 +278,8 @@ describe("computePaipan - 字段校验失败", () => {
     expect(result.error.fields.time).toBeDefined();
   });
 
-  it("缺失性别 -> fields.gender", () => {
-    const result = postPaipan({
+  it("缺失性别 -> fields.gender", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "12:00", gender: "", province: "", city: "",
     });
     expect(result.ok).toBe(false);
@@ -287,8 +287,8 @@ describe("computePaipan - 字段校验失败", () => {
     expect(result.error.fields.gender).toBeDefined();
   });
 
-  it("超出 100 年边界 -> fields.date", () => {
-    const result = postPaipan({
+  it("超出 100 年边界 -> fields.date", async () => {
+    const result = await postPaipan({
       date: "2200-01-01", time: "12:00", gender: "男", province: "", city: "",
     });
     expect(result.ok).toBe(false);
@@ -299,8 +299,8 @@ describe("computePaipan - 字段校验失败", () => {
 });
 
 describe("computePaipan - 出生地校验失败", () => {
-  it("未知省份 -> UNKNOWN_BIRTHPLACE + fields.province", () => {
-    const result = postPaipan({
+  it("未知省份 -> UNKNOWN_BIRTHPLACE + fields.province", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "火星省", city: "某市",
     });
@@ -311,8 +311,8 @@ describe("computePaipan - 出生地校验失败", () => {
     expect(result.error.fields.city).toBeUndefined();
   });
 
-  it("省市不匹配 -> UNKNOWN_BIRTHPLACE + fields.city", () => {
-    const result = postPaipan({
+  it("省市不匹配 -> UNKNOWN_BIRTHPLACE + fields.city", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "四川省", city: "不存在的市",
     });
@@ -323,8 +323,8 @@ describe("computePaipan - 出生地校验失败", () => {
     expect(result.error.fields.province).toBeUndefined();
   });
 
-  it("只给省不给市 -> fields 同时标记", () => {
-    const result = postPaipan({
+  it("只给省不给市 -> fields 同时标记", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "四川省", city: "",
     });
@@ -336,16 +336,16 @@ describe("computePaipan - 出生地校验失败", () => {
 });
 
 describe("computePaipan - fields 始终存在", () => {
-  it("成功时无 error 字段", () => {
-    const result = postPaipan({
+  it("成功时无 error 字段", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "北京市", city: "市辖区",
     });
     expect(result.ok).toBe(true);
   });
 
-  it("字段错误时 fields 只含 invalid 字段", () => {
-    const result = postPaipan({
+  it("字段错误时 fields 只含 invalid 字段", async () => {
+    const result = await postPaipan({
       date: "2000-01-01", time: "12:00", gender: "男",
       province: "火星省", city: "某市",
     });

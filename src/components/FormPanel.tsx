@@ -43,9 +43,10 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
   const [birthplaceReady, setBirthplaceReady] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
     setGeneralError("");
@@ -54,21 +55,26 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
       ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
       : "";
 
-    const result = computePaipan({
-      date: dateString,
-      time,
-      gender,
-      province,
-      city,
-    });
+    setSubmitting(true);
+    try {
+      const result = await computePaipan({
+        date: dateString,
+        time,
+        gender,
+        province,
+        city,
+      });
 
-    if (!result.ok) {
-      setErrors(result.error.fields);
-      setGeneralError(result.error.message);
-      return;
+      if (!result.ok) {
+        setErrors(result.error.fields);
+        setGeneralError(result.error.message);
+        return;
+      }
+
+      onSubmit(result.data);
+    } finally {
+      setSubmitting(false);
     }
-
-    onSubmit(result.data);
   }
 
   function handleBirthplaceChange(p: string, c: string) {
@@ -168,8 +174,8 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
         onReadyChange={setBirthplaceReady}
       />
 
-      <Button type="submit" disabled={submitDisabled} className="w-full">
-        排盘
+      <Button type="submit" disabled={submitDisabled || submitting} className="w-full">
+        {submitting ? "排盘中…" : "排盘"}
       </Button>
 
       {generalError && (

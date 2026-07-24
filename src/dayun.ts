@@ -16,7 +16,6 @@ import {
   JIE_TERM_INDEXES,
   type Ganzhi,
 } from "./ganzhi.js";
-import { getSolarTermMoment } from "./jieqi.js";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
 export type Gender = "男" | "女";
@@ -75,11 +74,11 @@ export function determineDayunDirection(gender: Gender, yearTianganIndex: number
  * 找出生时刻方向侧最近一次"节"（交节时刻）：forward=true 取下一节（严格大于出生时刻），
  * forward=false 取上一节（严格小于出生时刻）。
  */
-function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean): number {
+function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean, jieqiModule: { getSolarTermMoment: typeof import("./jieqi.js")["getSolarTermMoment"] }): number {
   let best = forward ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
   for (const year of [birthYear - 1, birthYear, birthYear + 1]) {
     for (const termIndex of JIE_TERM_INDEXES) {
-      const ms = getSolarTermMoment(year, termIndex);
+      const ms = jieqiModule.getSolarTermMoment(year, termIndex);
       if (forward) {
         if (ms > birthUtc && ms < best) best = ms;
       } else {
@@ -139,17 +138,18 @@ function splitZhu(zhu: Ganzhi): { tianganIndex: number; dizhiIndex: number } {
  * @param birthMonth 出生公历月（用于起运年月起算）
  * @returns 大运完整结果（方向 + 起运岁 + 10 柱）
  */
-export function dayun(
+export async function dayun(
   yuezhu: Ganzhi,
   yearTianganIndex: number,
   gender: Gender,
   birthUtc: number,
   birthYear: number,
   birthMonth: number,
-): DayunResult {
+): Promise<DayunResult> {
+  const jieqiModule = await import("./jieqi.js");
   const direction = determineDayunDirection(gender, yearTianganIndex);
   const forward = direction === "顺";
-  const jieMs = findAdjacentJie(birthUtc, birthYear, forward);
+  const jieMs = findAdjacentJie(birthUtc, birthYear, forward, jieqiModule);
   const diffMs = forward ? jieMs - birthUtc : birthUtc - jieMs;
   const qiyunsui = calculateQiyunsui(diffMs);
 
