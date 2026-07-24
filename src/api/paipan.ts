@@ -6,7 +6,6 @@ import { paipan, type PaipanInput as DomainPaipanInput } from "../paipan.js";
 import { liunian } from "../liunian.js";
 import { shishen, cangganTable } from "../shishen.js";
 import { findLongitude, type Birthplace } from "../birthplace.js";
-import { getBeijingYearMonth } from "../beijing-time.js";
 import type { Gender } from "../dayun.js";
 import { ganzhiDizhi, ganzhiTiangan, type Ganzhi, type Tiangan } from "../ganzhi.js";
 import {
@@ -14,7 +13,7 @@ import {
   type GanzhiRelationsResult,
 } from "../ganzhi-relations.js";
 import { personalInfo, type PersonalInfo } from "../personal-info.js";
-import { getBirthDateLimit, isAfterBirthDateLimit, parseBirthDate } from "../birth-date.js";
+import { isAfterBirthDateLimit, getBirthDateLimit, parseBirthDate, type CurrentYearMonth } from "../birth-date.js";
 
 /** API 输入：出生资料（网页提交）。省市可同时为空或同时给出。 */
 export interface PaipanInput {
@@ -151,6 +150,7 @@ function liunianzhuToOut(
 
 export async function computePaipan(
   input: PaipanInput,
+  now: CurrentYearMonth,
 ): Promise<{ ok: true; data: PaipanData } | { ok: false; error: PaipanError }> {
   const fields: Record<string, string> = {};
 
@@ -183,9 +183,8 @@ export async function computePaipan(
   }
 
   if (dateValid && timeValid) {
-    const nowMs = Date.now();
-    const limit = getBirthDateLimit(nowMs);
-    if (isAfterBirthDateLimit(parsedDate!, nowMs)) {
+    const limit = getBirthDateLimit(now);
+    if (isAfterBirthDateLimit(parsedDate!, now)) {
       fields.date = "出生日期不得晚于服务当前北京日期后 100 个日历年（" + limit.year + "-" + String(limit.month).padStart(2, "0") + "-" + String(limit.day).padStart(2, "0") + "）";
     }
   }
@@ -249,7 +248,7 @@ export async function computePaipan(
   }
 
   const dayun = result.dayun!;
-  const { year: currentYear, month: currentMonth } = getBeijingYearMonth();
+  const { year: currentYear, month: currentMonth } = now;
   const dayunOut: DayunOut = {
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },

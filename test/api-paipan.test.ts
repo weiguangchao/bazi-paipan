@@ -1,8 +1,10 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { computePaipan, type PaipanInput } from "../src/api/paipan.js";
 
-function postPaipan(input: PaipanInput) {
-  return computePaipan(input);
+const NOW = { year: 2026, month: 7 };
+
+function postPaipan(input: PaipanInput, now: { year: number; month: number } = NOW) {
+  return computePaipan(input, now);
 }
 
 describe("computePaipan - 成功响应", () => {
@@ -237,24 +239,19 @@ describe("computePaipan - 成功响应", () => {
   });
 
   it("当前大运按北京时间起运月份切换", async () => {
-    const now = vi.spyOn(Date, "now");
     const input: PaipanInput = {
       date: "1990-05-15", time: "12:00", gender: "男", province: "北京市", city: "市辖区",
     };
 
-    now.mockReturnValue(Date.UTC(2017, 7, 15));
-    const august = await postPaipan(input);
+    const august = await postPaipan(input, { year: 2017, month: 8 });
     expect(august.ok).toBe(true);
     if (!august.ok) return;
     expect(august.data.dayun.zhu.findIndex((zhu) => zhu.isCurrent)).toBe(1);
 
-    now.mockReturnValue(Date.UTC(2017, 8, 15));
-    const september = await postPaipan(input);
+    const september = await postPaipan(input, { year: 2017, month: 9 });
     expect(september.ok).toBe(true);
     if (!september.ok) return;
     expect(september.data.dayun.zhu.findIndex((zhu) => zhu.isCurrent)).toBe(2);
-
-    now.mockRestore();
   });
 });
 

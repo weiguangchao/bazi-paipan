@@ -6,6 +6,7 @@ import { CalendarIcon } from "lucide-react";
 import { zhCN } from "date-fns/locale";
 import { computePaipan, type PaipanData } from "@/api/paipan";
 import { getBirthDateLimit } from "@/birth-date";
+import { getBeijingYearMonth } from "@/beijing-time";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -29,7 +30,7 @@ interface FormPanelProps {
 }
 
 export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
-  const now = Date.now();
+  const now = getBeijingYearMonth();
   const limit = getBirthDateLimit(now);
 
   const initialDate = defaultValues?.date ? new Date(defaultValues.date + "T00:00:00") : undefined;
@@ -63,7 +64,7 @@ export function FormPanel({ defaultValues, onSubmit }: FormPanelProps) {
         gender,
         province,
         city,
-      });
+      }, now);
 
       if (!result.ok) {
         setErrors(result.error.fields);
