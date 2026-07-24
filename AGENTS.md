@@ -1,5 +1,29 @@
 # AGENTS.md
 
+## Project structure
+
+```text
+.
+├── AGENTS.md          # agent 工作流规则（本文件）
+├── CONTEXT.md         # 命理术语表与规范 token
+├── index.html         # Vite 入口
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── docs/
+│   ├── adr/           # 架构决策记录
+│   └── agents/        # agent 工作流细则
+├── src/
+│   ├── domain/        # 命理核心：birth / ganzhi / paipan / time
+│   ├── components/    # React 组件：paipan-form / paipan-result / ui
+│   ├── pages/         # 页面与 URL 参数
+│   ├── data/          # 生成数据 cities.generated.ts
+│   ├── lib/           # 通用工具
+│   └── utils/         # beijing-time / wuxing
+├── scripts/           # 数据生成与标识符检查脚本
+└── test/              # Vitest 测试
+```
+
 ## Agent skills
 
 ### Issue tracker
