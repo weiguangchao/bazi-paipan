@@ -1,16 +1,8 @@
 // 四柱展示：年月日时四柱表格，含天干十神、藏干十神、五行着色。
 // 词汇遵循 CONTEXT.md（四柱、柱、天干、地支、藏干、十神、五行）。
 import type { SizhuOut } from "@/api/paipan";
-import { getWuxing } from "@/lib/wuxing";
+import { getWuxing, wuxingTextColors } from "@/lib/wuxing";
 import { cn } from "@/lib/utils";
-
-const wuxingTextColors: Record<string, string> = {
-  wood: "text-green-600",
-  fire: "text-red-600",
-  earth: "text-amber-700",
-  metal: "text-orange-600",
-  water: "text-blue-500",
-};
 
 const wuxingSymbols: Record<string, string> = {
   wood: "木", fire: "火", earth: "土", metal: "金", water: "水",

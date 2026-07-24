@@ -3,21 +3,13 @@
 // 词汇遵循 CONTEXT.md（大运、大运柱、起运、流年、流年柱、十神）。
 import { useState } from "react";
 import type { DayunOut } from "@/api/paipan";
-import { getWuxing, shishenAbbreviation } from "@/lib/wuxing";
+import { getWuxing, shishenAbbreviation, wuxingTextColors } from "@/lib/wuxing";
 import { cn } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface DayunPanelProps {
   data: DayunOut;
 }
-
-const wuxingTextColors: Record<string, string> = {
-  wood: "text-green-600",
-  fire: "text-red-600",
-  earth: "text-amber-700",
-  metal: "text-orange-600",
-  water: "text-blue-500",
-};
 
 function ZhuRow({ character, shishen }: { character: string; shishen: string }) {
   return (
