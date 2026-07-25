@@ -91,6 +91,20 @@ async function main(): Promise<void> {
     await tryPick(page, "市辖区");
     const afterCityReselect = await cityText(page);
     check("重复点市辖区不清空（toggle 移除）", afterCityReselect.includes("市辖区"), "实际: " + afterCityReselect);
+
+    // 5. 选唯一城市省自动携带城市：北京市 -> 城市字段自动显示"市辖区"，无需点城市下拉
+    await openProvince(page);
+    await tryPick(page, "北京市");
+    await page.keyboard.press("Escape");
+    const autoCity = await cityText(page);
+    check("选北京市后城市自动显示市辖区", autoCity.includes("市辖区"), "实际: " + autoCity);
+
+    // 6. 多城市直辖市不自动填：重庆市 -> 城市字段仍为占位符"选择城市"
+    await openProvince(page);
+    await tryPick(page, "重庆市");
+    await page.keyboard.press("Escape");
+    const chongqingCity = await cityText(page);
+    check("选重庆市后城市不自动填（仍占位）", !chongqingCity.includes("市辖区") && chongqingCity.includes("选择城市"), "实际: " + chongqingCity);
   } finally {
     await browser.close();
   }

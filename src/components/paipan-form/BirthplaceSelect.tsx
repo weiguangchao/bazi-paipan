@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, ChevronsUpDown, MapPin } from "lucide-react";
 import { CITIES } from "@/data/cities.generated";
+import { resolveSingleCity } from "@/components/paipan-form/birthplace-auto-city";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
@@ -30,10 +31,13 @@ export function BirthplaceSelect({ defaultProvince, defaultCity, errors, onChang
 
   function selectProvince(value: string) {
     setProvince(value);
-    setCity("");
+    // 选省后按新省的唯一城市判断决定城市：恰好一个城市则自动携带，否则留空（等效清空）。
+    // 规则对首次选与切换省一致，不区分直辖市（grilling 决议：阈值=城市数等于 1）。
+    const autoCity = resolveSingleCity(value);
+    setCity(autoCity);
     setProvOpen(false);
     onReadyChange?.(true);
-    onChange(value, "");
+    onChange(value, autoCity);
   }
 
   function selectCity(value: string) {
