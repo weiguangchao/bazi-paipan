@@ -2,7 +2,7 @@
 // 词汇遵循 CONTEXT.md（出生资料、命盘、排盘）。
 import { useState } from "react";
 import { parse, type BirthDataInput } from "@/domain/birth/birth-profile";
-import { getBirthDateLimit } from "@/domain/birth/birth-date";
+import { getBirthDateLimit, parseBirthDate } from "@/domain/birth/birth-date";
 import { mingpan, type Mingpan } from "@/domain/paipan/mingpan";
 import { getBeijingYearMonth } from "@/utils/beijing-time";
 
@@ -36,14 +36,31 @@ function formatDateString(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+/** 表单层出生日期默认值；非命理概念（见 CONTEXT.md「出生资料」），与 time/gender 默认同属 UI 预填。 */
+export const DEFAULT_BIRTH_DATE = "2000-01-01";
+
+// 解析表单初始出生日期：URL 合法 date 优先；无 URL 或 URL 非法时预填默认 2000-01-01。
+// 复用领域层 parseBirthDate 做格式与真实日历校验；领域层对空 date 仍报错，默认不渗入 domain。
+// 将 YYYY-MM-DD 解析为本地零点的 Date，统一 date↔string 的本地午夜口径（与 formatDateString 互逆）。
+function parseLocalMidnight(iso: string): Date {
+  return new Date(iso + "T00:00:00");
+}
+
+export function resolveInitialBirthDate(date?: string): Date {
+  const candidate = date ?? DEFAULT_BIRTH_DATE;
+  if (parseBirthDate(candidate) !== null) {
+    return parseLocalMidnight(candidate);
+  }
+  return parseLocalMidnight(DEFAULT_BIRTH_DATE);
+}
+
 export function usePaipanForm(defaultValues?: Partial<BirthDataInput>): PaipanFormResult {
   const now = getBeijingYearMonth();
   const dateLimit = getBirthDateLimit(now);
 
-  const initialDate = defaultValues?.date ? new Date(defaultValues.date + "T00:00:00") : undefined;
-  const validInitial = initialDate && !isNaN(initialDate.getTime()) ? initialDate : undefined;
+  const initialDate = resolveInitialBirthDate(defaultValues?.date);
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(validInitial);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialDate);
   const [time, setTime] = useState(defaultValues?.time ?? "00:00");
   const [gender, setGender] = useState(defaultValues?.gender ?? "男");
   const [province, setProvince] = useState(defaultValues?.province ?? "");
