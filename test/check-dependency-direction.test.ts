@@ -1,0 +1,120 @@
+import { describe, expect, it } from "vitest";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import {
+  checkDependencyDirection,
+  findDependencyViolations,
+  formatViolation,
+} from "../scripts/check-dependency-direction.mjs";
+
+// 守卫规格见 issues #115 / #116。测试只经由公开导出（findDependencyViolations /
+// formatViolation / checkDependencyDirection）观察行为，不触达内部实现。
+// 命理术语遵循 CONTEXT.md（zhu / sizhu / ganzhi 等完整 token）。
+
+describe("依赖方向守卫", () => {
+  it("拒绝 domain 经 @/ alias 指向 components", () => {
+    const source = 'import { Button } from "@/components/ui/button";';
+    const [violation] = findDependencyViolations(source, "src/domain/paipan/leak.ts");
+    expect(violation).toEqual(
+      expect.objectContaining({
+        fromLayer: "domain",
+        toLayer: "components",
+        specifier: "@/components/ui/button",
+      }),
+    );
+  });
+
+  it("拒绝 domain 经相对路径逃出 domain 子树（扩展名缺省）", () => {
+    // 关键边界：相对路径 ../.. 的点不应被误读为扩展名分隔符，
+    // 解析后落点为 components 层即判违规。
+    const source = 'import { Button } from "../../components/ui/button";';
+    const [violation] = findDependencyViolations(source, "src/domain/paipan/leak.ts");
+    expect(violation).toEqual(
+      expect.objectContaining({ fromLayer: "domain", toLayer: "components" }),
+    );
+  });
+
+  it("拒绝 domain 经相对路径逃向未声明层（如 ../hooks/...）", () => {
+    // 落地 #116「domain 内的相对路径不得解析出 domain 子树」：
+    // 即使目标层尚未声明，只要解析落在 src/ 内且非 domain，即判 domain 越层。
+    const source = 'import { useFoo } from "../../hooks/useFoo";';
+    const [violation] = findDependencyViolations(source, "src/domain/paipan/leak.ts");
+    expect(violation).toEqual(
+      expect.objectContaining({ fromLayer: "domain", toLayer: "hooks" }),
+    );
+  });
+
+  it("拒绝 domain 经 @/ alias 逃向未声明层", () => {
+    const source = 'import { useFoo } from "@/hooks/useFoo";';
+    const [violation] = findDependencyViolations(source, "src/domain/paipan/leak.ts");
+    expect(violation).toEqual(
+      expect.objectContaining({ fromLayer: "domain", toLayer: "hooks" }),
+    );
+  });
+
+  it("允许 domain 内相对引用停留在 domain 子树", () => {
+    const source = 'import { paipan } from "../paipan/paipan";';
+    expect(findDependencyViolations(source, "src/domain/paipan/mingpan.ts")).toEqual([]);
+  });
+
+  it("允许 utils -> domain（展示适配消费纯核）", () => {
+    const source = 'import { characterWuxing } from "@/domain/ganzhi/wuxing";';
+    expect(findDependencyViolations(source, "src/utils/wuxing.ts")).toEqual([]);
+  });
+
+  it("允许 domain -> data（出生地消费生成数据）", () => {
+    const source = 'import { CITIES } from "@/data/cities.generated";';
+    expect(findDependencyViolations(source, "src/domain/birth/birthplace.ts")).toEqual([]);
+  });
+
+  it("拒绝 utils 指向上游消费层 components", () => {
+    const source = 'import { Button } from "@/components/ui/button";';
+    const [violation] = findDependencyViolations(source, "src/utils/wuxing.ts");
+    expect(violation).toEqual(
+      expect.objectContaining({ fromLayer: "utils", toLayer: "components" }),
+    );
+  });
+
+  it("允许 pages -> components / domain / utils，允许 app -> pages", () => {
+    expect(
+      findDependencyViolations(
+        'import { FormPanel } from "@/components/paipan-form/FormPanel";',
+        "src/pages/paipan/PaipanPage.tsx",
+      ),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(
+        'import { PaipanPage } from "@/pages/paipan/PaipanPage";',
+        "src/app/App.tsx",
+      ),
+    ).toEqual([]);
+  });
+
+  it("formatViolation 报告文件、行列、方向与允许集", () => {
+    const source = 'import { Button } from "@/components/ui/button";';
+    const [violation] = findDependencyViolations(source, "src/domain/paipan/leak.ts");
+    expect(formatViolation("src/domain/paipan/leak.ts", violation!)).toBe(
+      "src/domain/paipan/leak.ts:1:24 forbidden dependency direction domain -> components via @/components/ui/button; allowed targets for domain: domain, data",
+    );
+  });
+
+  it("对整仓扫描抛出越层清单（exit 非 0 语义）", () => {
+    const root = mkdtempSync(path.join(tmpdir(), "dep-guard-"));
+    try {
+      mkdirSync(path.join(root, "src", "domain", "paipan"), { recursive: true });
+      mkdirSync(path.join(root, "src", "components", "ui"), { recursive: true });
+      writeFileSync(
+        path.join(root, "src", "components", "ui", "button.tsx"),
+        "export const Button = {};\n",
+      );
+      writeFileSync(
+        path.join(root, "src", "domain", "paipan", "leak.ts"),
+        'import { Button } from "@/components/ui/button";\n',
+      );
+      expect(() => checkDependencyDirection(root)).toThrow(/domain -> components/);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});

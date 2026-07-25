@@ -8,10 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary",
+    "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
     "test:watch": "vitest",
     "check:ascii-identifiers": "node scripts/check-ascii-identifiers.mjs",
     "check:identifier-vocabulary": "node scripts/check-identifier-vocabulary.mjs",
+    "check:dependency-direction": "node scripts/check-dependency-direction.mjs",
     "scrape:wenzhen": "tsx scripts/scrape-wenzhen.ts",
     "build:cities": "node scripts/build-public-data.cjs"
   },
