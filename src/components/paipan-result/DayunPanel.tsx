@@ -1,9 +1,10 @@
 // 大运与流年面板：大运用 Radix ToggleGroup type="single" 实现单选，选中刷新流年。
 // 当前（isCurrent）仅决定初始选中与 badge，与选中态解耦。流年纯展示不可点。
 // 词汇遵循 CONTEXT.md（大运、大运柱、起运、流年、流年柱、十神）。
+// 大运/流年干支不显示五行色与 emoji，仅用前景墨色；十神用简写。
 import { useState } from "react";
 import type { DayunOut } from "@/domain/paipan/mingpan";
-import { getWuxing, shishenAbbreviation, wuxingTextColors } from "@/utils/wuxing";
+import { shishenAbbreviation } from "@/utils/wuxing";
 import { cn } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -14,7 +15,7 @@ interface DayunPanelProps {
 function ZhuRow({ character, shishen }: { character: string; shishen: string }) {
   return (
     <div className="flex items-baseline justify-center gap-1.5 min-h-7">
-      <span className={cn("font-serif text-lg font-semibold", wuxingTextColors[getWuxing(character)])}>
+      <span className="font-serif text-lg font-semibold text-foreground">
         {character}
       </span>
       <span className="text-xs font-semibold text-accent">{shishenAbbreviation(shishen)}</span>
@@ -52,7 +53,7 @@ export function DayunPanel({ data }: DayunPanelProps) {
             <span className="relative w-full text-center">
               <span className="text-xs font-semibold text-muted-foreground">{zhu.startYear}</span>
               {zhu.isCurrent && (
-                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
+                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
                   当前
                 </span>
               )}
@@ -75,7 +76,7 @@ export function DayunPanel({ data }: DayunPanelProps) {
             <span className="relative">
               <span className="text-xs font-semibold text-muted-foreground">{item.year}</span>
               {item.isCurrentYear && (
-                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
+                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
                   今年
                 </span>
               )}

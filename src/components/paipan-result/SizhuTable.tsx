@@ -1,12 +1,9 @@
-// 四柱展示：年月日时四柱表格，含天干十神、藏干十神、五行着色。
+// 四柱展示：年月日时四柱表格，含天干十神、藏干十神、五行着色与 emoji。
 // 词汇遵循 CONTEXT.md（四柱、柱、天干、地支、藏干、十神、五行）。
+// 五行信号：天干/地支用颜色 + emoji（emoji 放大 text-base）；藏干仅用颜色，无 emoji。
 import type { SizhuOut } from "@/domain/paipan/mingpan";
-import { getWuxing, wuxingTextColors } from "@/utils/wuxing";
+import { getWuxing, wuxingTextColors, wuxingEmoji } from "@/utils/wuxing";
 import { cn } from "@/lib/utils";
-
-const wuxingSymbols: Record<string, string> = {
-  wood: "木", fire: "火", earth: "土", metal: "金", water: "水",
-};
 
 interface SizhuTableProps {
   sizhu: SizhuOut;
@@ -23,18 +20,24 @@ export function SizhuTable({ sizhu }: SizhuTableProps) {
   const zhuList = columns.map((col) => ({ label: col.label, data: sizhu[col.key] }));
   const rows = [
     { label: "十神", render: (z: typeof zhuList[number]) => <span className="text-sm">{z.data.shishen}</span> },
-    { label: "天干", render: (z: typeof zhuList[number]) => (
-      <span className={cn("relative text-2xl font-bold", wuxingTextColors[getWuxing(z.data.ganzhi[0]!)])}>
-        {z.data.ganzhi[0]}
-        <span className="ml-0.5 text-xs">{wuxingSymbols[getWuxing(z.data.ganzhi[0]!)]}</span>
-      </span>
-    )},
-    { label: "地支", render: (z: typeof zhuList[number]) => (
-      <span className={cn("relative text-2xl font-bold", wuxingTextColors[getWuxing(z.data.ganzhi[1]!)])}>
-        {z.data.ganzhi[1]}
-        <span className="ml-0.5 text-xs">{wuxingSymbols[getWuxing(z.data.ganzhi[1]!)]}</span>
-      </span>
-    )},
+    { label: "天干", render: (z: typeof zhuList[number]) => {
+      const w = getWuxing(z.data.ganzhi[0]!);
+      return (
+        <span className={cn("relative inline-flex items-baseline text-2xl font-bold", wuxingTextColors[w])}>
+          {z.data.ganzhi[0]}
+          <span className="ml-0.5 text-base leading-none">{wuxingEmoji[w]}</span>
+        </span>
+      );
+    }},
+    { label: "地支", render: (z: typeof zhuList[number]) => {
+      const w = getWuxing(z.data.ganzhi[1]!);
+      return (
+        <span className={cn("relative inline-flex items-baseline text-2xl font-bold", wuxingTextColors[w])}>
+          {z.data.ganzhi[1]}
+          <span className="ml-0.5 text-base leading-none">{wuxingEmoji[w]}</span>
+        </span>
+      );
+    }},
     { label: "藏干", render: (z: typeof zhuList[number]) => (
       <div className="flex flex-col gap-0.5 text-sm">
         {z.data.canggan.map((c, i) => (
