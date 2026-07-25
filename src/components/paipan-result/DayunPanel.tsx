@@ -2,6 +2,7 @@
 // 当前（isCurrent）仅决定初始选中与 badge，与选中态解耦。流年纯展示不可点。
 // 词汇遵循 CONTEXT.md（大运、大运柱、起运、流年、流年柱、十神）。
 // 大运/流年干支不显示五行色与 emoji，仅用前景墨色；十神用简写。
+// 大运卡片 hover 为墨线下划：悬停扫入 70%，选中常驻 88% 并加重干支、年份转 accent。
 import { useState } from "react";
 import type { DayunOut } from "@/domain/paipan/mingpan";
 import { shishenAbbreviation } from "@/utils/wuxing";
@@ -12,10 +13,10 @@ interface DayunPanelProps {
   data: DayunOut;
 }
 
-function ZhuRow({ character, shishen }: { character: string; shishen: string }) {
+function ZhuRow({ character, shishen, bold }: { character: string; shishen: string; bold?: boolean }) {
   return (
     <div className="flex items-baseline justify-center gap-1.5 min-h-7">
-      <span className="font-serif text-lg font-semibold text-foreground">
+      <span className={cn("font-serif text-lg text-foreground", bold ? "font-bold" : "font-semibold")}>
         {character}
       </span>
       <span className="text-xs font-semibold text-accent">{shishenAbbreviation(shishen)}</span>
@@ -43,28 +44,45 @@ export function DayunPanel({ data }: DayunPanelProps) {
         variant="outline"
         className="flex w-full flex-nowrap gap-1.5 overflow-x-auto rounded-lg border border-border p-1"
       >
-        {data.zhu.map((zhu, i) => (
-          <ToggleGroupItem
-            key={i}
-            value={String(i)}
-            aria-label={`${zhu.startYear}年大运，年龄${zhu.qiyun.ageYears}~${zhu.qiyun.ageYears + 9}岁${zhu.isCurrent ? "，当前" : ""}`}
-            className="flex h-auto w-16 shrink-0 flex-col gap-0.5 rounded-md border border-border p-1.5 data-[state=on]:border-accent data-[state=on]:bg-accent/10 data-[state=on]:shadow-[inset_0_-3px_0_var(--color-accent)]"
-          >
-            <span className="relative w-full text-center">
-              <span className="text-xs font-semibold text-muted-foreground">{zhu.startYear}</span>
-              {zhu.isCurrent && (
-                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
-                  当前
-                </span>
+        {data.zhu.map((zhu, i) => {
+          const isSelected = i === index;
+          return (
+            <ToggleGroupItem
+              key={i}
+              value={String(i)}
+              aria-label={`${zhu.startYear}年大运，年龄${zhu.qiyun.ageYears}~${zhu.qiyun.ageYears + 9}岁${zhu.isCurrent ? "，当前" : ""}`}
+              className={cn(
+                "group flex h-auto w-16 shrink-0 flex-col gap-0.5 rounded-md border border-border p-1.5 shadow-none data-[state=on]:bg-transparent",
+                isSelected ? "hover:bg-transparent" : "hover:bg-accent/5",
               )}
-            </span>
-            <span className="text-[0.6rem] leading-none text-muted-foreground">
-              {zhu.qiyun.ageYears}~{zhu.qiyun.ageYears + 9}岁
-            </span>
-            <ZhuRow character={zhu.ganzhi[0]!} shishen={zhu.tianganShishen} />
-            <ZhuRow character={zhu.ganzhi[1]!} shishen={zhu.dizhiShishen} />
-          </ToggleGroupItem>
-        ))}
+            >
+              <span className="relative w-full text-center">
+                <span className={cn("text-xs font-semibold", isSelected ? "text-accent" : "text-muted-foreground")}>
+                  {zhu.startYear}
+                </span>
+                {zhu.isCurrent && (
+                  <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
+                    当前
+                  </span>
+                )}
+              </span>
+              <span className="text-[0.6rem] leading-none text-muted-foreground">
+                {zhu.qiyun.ageYears}~{zhu.qiyun.ageYears + 9}岁
+              </span>
+              <div className="relative flex flex-col gap-0.5 pb-[3px]">
+                <ZhuRow character={zhu.ganzhi[0]!} shishen={zhu.tianganShishen} bold={isSelected} />
+                <ZhuRow character={zhu.ganzhi[1]!} shishen={zhu.dizhiShishen} bold={isSelected} />
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "pointer-events-none absolute bottom-0 left-1/2 h-0.5 -translate-x-1/2 bg-accent transition-[width] duration-200 ease-out motion-reduce:transition-none",
+                    isSelected ? "w-[88%]" : "w-0 group-hover:w-[70%]",
+                  )}
+                />
+              </div>
+            </ToggleGroupItem>
+          );
+        })}
       </ToggleGroup>
 
       <div className="flex flex-nowrap gap-1.5 overflow-x-auto rounded-lg border border-border p-1">
