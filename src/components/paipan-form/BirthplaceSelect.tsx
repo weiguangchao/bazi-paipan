@@ -5,7 +5,7 @@ import { Check, ChevronsUpDown, MapPin } from "lucide-react";
 import { CITIES } from "@/data/cities.generated";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -29,19 +29,25 @@ export function BirthplaceSelect({ defaultProvince, defaultCity, errors, onChang
   const cityDisabled = !province;
 
   function selectProvince(value: string) {
-    const next = value === province ? "" : value;
-    setProvince(next);
+    setProvince(value);
     setCity("");
     setProvOpen(false);
     onReadyChange?.(true);
-    onChange(next, "");
+    onChange(value, "");
   }
 
   function selectCity(value: string) {
-    const next = value === city ? "" : value;
-    setCity(next);
+    setCity(value);
     setCityOpen(false);
-    onChange(province, next);
+    onChange(province, value);
+  }
+
+  function selectNone() {
+    setProvince("");
+    setCity("");
+    setProvOpen(false);
+    onReadyChange?.(true);
+    onChange("", "");
   }
 
   return (
@@ -73,6 +79,13 @@ export function BirthplaceSelect({ defaultProvince, defaultCity, errors, onChang
               <CommandInput placeholder="搜索省份…" />
               <CommandList>
                 <CommandEmpty>未找到省份</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem value="不选（按北京时间）" onSelect={selectNone}>
+                    <Check className={cn("mr-2 size-4", province === "" ? "opacity-100" : "opacity-0")} />
+                    不选（按北京时间）
+                  </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
                 <CommandGroup>
                   {provinces.map((p) => (
                     <CommandItem key={p} value={p} onSelect={selectProvince}>
