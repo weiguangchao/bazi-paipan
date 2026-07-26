@@ -1,6 +1,13 @@
 // 大运、流年、流月三级面板：每层均有独立点击态，上层切换时重置下层。
 // 词汇遵循 CONTEXT.md（大运、流年、流月、流月柱、十神、节）。
-import { type ReactNode, useEffect, useState } from "react";
+import {
+  type ReactNode,
+  type RefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import type { DayunOut } from "@/domain/paipan/mingpan";
 import { shishenAbbreviation } from "@/utils/wuxing";
 import { cn } from "@/lib/utils";
@@ -26,14 +33,17 @@ function SelectableLayer({
   value,
   onValueChange,
   children,
+  layerRef,
 }: {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
   children: ReactNode;
+  layerRef?: RefObject<HTMLDivElement | null>;
 }) {
   return (
     <ToggleGroup
+      ref={layerRef}
       type="single"
       value={value}
       onValueChange={onValueChange}
@@ -112,16 +122,71 @@ function GanzhiRows({
   );
 }
 
+interface DayunPanelSelection {
+  dayunIndex: string;
+  liunianIndex: string;
+  liuyueIndex: string;
+}
+
+function automaticSelection(data: DayunOut): DayunPanelSelection {
+  const currentDayunIndex = data.zhu.findIndex((item) => item.isCurrent);
+  if (currentDayunIndex < 0) {
+    return {
+      dayunIndex: data.zhu.length > 0 ? "0" : "",
+      liunianIndex: data.zhu[0]?.liunian.length ? "0" : "",
+      liuyueIndex: "",
+    };
+  }
+
+  const currentYearIndex = data.zhu[currentDayunIndex]!.liunian.findIndex(
+    (item) => item.isCurrentYear,
+  );
+  return {
+    dayunIndex: String(currentDayunIndex),
+    liunianIndex: currentYearIndex < 0 ? "" : String(currentYearIndex),
+    liuyueIndex: "",
+  };
+}
+
 export function DayunPanel({ data }: DayunPanelProps) {
-  const [selectedDayunIndex, setSelectedDayunIndex] = useState("");
-  const [selectedLiunianIndex, setSelectedLiunianIndex] = useState("");
-  const [selectedLiuyueIndex, setSelectedLiuyueIndex] = useState("");
+  const [selection, setSelection] = useState<DayunPanelSelection>(() => automaticSelection(data));
+  const [autoScrollPending, setAutoScrollPending] = useState(true);
+  const dayunCardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const liunianCardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const liuyueLayerRef = useRef<HTMLDivElement>(null);
+  const {
+    dayunIndex: selectedDayunIndex,
+    liunianIndex: selectedLiunianIndex,
+    liuyueIndex: selectedLiuyueIndex,
+  } = selection;
+
+  useLayoutEffect(() => {
+    setSelection(automaticSelection(data));
+    setAutoScrollPending(true);
+  }, [data]);
 
   useEffect(() => {
-    setSelectedDayunIndex("");
-    setSelectedLiunianIndex("");
-    setSelectedLiuyueIndex("");
-  }, [data]);
+    if (!autoScrollPending) return;
+
+    const scrollOptions: ScrollIntoViewOptions = {
+      behavior: "auto",
+      block: "nearest",
+      inline: "nearest",
+    };
+    if (selectedDayunIndex !== "") {
+      dayunCardRefs.current[Number(selectedDayunIndex)]?.scrollIntoView(scrollOptions);
+    }
+    if (selectedLiunianIndex !== "") {
+      liunianCardRefs.current[Number(selectedLiunianIndex)]?.scrollIntoView(scrollOptions);
+    }
+    setAutoScrollPending(false);
+  }, [autoScrollPending, selectedDayunIndex, selectedLiunianIndex]);
+
+  useLayoutEffect(() => {
+    if (liuyueLayerRef.current) {
+      liuyueLayerRef.current.scrollLeft = 0;
+    }
+  }, [data, selectedDayunIndex, selectedLiunianIndex]);
 
   const selectedDayunzhu =
     selectedDayunIndex === "" ? undefined : data.zhu[Number(selectedDayunIndex)];
@@ -131,22 +196,34 @@ export function DayunPanel({ data }: DayunPanelProps) {
   function selectDayun(value: string) {
     if (!value) return;
     if (value !== selectedDayunIndex) {
-      setSelectedDayunIndex(value);
-      setSelectedLiunianIndex("");
-      setSelectedLiuyueIndex("");
+      const target = data.zhu[Number(value)];
+      const currentYearIndex = target?.isCurrent
+        ? target.liunian.findIndex((item) => item.isCurrentYear)
+        : -1;
+      setSelection({
+        dayunIndex: value,
+        liunianIndex:
+          currentYearIndex >= 0 ? String(currentYearIndex) : target?.liunian.length ? "0" : "",
+        liuyueIndex: "",
+      });
     }
   }
 
   function selectLiunian(value: string) {
     if (!value) return;
     if (value !== selectedLiunianIndex) {
-      setSelectedLiunianIndex(value);
-      setSelectedLiuyueIndex("");
+      setSelection((current) => ({
+        ...current,
+        liunianIndex: value,
+        liuyueIndex: "",
+      }));
     }
   }
 
   function selectLiuyue(value: string) {
-    if (value) setSelectedLiuyueIndex(value);
+    if (value) {
+      setSelection((current) => ({ ...current, liuyueIndex: value }));
+    }
   }
 
   return (
@@ -166,6 +243,9 @@ export function DayunPanel({ data }: DayunPanelProps) {
             <ToggleGroupItem
               key={index}
               value={String(index)}
+              ref={(element) => {
+                dayunCardRefs.current[index] = element;
+              }}
               data-testid="dayun-card"
               aria-label={`${zhu.startYear}年大运，年龄${zhu.qiyun.ageYears}~${zhu.qiyun.ageYears + 9}岁${zhu.isCurrent ? "，当前" : ""}`}
               className={selectableCardClass(isSelected)}
@@ -204,6 +284,9 @@ export function DayunPanel({ data }: DayunPanelProps) {
               <ToggleGroupItem
                 key={item.year}
                 value={String(index)}
+                ref={(element) => {
+                  liunianCardRefs.current[index] = element;
+                }}
                 data-testid="liunian-card"
                 aria-label={`${item.year}年流年${item.isCurrentYear ? "，今年" : ""}`}
                 className={selectableCardClass(isSelected)}
@@ -233,6 +316,7 @@ export function DayunPanel({ data }: DayunPanelProps) {
           value={selectedLiuyueIndex}
           onValueChange={selectLiuyue}
           label="流月"
+          layerRef={liuyueLayerRef}
         >
           {selectedLiunianzhu.liuyue.map((item, index) => {
             const isSelected = selectedLiuyueIndex === String(index);
