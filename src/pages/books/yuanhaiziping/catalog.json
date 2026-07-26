@@ -1,0 +1,2466 @@
+{
+  "book": {
+    "id": "yuanhaiziping",
+    "title": "渊海子平",
+    "author": "（宋）徐大升",
+    "description": "从五行生克、干支源流到诸格命例，按原卷次查阅二百六十九篇正文。"
+  },
+  "volumes": [
+    {
+      "id": "v1",
+      "title": "卷一",
+      "order": 1,
+      "chapters": [
+        {
+          "id": "v1-c001",
+          "title": "论五行所生之始",
+          "volumeId": "v1",
+          "order": 1,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c001.md",
+          "sourceStartLine": 297,
+          "sourceEndLine": 301
+        },
+        {
+          "id": "v1-c002",
+          "title": "论天干地支所出",
+          "volumeId": "v1",
+          "order": 2,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c002.md",
+          "sourceStartLine": 302,
+          "sourceEndLine": 314
+        },
+        {
+          "id": "v1-c003",
+          "title": "天干相合",
+          "volumeId": "v1",
+          "order": 3,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c003.md",
+          "sourceStartLine": 315,
+          "sourceEndLine": 319
+        },
+        {
+          "id": "v1-c004",
+          "title": "十干所属方位十二支所属论",
+          "volumeId": "v1",
+          "order": 4,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c004.md",
+          "sourceStartLine": 320,
+          "sourceEndLine": 336
+        },
+        {
+          "id": "v1-c005",
+          "title": "论十二干支阴阳所属",
+          "volumeId": "v1",
+          "order": 5,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c005.md",
+          "sourceStartLine": 337,
+          "sourceEndLine": 343
+        },
+        {
+          "id": "v1-c006",
+          "title": "论十二支六合",
+          "volumeId": "v1",
+          "order": 6,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c006.md",
+          "sourceStartLine": 344,
+          "sourceEndLine": 348
+        },
+        {
+          "id": "v1-c007",
+          "title": "论十二支三合",
+          "volumeId": "v1",
+          "order": 7,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c007.md",
+          "sourceStartLine": 349,
+          "sourceEndLine": 353
+        },
+        {
+          "id": "v1-c008",
+          "title": "论十二支相冲",
+          "volumeId": "v1",
+          "order": 8,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c008.md",
+          "sourceStartLine": 354,
+          "sourceEndLine": 358
+        },
+        {
+          "id": "v1-c009",
+          "title": "论十二支相穿",
+          "volumeId": "v1",
+          "order": 9,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c009.md",
+          "sourceStartLine": 359,
+          "sourceEndLine": 363
+        },
+        {
+          "id": "v1-c010",
+          "title": "论十二支相刑",
+          "volumeId": "v1",
+          "order": 10,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c010.md",
+          "sourceStartLine": 364,
+          "sourceEndLine": 368
+        },
+        {
+          "id": "v1-c011",
+          "title": "论干支字义",
+          "volumeId": "v1",
+          "order": 11,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c011.md",
+          "sourceStartLine": 369,
+          "sourceEndLine": 375
+        },
+        {
+          "id": "v1-c012",
+          "title": "论十二支生肖",
+          "volumeId": "v1",
+          "order": 12,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c012.md",
+          "sourceStartLine": 376,
+          "sourceEndLine": 390
+        },
+        {
+          "id": "v1-c013",
+          "title": "论六十花甲子纳音并注解",
+          "volumeId": "v1",
+          "order": 13,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c013.md",
+          "sourceStartLine": 391,
+          "sourceEndLine": 515
+        },
+        {
+          "id": "v1-c014",
+          "title": "论天干生旺死绝",
+          "volumeId": "v1",
+          "order": 14,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c014.md",
+          "sourceStartLine": 516,
+          "sourceEndLine": 538
+        },
+        {
+          "id": "v1-c015",
+          "title": "五行发用定例",
+          "volumeId": "v1",
+          "order": 15,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c015.md",
+          "sourceStartLine": 539,
+          "sourceEndLine": 665
+        },
+        {
+          "id": "v1-c016",
+          "title": "论年上起月例",
+          "volumeId": "v1",
+          "order": 16,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c016.md",
+          "sourceStartLine": 666,
+          "sourceEndLine": 672
+        },
+        {
+          "id": "v1-c017",
+          "title": "论日上起时例",
+          "volumeId": "v1",
+          "order": 17,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c017.md",
+          "sourceStartLine": 673,
+          "sourceEndLine": 679
+        },
+        {
+          "id": "v1-c018",
+          "title": "论起胎法",
+          "volumeId": "v1",
+          "order": 18,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c018.md",
+          "sourceStartLine": 680,
+          "sourceEndLine": 706
+        },
+        {
+          "id": "v1-c019",
+          "title": "起天官贵人",
+          "volumeId": "v1",
+          "order": 19,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c019.md",
+          "sourceStartLine": 707,
+          "sourceEndLine": 713
+        },
+        {
+          "id": "v1-c020",
+          "title": "论太极贵人",
+          "volumeId": "v1",
+          "order": 20,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c020.md",
+          "sourceStartLine": 714,
+          "sourceEndLine": 720
+        },
+        {
+          "id": "v1-c021",
+          "title": "论三奇贵人",
+          "volumeId": "v1",
+          "order": 21,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c021.md",
+          "sourceStartLine": 721,
+          "sourceEndLine": 727
+        },
+        {
+          "id": "v1-c022",
+          "title": "论月德贵人",
+          "volumeId": "v1",
+          "order": 22,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c022.md",
+          "sourceStartLine": 728,
+          "sourceEndLine": 734
+        },
+        {
+          "id": "v1-c023",
+          "title": "论月德合",
+          "volumeId": "v1",
+          "order": 23,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c023.md",
+          "sourceStartLine": 735,
+          "sourceEndLine": 741
+        },
+        {
+          "id": "v1-c024",
+          "title": "论天德贵人",
+          "volumeId": "v1",
+          "order": 24,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c024.md",
+          "sourceStartLine": 742,
+          "sourceEndLine": 748
+        },
+        {
+          "id": "v1-c025",
+          "title": "论天厨贵人",
+          "volumeId": "v1",
+          "order": 25,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c025.md",
+          "sourceStartLine": 749,
+          "sourceEndLine": 753
+        },
+        {
+          "id": "v1-c026",
+          "title": "论福星贵人",
+          "volumeId": "v1",
+          "order": 26,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c026.md",
+          "sourceStartLine": 754,
+          "sourceEndLine": 758
+        },
+        {
+          "id": "v1-c027",
+          "title": "论三元",
+          "volumeId": "v1",
+          "order": 27,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c027.md",
+          "sourceStartLine": 759,
+          "sourceEndLine": 763
+        },
+        {
+          "id": "v1-c028",
+          "title": "论十干禄",
+          "volumeId": "v1",
+          "order": 28,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c028.md",
+          "sourceStartLine": 764,
+          "sourceEndLine": 770
+        },
+        {
+          "id": "v1-c029",
+          "title": "论驿马",
+          "volumeId": "v1",
+          "order": 29,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c029.md",
+          "sourceStartLine": 771,
+          "sourceEndLine": 777
+        },
+        {
+          "id": "v1-c030",
+          "title": "论天赦",
+          "volumeId": "v1",
+          "order": 30,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c030.md",
+          "sourceStartLine": 778,
+          "sourceEndLine": 782
+        },
+        {
+          "id": "v1-c031",
+          "title": "论华盖",
+          "volumeId": "v1",
+          "order": 31,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c031.md",
+          "sourceStartLine": 783,
+          "sourceEndLine": 789
+        },
+        {
+          "id": "v1-c032",
+          "title": "论十干学堂",
+          "volumeId": "v1",
+          "order": 32,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c032.md",
+          "sourceStartLine": 790,
+          "sourceEndLine": 796
+        },
+        {
+          "id": "v1-c033",
+          "title": "论十干食禄",
+          "volumeId": "v1",
+          "order": 33,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c033.md",
+          "sourceStartLine": 797,
+          "sourceEndLine": 801
+        },
+        {
+          "id": "v1-c034",
+          "title": "论金舆禄",
+          "volumeId": "v1",
+          "order": 34,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c034.md",
+          "sourceStartLine": 802,
+          "sourceEndLine": 806
+        },
+        {
+          "id": "v1-c035",
+          "title": "论拱禄",
+          "volumeId": "v1",
+          "order": 35,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c035.md",
+          "sourceStartLine": 807,
+          "sourceEndLine": 811
+        },
+        {
+          "id": "v1-c036",
+          "title": "论交禄",
+          "volumeId": "v1",
+          "order": 36,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c036.md",
+          "sourceStartLine": 812,
+          "sourceEndLine": 816
+        },
+        {
+          "id": "v1-c037",
+          "title": "论暗禄",
+          "volumeId": "v1",
+          "order": 37,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c037.md",
+          "sourceStartLine": 817,
+          "sourceEndLine": 821
+        },
+        {
+          "id": "v1-c038",
+          "title": "论夹禄",
+          "volumeId": "v1",
+          "order": 38,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c038.md",
+          "sourceStartLine": 822,
+          "sourceEndLine": 826
+        },
+        {
+          "id": "v1-c039",
+          "title": "论垣城",
+          "volumeId": "v1",
+          "order": 39,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c039.md",
+          "sourceStartLine": 827,
+          "sourceEndLine": 833
+        },
+        {
+          "id": "v1-c040",
+          "title": "论帝座",
+          "volumeId": "v1",
+          "order": 40,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c040.md",
+          "sourceStartLine": 834,
+          "sourceEndLine": 838
+        },
+        {
+          "id": "v1-c041",
+          "title": "论六甲空亡",
+          "volumeId": "v1",
+          "order": 41,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c041.md",
+          "sourceStartLine": 839,
+          "sourceEndLine": 845
+        },
+        {
+          "id": "v1-c042",
+          "title": "论截路空亡",
+          "volumeId": "v1",
+          "order": 42,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c042.md",
+          "sourceStartLine": 846,
+          "sourceEndLine": 852
+        },
+        {
+          "id": "v1-c043",
+          "title": "论四大空亡",
+          "volumeId": "v1",
+          "order": 43,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c043.md",
+          "sourceStartLine": 853,
+          "sourceEndLine": 859
+        },
+        {
+          "id": "v1-c044",
+          "title": "论十恶大败日",
+          "volumeId": "v1",
+          "order": 44,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c044.md",
+          "sourceStartLine": 860,
+          "sourceEndLine": 864
+        },
+        {
+          "id": "v1-c045",
+          "title": "论四废日",
+          "volumeId": "v1",
+          "order": 45,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c045.md",
+          "sourceStartLine": 865,
+          "sourceEndLine": 869
+        },
+        {
+          "id": "v1-c046",
+          "title": "论天地转杀",
+          "volumeId": "v1",
+          "order": 46,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c046.md",
+          "sourceStartLine": 870,
+          "sourceEndLine": 880
+        },
+        {
+          "id": "v1-c047",
+          "title": "论天罗地网",
+          "volumeId": "v1",
+          "order": 47,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c047.md",
+          "sourceStartLine": 881,
+          "sourceEndLine": 885
+        },
+        {
+          "id": "v1-c048",
+          "title": "论羊刃",
+          "volumeId": "v1",
+          "order": 48,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c048.md",
+          "sourceStartLine": 886,
+          "sourceEndLine": 890
+        },
+        {
+          "id": "v1-c049",
+          "title": "论起大运法",
+          "volumeId": "v1",
+          "order": 49,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c049.md",
+          "sourceStartLine": 891,
+          "sourceEndLine": 899
+        },
+        {
+          "id": "v1-c050",
+          "title": "论行小运法",
+          "volumeId": "v1",
+          "order": 50,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c050.md",
+          "sourceStartLine": 900,
+          "sourceEndLine": 904
+        },
+        {
+          "id": "v1-c051",
+          "title": "论五行相生相克",
+          "volumeId": "v1",
+          "order": 51,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c051.md",
+          "sourceStartLine": 905,
+          "sourceEndLine": 909
+        },
+        {
+          "id": "v1-c052",
+          "title": "论节候歌",
+          "volumeId": "v1",
+          "order": 52,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c052.md",
+          "sourceStartLine": 910,
+          "sourceEndLine": 914
+        },
+        {
+          "id": "v1-c053",
+          "title": "论天地干支暗藏总诀",
+          "volumeId": "v1",
+          "order": 53,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c053.md",
+          "sourceStartLine": 915,
+          "sourceEndLine": 919
+        },
+        {
+          "id": "v1-c054",
+          "title": "又论节气歌",
+          "volumeId": "v1",
+          "order": 54,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c054.md",
+          "sourceStartLine": 920,
+          "sourceEndLine": 924
+        },
+        {
+          "id": "v1-c055",
+          "title": "又地支藏遁歌",
+          "volumeId": "v1",
+          "order": 55,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c055.md",
+          "sourceStartLine": 925,
+          "sourceEndLine": 929
+        },
+        {
+          "id": "v1-c056",
+          "title": "论四季大节诀",
+          "volumeId": "v1",
+          "order": 56,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c056.md",
+          "sourceStartLine": 930,
+          "sourceEndLine": 936
+        },
+        {
+          "id": "v1-c057",
+          "title": "论未来月朔节气奥诀",
+          "volumeId": "v1",
+          "order": 57,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c057.md",
+          "sourceStartLine": 937,
+          "sourceEndLine": 941
+        },
+        {
+          "id": "v1-c058",
+          "title": "论截流年节气日时刻数要诀",
+          "volumeId": "v1",
+          "order": 58,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c058.md",
+          "sourceStartLine": 942,
+          "sourceEndLine": 946
+        },
+        {
+          "id": "v1-c059",
+          "title": "论日为主",
+          "volumeId": "v1",
+          "order": 59,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c059.md",
+          "sourceStartLine": 947,
+          "sourceEndLine": 955
+        },
+        {
+          "id": "v1-c060",
+          "title": "论月令",
+          "volumeId": "v1",
+          "order": 60,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c060.md",
+          "sourceStartLine": 956,
+          "sourceEndLine": 962
+        },
+        {
+          "id": "v1-c061",
+          "title": "论生旺",
+          "volumeId": "v1",
+          "order": 61,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c061.md",
+          "sourceStartLine": 963,
+          "sourceEndLine": 967
+        },
+        {
+          "id": "v1-c062",
+          "title": "又论五行生旺衰绝吉凶",
+          "volumeId": "v1",
+          "order": 62,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c062.md",
+          "sourceStartLine": 968,
+          "sourceEndLine": 974
+        },
+        {
+          "id": "v1-c063",
+          "title": "论五行墓库财印",
+          "volumeId": "v1",
+          "order": 63,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c063.md",
+          "sourceStartLine": 975,
+          "sourceEndLine": 981
+        },
+        {
+          "id": "v1-c064",
+          "title": "论官杀混杂要制伏",
+          "volumeId": "v1",
+          "order": 64,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c064.md",
+          "sourceStartLine": 982,
+          "sourceEndLine": 988
+        },
+        {
+          "id": "v1-c065",
+          "title": "论五行生克制化各有所喜所害例",
+          "volumeId": "v1",
+          "order": 65,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c065.md",
+          "sourceStartLine": 989,
+          "sourceEndLine": 1005
+        },
+        {
+          "id": "v1-c066",
+          "title": "二至阴阳相生理",
+          "volumeId": "v1",
+          "order": 66,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c066.md",
+          "sourceStartLine": 1006,
+          "sourceEndLine": 1010
+        },
+        {
+          "id": "v1-c067",
+          "title": "子平举要歌",
+          "volumeId": "v1",
+          "order": 67,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c067.md",
+          "sourceStartLine": 1011,
+          "sourceEndLine": 1037
+        },
+        {
+          "id": "v1-c068",
+          "title": "详解定真论",
+          "volumeId": "v1",
+          "order": 68,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c068.md",
+          "sourceStartLine": 1038,
+          "sourceEndLine": 1074
+        },
+        {
+          "id": "v1-c069",
+          "title": "喜忌篇",
+          "volumeId": "v1",
+          "order": 69,
+          "path": "content/books/yuanhaiziping/chapters/v1/v1-c069.md",
+          "sourceStartLine": 1075,
+          "sourceEndLine": 1161
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "title": "卷二",
+      "order": 2,
+      "chapters": [
+        {
+          "id": "v2-c001",
+          "title": "继善篇",
+          "volumeId": "v2",
+          "order": 1,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c001.md",
+          "sourceStartLine": 1175,
+          "sourceEndLine": 1323
+        },
+        {
+          "id": "v2-c002",
+          "title": "看命入式",
+          "volumeId": "v2",
+          "order": 2,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c002.md",
+          "sourceStartLine": 1324,
+          "sourceEndLine": 1330
+        },
+        {
+          "id": "v2-c003",
+          "title": "正官论",
+          "volumeId": "v2",
+          "order": 3,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c003.md",
+          "sourceStartLine": 1331,
+          "sourceEndLine": 1367
+        },
+        {
+          "id": "v2-c004",
+          "title": "论官星太过",
+          "volumeId": "v2",
+          "order": 4,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c004.md",
+          "sourceStartLine": 1368,
+          "sourceEndLine": 1372
+        },
+        {
+          "id": "v2-c005",
+          "title": "论偏官",
+          "volumeId": "v2",
+          "order": 5,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c005.md",
+          "sourceStartLine": 1373,
+          "sourceEndLine": 1389
+        },
+        {
+          "id": "v2-c006",
+          "title": "论七杀",
+          "volumeId": "v2",
+          "order": 6,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c006.md",
+          "sourceStartLine": 1390,
+          "sourceEndLine": 1408
+        },
+        {
+          "id": "v2-c007",
+          "title": "论印绶",
+          "volumeId": "v2",
+          "order": 7,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c007.md",
+          "sourceStartLine": 1409,
+          "sourceEndLine": 1433
+        },
+        {
+          "id": "v2-c008",
+          "title": "论正财",
+          "volumeId": "v2",
+          "order": 8,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c008.md",
+          "sourceStartLine": 1434,
+          "sourceEndLine": 1456
+        },
+        {
+          "id": "v2-c009",
+          "title": "论偏财",
+          "volumeId": "v2",
+          "order": 9,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c009.md",
+          "sourceStartLine": 1457,
+          "sourceEndLine": 1467
+        },
+        {
+          "id": "v2-c010",
+          "title": "论食神",
+          "volumeId": "v2",
+          "order": 10,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c010.md",
+          "sourceStartLine": 1468,
+          "sourceEndLine": 1478
+        },
+        {
+          "id": "v2-c011",
+          "title": "论倒食",
+          "volumeId": "v2",
+          "order": 11,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c011.md",
+          "sourceStartLine": 1479,
+          "sourceEndLine": 1489
+        },
+        {
+          "id": "v2-c012",
+          "title": "论伤官",
+          "volumeId": "v2",
+          "order": 12,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c012.md",
+          "sourceStartLine": 1490,
+          "sourceEndLine": 1506
+        },
+        {
+          "id": "v2-c013",
+          "title": "论劫财",
+          "volumeId": "v2",
+          "order": 13,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c013.md",
+          "sourceStartLine": 1507,
+          "sourceEndLine": 1511
+        },
+        {
+          "id": "v2-c014",
+          "title": "论羊刃",
+          "volumeId": "v2",
+          "order": 14,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c014.md",
+          "sourceStartLine": 1512,
+          "sourceEndLine": 1526
+        },
+        {
+          "id": "v2-c015",
+          "title": "论刑合",
+          "volumeId": "v2",
+          "order": 15,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c015.md",
+          "sourceStartLine": 1527,
+          "sourceEndLine": 1537
+        },
+        {
+          "id": "v2-c016",
+          "title": "论福德秀气",
+          "volumeId": "v2",
+          "order": 16,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c016.md",
+          "sourceStartLine": 1538,
+          "sourceEndLine": 1542
+        },
+        {
+          "id": "v2-c017",
+          "title": "论杂气",
+          "volumeId": "v2",
+          "order": 17,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c017.md",
+          "sourceStartLine": 1543,
+          "sourceEndLine": 1551
+        },
+        {
+          "id": "v2-c018",
+          "title": "论日贵",
+          "volumeId": "v2",
+          "order": 18,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c018.md",
+          "sourceStartLine": 1552,
+          "sourceEndLine": 1556
+        },
+        {
+          "id": "v2-c019",
+          "title": "论日德",
+          "volumeId": "v2",
+          "order": 19,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c019.md",
+          "sourceStartLine": 1557,
+          "sourceEndLine": 1567
+        },
+        {
+          "id": "v2-c020",
+          "title": "论日刃",
+          "volumeId": "v2",
+          "order": 20,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c020.md",
+          "sourceStartLine": 1568,
+          "sourceEndLine": 1576
+        },
+        {
+          "id": "v2-c021",
+          "title": "论魁罡",
+          "volumeId": "v2",
+          "order": 21,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c021.md",
+          "sourceStartLine": 1577,
+          "sourceEndLine": 1581
+        },
+        {
+          "id": "v2-c022",
+          "title": "论金神",
+          "volumeId": "v2",
+          "order": 22,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c022.md",
+          "sourceStartLine": 1582,
+          "sourceEndLine": 1602
+        },
+        {
+          "id": "v2-c023",
+          "title": "论时墓",
+          "volumeId": "v2",
+          "order": 23,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c023.md",
+          "sourceStartLine": 1603,
+          "sourceEndLine": 1797
+        },
+        {
+          "id": "v2-c024",
+          "title": "正官格",
+          "volumeId": "v2",
+          "order": 24,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c024.md",
+          "sourceStartLine": 1798,
+          "sourceEndLine": 1808
+        },
+        {
+          "id": "v2-c025",
+          "title": "杂气财官格",
+          "volumeId": "v2",
+          "order": 25,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c025.md",
+          "sourceStartLine": 1809,
+          "sourceEndLine": 1829
+        },
+        {
+          "id": "v2-c026",
+          "title": "月上偏官格",
+          "volumeId": "v2",
+          "order": 26,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c026.md",
+          "sourceStartLine": 1830,
+          "sourceEndLine": 1850
+        },
+        {
+          "id": "v2-c027",
+          "title": "时上偏财格",
+          "volumeId": "v2",
+          "order": 27,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c027.md",
+          "sourceStartLine": 1851,
+          "sourceEndLine": 1957
+        },
+        {
+          "id": "v2-c028",
+          "title": "时上一位贵格",
+          "volumeId": "v2",
+          "order": 28,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c028.md",
+          "sourceStartLine": 1958,
+          "sourceEndLine": 2064
+        },
+        {
+          "id": "v2-c029",
+          "title": "飞天禄马格",
+          "volumeId": "v2",
+          "order": 29,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c029.md",
+          "sourceStartLine": 2065,
+          "sourceEndLine": 2109
+        },
+        {
+          "id": "v2-c030",
+          "title": "又格",
+          "volumeId": "v2",
+          "order": 30,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c030.md",
+          "sourceStartLine": 2110,
+          "sourceEndLine": 2132
+        },
+        {
+          "id": "v2-c031",
+          "title": "倒冲格",
+          "volumeId": "v2",
+          "order": 31,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c031.md",
+          "sourceStartLine": 2133,
+          "sourceEndLine": 2141
+        },
+        {
+          "id": "v2-c032",
+          "title": "又格",
+          "volumeId": "v2",
+          "order": 32,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c032.md",
+          "sourceStartLine": 2142,
+          "sourceEndLine": 2172
+        },
+        {
+          "id": "v2-c033",
+          "title": "乙己鼠贵格",
+          "volumeId": "v2",
+          "order": 33,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c033.md",
+          "sourceStartLine": 2173,
+          "sourceEndLine": 2193
+        },
+        {
+          "id": "v2-c034",
+          "title": "六乙鼠贵格",
+          "volumeId": "v2",
+          "order": 34,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c034.md",
+          "sourceStartLine": 2194,
+          "sourceEndLine": 2206
+        },
+        {
+          "id": "v2-c035",
+          "title": "合禄格",
+          "volumeId": "v2",
+          "order": 35,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c035.md",
+          "sourceStartLine": 2207,
+          "sourceEndLine": 2253
+        },
+        {
+          "id": "v2-c036",
+          "title": "又合禄格",
+          "volumeId": "v2",
+          "order": 36,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c036.md",
+          "sourceStartLine": 2254,
+          "sourceEndLine": 2292
+        },
+        {
+          "id": "v2-c037",
+          "title": "子遥巳格",
+          "volumeId": "v2",
+          "order": 37,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c037.md",
+          "sourceStartLine": 2293,
+          "sourceEndLine": 2325
+        },
+        {
+          "id": "v2-c038",
+          "title": "丑遥巳格",
+          "volumeId": "v2",
+          "order": 38,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c038.md",
+          "sourceStartLine": 2326,
+          "sourceEndLine": 2354
+        },
+        {
+          "id": "v2-c039",
+          "title": "壬骑龙背格",
+          "volumeId": "v2",
+          "order": 39,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c039.md",
+          "sourceStartLine": 2355,
+          "sourceEndLine": 2395
+        },
+        {
+          "id": "v2-c040",
+          "title": "井栏叉格",
+          "volumeId": "v2",
+          "order": 40,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c040.md",
+          "sourceStartLine": 2396,
+          "sourceEndLine": 2424
+        },
+        {
+          "id": "v2-c041",
+          "title": "归禄格",
+          "volumeId": "v2",
+          "order": 41,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c041.md",
+          "sourceStartLine": 2425,
+          "sourceEndLine": 2455
+        },
+        {
+          "id": "v2-c042",
+          "title": "六阴朝阳格",
+          "volumeId": "v2",
+          "order": 42,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c042.md",
+          "sourceStartLine": 2456,
+          "sourceEndLine": 2478
+        },
+        {
+          "id": "v2-c043",
+          "title": "刑合格",
+          "volumeId": "v2",
+          "order": 43,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c043.md",
+          "sourceStartLine": 2479,
+          "sourceEndLine": 2519
+        },
+        {
+          "id": "v2-c044",
+          "title": "拱禄格",
+          "volumeId": "v2",
+          "order": 44,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c044.md",
+          "sourceStartLine": 2520,
+          "sourceEndLine": 2542
+        },
+        {
+          "id": "v2-c045",
+          "title": "拱贵格",
+          "volumeId": "v2",
+          "order": 45,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c045.md",
+          "sourceStartLine": 2543,
+          "sourceEndLine": 2567
+        },
+        {
+          "id": "v2-c046",
+          "title": "印绶格",
+          "volumeId": "v2",
+          "order": 46,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c046.md",
+          "sourceStartLine": 2568,
+          "sourceEndLine": 2596
+        },
+        {
+          "id": "v2-c047",
+          "title": "杂气印绶格",
+          "volumeId": "v2",
+          "order": 47,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c047.md",
+          "sourceStartLine": 2597,
+          "sourceEndLine": 2649
+        },
+        {
+          "id": "v2-c048",
+          "title": "六壬趋艮",
+          "volumeId": "v2",
+          "order": 48,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c048.md",
+          "sourceStartLine": 2650,
+          "sourceEndLine": 2682
+        },
+        {
+          "id": "v2-c049",
+          "title": "六甲趋干格",
+          "volumeId": "v2",
+          "order": 49,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c049.md",
+          "sourceStartLine": 2683,
+          "sourceEndLine": 2699
+        },
+        {
+          "id": "v2-c050",
+          "title": "勾陈得位格",
+          "volumeId": "v2",
+          "order": 50,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c050.md",
+          "sourceStartLine": 2700,
+          "sourceEndLine": 2712
+        },
+        {
+          "id": "v2-c051",
+          "title": "玄武当权格",
+          "volumeId": "v2",
+          "order": 51,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c051.md",
+          "sourceStartLine": 2713,
+          "sourceEndLine": 2725
+        },
+        {
+          "id": "v2-c052",
+          "title": "炎上格",
+          "volumeId": "v2",
+          "order": 52,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c052.md",
+          "sourceStartLine": 2726,
+          "sourceEndLine": 2742
+        },
+        {
+          "id": "v2-c053",
+          "title": "润下格",
+          "volumeId": "v2",
+          "order": 53,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c053.md",
+          "sourceStartLine": 2743,
+          "sourceEndLine": 2757
+        },
+        {
+          "id": "v2-c054",
+          "title": "从革格",
+          "volumeId": "v2",
+          "order": 54,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c054.md",
+          "sourceStartLine": 2758,
+          "sourceEndLine": 2772
+        },
+        {
+          "id": "v2-c055",
+          "title": "稼穑格",
+          "volumeId": "v2",
+          "order": 55,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c055.md",
+          "sourceStartLine": 2773,
+          "sourceEndLine": 2785
+        },
+        {
+          "id": "v2-c056",
+          "title": "曲直格",
+          "volumeId": "v2",
+          "order": 56,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c056.md",
+          "sourceStartLine": 2786,
+          "sourceEndLine": 2800
+        },
+        {
+          "id": "v2-c057",
+          "title": "日德秀气格",
+          "volumeId": "v2",
+          "order": 57,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c057.md",
+          "sourceStartLine": 2801,
+          "sourceEndLine": 2805
+        },
+        {
+          "id": "v2-c058",
+          "title": "福德格",
+          "volumeId": "v2",
+          "order": 58,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c058.md",
+          "sourceStartLine": 2806,
+          "sourceEndLine": 2812
+        },
+        {
+          "id": "v2-c059",
+          "title": "弃命从财格",
+          "volumeId": "v2",
+          "order": 59,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c059.md",
+          "sourceStartLine": 2813,
+          "sourceEndLine": 2817
+        },
+        {
+          "id": "v2-c060",
+          "title": "伤官生财格",
+          "volumeId": "v2",
+          "order": 60,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c060.md",
+          "sourceStartLine": 2818,
+          "sourceEndLine": 2822
+        },
+        {
+          "id": "v2-c061",
+          "title": "弃命从杀格",
+          "volumeId": "v2",
+          "order": 61,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c061.md",
+          "sourceStartLine": 2823,
+          "sourceEndLine": 2827
+        },
+        {
+          "id": "v2-c062",
+          "title": "伤官带杀格",
+          "volumeId": "v2",
+          "order": 62,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c062.md",
+          "sourceStartLine": 2828,
+          "sourceEndLine": 2832
+        },
+        {
+          "id": "v2-c063",
+          "title": "岁德扶杀格",
+          "volumeId": "v2",
+          "order": 63,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c063.md",
+          "sourceStartLine": 2833,
+          "sourceEndLine": 2837
+        },
+        {
+          "id": "v2-c064",
+          "title": "岁德扶财格",
+          "volumeId": "v2",
+          "order": 64,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c064.md",
+          "sourceStartLine": 2838,
+          "sourceEndLine": 2842
+        },
+        {
+          "id": "v2-c065",
+          "title": "夹丘格",
+          "volumeId": "v2",
+          "order": 65,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c065.md",
+          "sourceStartLine": 2843,
+          "sourceEndLine": 2877
+        },
+        {
+          "id": "v2-c066",
+          "title": "两干不杂格",
+          "volumeId": "v2",
+          "order": 66,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c066.md",
+          "sourceStartLine": 2878,
+          "sourceEndLine": 2898
+        },
+        {
+          "id": "v2-c067",
+          "title": "五行俱足格",
+          "volumeId": "v2",
+          "order": 67,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c067.md",
+          "sourceStartLine": 2899,
+          "sourceEndLine": 2911
+        },
+        {
+          "id": "v2-c068",
+          "title": "支辰一字",
+          "volumeId": "v2",
+          "order": 68,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c068.md",
+          "sourceStartLine": 2912,
+          "sourceEndLine": 2924
+        },
+        {
+          "id": "v2-c069",
+          "title": "天元一气",
+          "volumeId": "v2",
+          "order": 69,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c069.md",
+          "sourceStartLine": 2925,
+          "sourceEndLine": 2945
+        },
+        {
+          "id": "v2-c070",
+          "title": "凤凰池",
+          "volumeId": "v2",
+          "order": 70,
+          "path": "content/books/yuanhaiziping/chapters/v2/v2-c070.md",
+          "sourceStartLine": 2946,
+          "sourceEndLine": 2958
+        }
+      ]
+    },
+    {
+      "id": "v3",
+      "title": "卷三",
+      "order": 3,
+      "chapters": [
+        {
+          "id": "v3-c001",
+          "title": "六亲总论",
+          "volumeId": "v3",
+          "order": 1,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c001.md",
+          "sourceStartLine": 2969,
+          "sourceEndLine": 2975
+        },
+        {
+          "id": "v3-c002",
+          "title": "六亲捷要歌",
+          "volumeId": "v3",
+          "order": 2,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c002.md",
+          "sourceStartLine": 2976,
+          "sourceEndLine": 2982
+        },
+        {
+          "id": "v3-c003",
+          "title": "论父",
+          "volumeId": "v3",
+          "order": 3,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c003.md",
+          "sourceStartLine": 2983,
+          "sourceEndLine": 2991
+        },
+        {
+          "id": "v3-c004",
+          "title": "论母",
+          "volumeId": "v3",
+          "order": 4,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c004.md",
+          "sourceStartLine": 2992,
+          "sourceEndLine": 3002
+        },
+        {
+          "id": "v3-c005",
+          "title": "论妻妾",
+          "volumeId": "v3",
+          "order": 5,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c005.md",
+          "sourceStartLine": 3003,
+          "sourceEndLine": 3025
+        },
+        {
+          "id": "v3-c006",
+          "title": "论兄弟姐妹",
+          "volumeId": "v3",
+          "order": 6,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c006.md",
+          "sourceStartLine": 3026,
+          "sourceEndLine": 3038
+        },
+        {
+          "id": "v3-c007",
+          "title": "论子息",
+          "volumeId": "v3",
+          "order": 7,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c007.md",
+          "sourceStartLine": 3039,
+          "sourceEndLine": 3057
+        },
+        {
+          "id": "v3-c008",
+          "title": "论妇人总诀",
+          "volumeId": "v3",
+          "order": 8,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c008.md",
+          "sourceStartLine": 3058,
+          "sourceEndLine": 3094
+        },
+        {
+          "id": "v3-c009",
+          "title": "阴命赋",
+          "volumeId": "v3",
+          "order": 9,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c009.md",
+          "sourceStartLine": 3095,
+          "sourceEndLine": 3111
+        },
+        {
+          "id": "v3-c010",
+          "title": "女命富贵贫贱篇",
+          "volumeId": "v3",
+          "order": 10,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c010.md",
+          "sourceStartLine": 3112,
+          "sourceEndLine": 3146
+        },
+        {
+          "id": "v3-c011",
+          "title": "女命贵格",
+          "volumeId": "v3",
+          "order": 11,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c011.md",
+          "sourceStartLine": 3147,
+          "sourceEndLine": 3153
+        },
+        {
+          "id": "v3-c012",
+          "title": "女命贱格",
+          "volumeId": "v3",
+          "order": 12,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c012.md",
+          "sourceStartLine": 3154,
+          "sourceEndLine": 3162
+        },
+        {
+          "id": "v3-c013",
+          "title": "滚浪桃花",
+          "volumeId": "v3",
+          "order": 13,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c013.md",
+          "sourceStartLine": 3163,
+          "sourceEndLine": 3177
+        },
+        {
+          "id": "v3-c014",
+          "title": "女命总断歌",
+          "volumeId": "v3",
+          "order": 14,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c014.md",
+          "sourceStartLine": 3178,
+          "sourceEndLine": 3228
+        },
+        {
+          "id": "v3-c015",
+          "title": "论小儿",
+          "volumeId": "v3",
+          "order": 15,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c015.md",
+          "sourceStartLine": 3229,
+          "sourceEndLine": 3251
+        },
+        {
+          "id": "v3-c016",
+          "title": "论小儿关杀例",
+          "volumeId": "v3",
+          "order": 16,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c016.md",
+          "sourceStartLine": 3252,
+          "sourceEndLine": 3260
+        },
+        {
+          "id": "v3-c017",
+          "title": "论性情",
+          "volumeId": "v3",
+          "order": 17,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c017.md",
+          "sourceStartLine": 3261,
+          "sourceEndLine": 3273
+        },
+        {
+          "id": "v3-c018",
+          "title": "论疾病",
+          "volumeId": "v3",
+          "order": 18,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c018.md",
+          "sourceStartLine": 3274,
+          "sourceEndLine": 3300
+        },
+        {
+          "id": "v3-c019",
+          "title": "论大运",
+          "volumeId": "v3",
+          "order": 19,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c019.md",
+          "sourceStartLine": 3301,
+          "sourceEndLine": 3313
+        },
+        {
+          "id": "v3-c020",
+          "title": "论太岁吉凶",
+          "volumeId": "v3",
+          "order": 20,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c020.md",
+          "sourceStartLine": 3314,
+          "sourceEndLine": 3320
+        },
+        {
+          "id": "v3-c021",
+          "title": "论运化气",
+          "volumeId": "v3",
+          "order": 21,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c021.md",
+          "sourceStartLine": 3321,
+          "sourceEndLine": 3329
+        },
+        {
+          "id": "v3-c022",
+          "title": "化气十段锦",
+          "volumeId": "v3",
+          "order": 22,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c022.md",
+          "sourceStartLine": 3330,
+          "sourceEndLine": 3360
+        },
+        {
+          "id": "v3-c023",
+          "title": "神趣八法",
+          "volumeId": "v3",
+          "order": 23,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c023.md",
+          "sourceStartLine": 3361,
+          "sourceEndLine": 3381
+        },
+        {
+          "id": "v3-c024",
+          "title": "论格局生死引用",
+          "volumeId": "v3",
+          "order": 24,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c024.md",
+          "sourceStartLine": 3382,
+          "sourceEndLine": 3400
+        },
+        {
+          "id": "v3-c025",
+          "title": "论征太岁",
+          "volumeId": "v3",
+          "order": 25,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c025.md",
+          "sourceStartLine": 3401,
+          "sourceEndLine": 3407
+        },
+        {
+          "id": "v3-c026",
+          "title": "杂论口诀",
+          "volumeId": "v3",
+          "order": 26,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c026.md",
+          "sourceStartLine": 3408,
+          "sourceEndLine": 3440
+        },
+        {
+          "id": "v3-c027",
+          "title": "群兴论",
+          "volumeId": "v3",
+          "order": 27,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c027.md",
+          "sourceStartLine": 3441,
+          "sourceEndLine": 3457
+        },
+        {
+          "id": "v3-c028",
+          "title": "论兴亡",
+          "volumeId": "v3",
+          "order": 28,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c028.md",
+          "sourceStartLine": 3458,
+          "sourceEndLine": 3466
+        },
+        {
+          "id": "v3-c029",
+          "title": "宝法第一",
+          "volumeId": "v3",
+          "order": 29,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c029.md",
+          "sourceStartLine": 3467,
+          "sourceEndLine": 3479
+        },
+        {
+          "id": "v3-c030",
+          "title": "宝法第二",
+          "volumeId": "v3",
+          "order": 30,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c030.md",
+          "sourceStartLine": 3480,
+          "sourceEndLine": 3496
+        },
+        {
+          "id": "v3-c031",
+          "title": "寸金搜髓论",
+          "volumeId": "v3",
+          "order": 31,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c031.md",
+          "sourceStartLine": 3497,
+          "sourceEndLine": 3609
+        },
+        {
+          "id": "v3-c032",
+          "title": "论命细法",
+          "volumeId": "v3",
+          "order": 32,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c032.md",
+          "sourceStartLine": 3610,
+          "sourceEndLine": 3780
+        },
+        {
+          "id": "v3-c033",
+          "title": "妖祥赋",
+          "volumeId": "v3",
+          "order": 33,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c033.md",
+          "sourceStartLine": 3781,
+          "sourceEndLine": 3861
+        },
+        {
+          "id": "v3-c034",
+          "title": "络绎赋",
+          "volumeId": "v3",
+          "order": 34,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c034.md",
+          "sourceStartLine": 3862,
+          "sourceEndLine": 3976
+        },
+        {
+          "id": "v3-c035",
+          "title": "相心赋",
+          "volumeId": "v3",
+          "order": 35,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c035.md",
+          "sourceStartLine": 3977,
+          "sourceEndLine": 4031
+        },
+        {
+          "id": "v3-c036",
+          "title": "玄机赋",
+          "volumeId": "v3",
+          "order": 36,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c036.md",
+          "sourceStartLine": 4032,
+          "sourceEndLine": 4204
+        },
+        {
+          "id": "v3-c037",
+          "title": "幽微赋",
+          "volumeId": "v3",
+          "order": 37,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c037.md",
+          "sourceStartLine": 4205,
+          "sourceEndLine": 4321
+        },
+        {
+          "id": "v3-c038",
+          "title": "五行元理消息赋",
+          "volumeId": "v3",
+          "order": 38,
+          "path": "content/books/yuanhaiziping/chapters/v3/v3-c038.md",
+          "sourceStartLine": 4322,
+          "sourceEndLine": 4517
+        }
+      ]
+    },
+    {
+      "id": "v4",
+      "title": "卷四",
+      "order": 4,
+      "chapters": [
+        {
+          "id": "v4-c001",
+          "title": "金玉赋",
+          "volumeId": "v4",
+          "order": 1,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c001.md",
+          "sourceStartLine": 4521,
+          "sourceEndLine": 4555
+        },
+        {
+          "id": "v4-c002",
+          "title": "碧渊赋",
+          "volumeId": "v4",
+          "order": 2,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c002.md",
+          "sourceStartLine": 4556,
+          "sourceEndLine": 4596
+        },
+        {
+          "id": "v4-c003",
+          "title": "造微论",
+          "volumeId": "v4",
+          "order": 3,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c003.md",
+          "sourceStartLine": 4597,
+          "sourceEndLine": 4613
+        },
+        {
+          "id": "v4-c004",
+          "title": "人鉴论",
+          "volumeId": "v4",
+          "order": 4,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c004.md",
+          "sourceStartLine": 4614,
+          "sourceEndLine": 4628
+        },
+        {
+          "id": "v4-c005",
+          "title": "爱憎赋",
+          "volumeId": "v4",
+          "order": 5,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c005.md",
+          "sourceStartLine": 4629,
+          "sourceEndLine": 4649
+        },
+        {
+          "id": "v4-c006",
+          "title": "万金赋",
+          "volumeId": "v4",
+          "order": 6,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c006.md",
+          "sourceStartLine": 4650,
+          "sourceEndLine": 4724
+        },
+        {
+          "id": "v4-c007",
+          "title": "挈要捷驰玄妙诀",
+          "volumeId": "v4",
+          "order": 7,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c007.md",
+          "sourceStartLine": 4725,
+          "sourceEndLine": 4739
+        },
+        {
+          "id": "v4-c008",
+          "title": "渊源集说",
+          "volumeId": "v4",
+          "order": 8,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c008.md",
+          "sourceStartLine": 4740,
+          "sourceEndLine": 4746
+        },
+        {
+          "id": "v4-c009",
+          "title": "子平百章歌",
+          "volumeId": "v4",
+          "order": 9,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c009.md",
+          "sourceStartLine": 4747,
+          "sourceEndLine": 4759
+        },
+        {
+          "id": "v4-c010",
+          "title": "四言独步",
+          "volumeId": "v4",
+          "order": 10,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c010.md",
+          "sourceStartLine": 4760,
+          "sourceEndLine": 4922
+        },
+        {
+          "id": "v4-c011",
+          "title": "身弱论",
+          "volumeId": "v4",
+          "order": 11,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c011.md",
+          "sourceStartLine": 4923,
+          "sourceEndLine": 4953
+        },
+        {
+          "id": "v4-c012",
+          "title": "弃命从杀格",
+          "volumeId": "v4",
+          "order": 12,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c012.md",
+          "sourceStartLine": 4954,
+          "sourceEndLine": 4982
+        },
+        {
+          "id": "v4-c013",
+          "title": "五言独步",
+          "volumeId": "v4",
+          "order": 13,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c013.md",
+          "sourceStartLine": 4983,
+          "sourceEndLine": 5037
+        },
+        {
+          "id": "v4-c014",
+          "title": "正月建寅候诗诀",
+          "volumeId": "v4",
+          "order": 14,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c014.md",
+          "sourceStartLine": 5038,
+          "sourceEndLine": 5050
+        },
+        {
+          "id": "v4-c015",
+          "title": "二月建卯候诗诀",
+          "volumeId": "v4",
+          "order": 15,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c015.md",
+          "sourceStartLine": 5051,
+          "sourceEndLine": 5067
+        },
+        {
+          "id": "v4-c016",
+          "title": "三月建辰候诗诀",
+          "volumeId": "v4",
+          "order": 16,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c016.md",
+          "sourceStartLine": 5068,
+          "sourceEndLine": 5076
+        },
+        {
+          "id": "v4-c017",
+          "title": "四月建巳候诗诀",
+          "volumeId": "v4",
+          "order": 17,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c017.md",
+          "sourceStartLine": 5077,
+          "sourceEndLine": 5089
+        },
+        {
+          "id": "v4-c018",
+          "title": "五月建午候诗诀",
+          "volumeId": "v4",
+          "order": 18,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c018.md",
+          "sourceStartLine": 5090,
+          "sourceEndLine": 5100
+        },
+        {
+          "id": "v4-c019",
+          "title": "六月建未候诗诀",
+          "volumeId": "v4",
+          "order": 19,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c019.md",
+          "sourceStartLine": 5101,
+          "sourceEndLine": 5107
+        },
+        {
+          "id": "v4-c020",
+          "title": "七月建申候诗诀",
+          "volumeId": "v4",
+          "order": 20,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c020.md",
+          "sourceStartLine": 5108,
+          "sourceEndLine": 5116
+        },
+        {
+          "id": "v4-c021",
+          "title": "八月建酉候诗诀",
+          "volumeId": "v4",
+          "order": 21,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c021.md",
+          "sourceStartLine": 5117,
+          "sourceEndLine": 5129
+        },
+        {
+          "id": "v4-c022",
+          "title": "九月建戌候诗诀",
+          "volumeId": "v4",
+          "order": 22,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c022.md",
+          "sourceStartLine": 5130,
+          "sourceEndLine": 5144
+        },
+        {
+          "id": "v4-c023",
+          "title": "十月建亥候诗诀",
+          "volumeId": "v4",
+          "order": 23,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c023.md",
+          "sourceStartLine": 5145,
+          "sourceEndLine": 5155
+        },
+        {
+          "id": "v4-c024",
+          "title": "十一月建子候诗诀",
+          "volumeId": "v4",
+          "order": 24,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c024.md",
+          "sourceStartLine": 5156,
+          "sourceEndLine": 5168
+        },
+        {
+          "id": "v4-c025",
+          "title": "十二月建丑候诗诀",
+          "volumeId": "v4",
+          "order": 25,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c025.md",
+          "sourceStartLine": 5169,
+          "sourceEndLine": 5187
+        },
+        {
+          "id": "v4-c026",
+          "title": "十干体象",
+          "volumeId": "v4",
+          "order": 26,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c026.md",
+          "sourceStartLine": 5188,
+          "sourceEndLine": 5230
+        },
+        {
+          "id": "v4-c027",
+          "title": "十二支体象",
+          "volumeId": "v4",
+          "order": 27,
+          "path": "content/books/yuanhaiziping/chapters/v4/v4-c027.md",
+          "sourceStartLine": 5231,
+          "sourceEndLine": 5280
+        }
+      ]
+    },
+    {
+      "id": "v5",
+      "title": "卷五",
+      "order": 5,
+      "chapters": [
+        {
+          "id": "v5-c001",
+          "title": "正官诗诀",
+          "volumeId": "v5",
+          "order": 1,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c001.md",
+          "sourceStartLine": 5284,
+          "sourceEndLine": 5300
+        },
+        {
+          "id": "v5-c002",
+          "title": "偏官诗诀",
+          "volumeId": "v5",
+          "order": 2,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c002.md",
+          "sourceStartLine": 5301,
+          "sourceEndLine": 5319
+        },
+        {
+          "id": "v5-c003",
+          "title": "印绶诗诀",
+          "volumeId": "v5",
+          "order": 3,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c003.md",
+          "sourceStartLine": 5320,
+          "sourceEndLine": 5354
+        },
+        {
+          "id": "v5-c004",
+          "title": "正财诗诀",
+          "volumeId": "v5",
+          "order": 4,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c004.md",
+          "sourceStartLine": 5355,
+          "sourceEndLine": 5365
+        },
+        {
+          "id": "v5-c005",
+          "title": "偏财诗诀",
+          "volumeId": "v5",
+          "order": 5,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c005.md",
+          "sourceStartLine": 5366,
+          "sourceEndLine": 5378
+        },
+        {
+          "id": "v5-c006",
+          "title": "食神诗诀",
+          "volumeId": "v5",
+          "order": 6,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c006.md",
+          "sourceStartLine": 5379,
+          "sourceEndLine": 5393
+        },
+        {
+          "id": "v5-c007",
+          "title": "伤官诗诀",
+          "volumeId": "v5",
+          "order": 7,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c007.md",
+          "sourceStartLine": 5394,
+          "sourceEndLine": 5412
+        },
+        {
+          "id": "v5-c008",
+          "title": "羊刃诗诀",
+          "volumeId": "v5",
+          "order": 8,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c008.md",
+          "sourceStartLine": 5413,
+          "sourceEndLine": 5431
+        },
+        {
+          "id": "v5-c009",
+          "title": "刑合诗诀",
+          "volumeId": "v5",
+          "order": 9,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c009.md",
+          "sourceStartLine": 5432,
+          "sourceEndLine": 5448
+        },
+        {
+          "id": "v5-c010",
+          "title": "日贵诗诀",
+          "volumeId": "v5",
+          "order": 10,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c010.md",
+          "sourceStartLine": 5449,
+          "sourceEndLine": 5459
+        },
+        {
+          "id": "v5-c011",
+          "title": "金神诗诀",
+          "volumeId": "v5",
+          "order": 11,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c011.md",
+          "sourceStartLine": 5460,
+          "sourceEndLine": 5472
+        },
+        {
+          "id": "v5-c012",
+          "title": "日德诗诀",
+          "volumeId": "v5",
+          "order": 12,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c012.md",
+          "sourceStartLine": 5473,
+          "sourceEndLine": 5487
+        },
+        {
+          "id": "v5-c013",
+          "title": "魁罡诗诀",
+          "volumeId": "v5",
+          "order": 13,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c013.md",
+          "sourceStartLine": 5488,
+          "sourceEndLine": 5500
+        },
+        {
+          "id": "v5-c014",
+          "title": "时墓诗诀",
+          "volumeId": "v5",
+          "order": 14,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c014.md",
+          "sourceStartLine": 5501,
+          "sourceEndLine": 5511
+        },
+        {
+          "id": "v5-c015",
+          "title": "杂气财官诗诀",
+          "volumeId": "v5",
+          "order": 15,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c015.md",
+          "sourceStartLine": 5512,
+          "sourceEndLine": 5528
+        },
+        {
+          "id": "v5-c016",
+          "title": "时上偏财诗诀",
+          "volumeId": "v5",
+          "order": 16,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c016.md",
+          "sourceStartLine": 5529,
+          "sourceEndLine": 5543
+        },
+        {
+          "id": "v5-c017",
+          "title": "时上一位贵诗诀",
+          "volumeId": "v5",
+          "order": 17,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c017.md",
+          "sourceStartLine": 5544,
+          "sourceEndLine": 5560
+        },
+        {
+          "id": "v5-c018",
+          "title": "飞天禄马诗诀",
+          "volumeId": "v5",
+          "order": 18,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c018.md",
+          "sourceStartLine": 5561,
+          "sourceEndLine": 5595
+        },
+        {
+          "id": "v5-c019",
+          "title": "六乙鼠贵诗诀",
+          "volumeId": "v5",
+          "order": 19,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c019.md",
+          "sourceStartLine": 5596,
+          "sourceEndLine": 5608
+        },
+        {
+          "id": "v5-c020",
+          "title": "合禄诗诀",
+          "volumeId": "v5",
+          "order": 20,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c020.md",
+          "sourceStartLine": 5609,
+          "sourceEndLine": 5621
+        },
+        {
+          "id": "v5-c021",
+          "title": "子遥巳诗诀",
+          "volumeId": "v5",
+          "order": 21,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c021.md",
+          "sourceStartLine": 5622,
+          "sourceEndLine": 5634
+        },
+        {
+          "id": "v5-c022",
+          "title": "丑遥巳格诗诀",
+          "volumeId": "v5",
+          "order": 22,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c022.md",
+          "sourceStartLine": 5635,
+          "sourceEndLine": 5645
+        },
+        {
+          "id": "v5-c023",
+          "title": "壬骑龙背诗诀",
+          "volumeId": "v5",
+          "order": 23,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c023.md",
+          "sourceStartLine": 5646,
+          "sourceEndLine": 5660
+        },
+        {
+          "id": "v5-c024",
+          "title": "井栏叉格诗诀",
+          "volumeId": "v5",
+          "order": 24,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c024.md",
+          "sourceStartLine": 5661,
+          "sourceEndLine": 5673
+        },
+        {
+          "id": "v5-c025",
+          "title": "归禄格诗诀",
+          "volumeId": "v5",
+          "order": 25,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c025.md",
+          "sourceStartLine": 5674,
+          "sourceEndLine": 5684
+        },
+        {
+          "id": "v5-c026",
+          "title": "六阴朝阳诗诀",
+          "volumeId": "v5",
+          "order": 26,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c026.md",
+          "sourceStartLine": 5685,
+          "sourceEndLine": 5699
+        },
+        {
+          "id": "v5-c027",
+          "title": "拱禄拱贵诗诀",
+          "volumeId": "v5",
+          "order": 27,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c027.md",
+          "sourceStartLine": 5700,
+          "sourceEndLine": 5720
+        },
+        {
+          "id": "v5-c028",
+          "title": "六甲趋干诗诀",
+          "volumeId": "v5",
+          "order": 28,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c028.md",
+          "sourceStartLine": 5721,
+          "sourceEndLine": 5725
+        },
+        {
+          "id": "v5-c029",
+          "title": "六壬趋艮诗诀",
+          "volumeId": "v5",
+          "order": 29,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c029.md",
+          "sourceStartLine": 5726,
+          "sourceEndLine": 5732
+        },
+        {
+          "id": "v5-c030",
+          "title": "勾陈得位诗诀",
+          "volumeId": "v5",
+          "order": 30,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c030.md",
+          "sourceStartLine": 5733,
+          "sourceEndLine": 5741
+        },
+        {
+          "id": "v5-c031",
+          "title": "玄武当权诗诀",
+          "volumeId": "v5",
+          "order": 31,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c031.md",
+          "sourceStartLine": 5742,
+          "sourceEndLine": 5748
+        },
+        {
+          "id": "v5-c032",
+          "title": "润下诗诀",
+          "volumeId": "v5",
+          "order": 32,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c032.md",
+          "sourceStartLine": 5749,
+          "sourceEndLine": 5755
+        },
+        {
+          "id": "v5-c033",
+          "title": "从革诗诀",
+          "volumeId": "v5",
+          "order": 33,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c033.md",
+          "sourceStartLine": 5756,
+          "sourceEndLine": 5762
+        },
+        {
+          "id": "v5-c034",
+          "title": "稼穑诗诀",
+          "volumeId": "v5",
+          "order": 34,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c034.md",
+          "sourceStartLine": 5763,
+          "sourceEndLine": 5769
+        },
+        {
+          "id": "v5-c035",
+          "title": "曲直格诗诀",
+          "volumeId": "v5",
+          "order": 35,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c035.md",
+          "sourceStartLine": 5770,
+          "sourceEndLine": 5776
+        },
+        {
+          "id": "v5-c036",
+          "title": "炎上格诗诀",
+          "volumeId": "v5",
+          "order": 36,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c036.md",
+          "sourceStartLine": 5777,
+          "sourceEndLine": 5783
+        },
+        {
+          "id": "v5-c037",
+          "title": "福德格诗诀",
+          "volumeId": "v5",
+          "order": 37,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c037.md",
+          "sourceStartLine": 5784,
+          "sourceEndLine": 5800
+        },
+        {
+          "id": "v5-c038",
+          "title": "弃命从财诗诀",
+          "volumeId": "v5",
+          "order": 38,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c038.md",
+          "sourceStartLine": 5801,
+          "sourceEndLine": 5805
+        },
+        {
+          "id": "v5-c039",
+          "title": "弃命从杀诗诀",
+          "volumeId": "v5",
+          "order": 39,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c039.md",
+          "sourceStartLine": 5806,
+          "sourceEndLine": 5820
+        },
+        {
+          "id": "v5-c040",
+          "title": "杀重有救诗诀",
+          "volumeId": "v5",
+          "order": 40,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c040.md",
+          "sourceStartLine": 5821,
+          "sourceEndLine": 5829
+        },
+        {
+          "id": "v5-c041",
+          "title": "天元一气诗诀",
+          "volumeId": "v5",
+          "order": 41,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c041.md",
+          "sourceStartLine": 5830,
+          "sourceEndLine": 5852
+        },
+        {
+          "id": "v5-c042",
+          "title": "化气诗诀",
+          "volumeId": "v5",
+          "order": 42,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c042.md",
+          "sourceStartLine": 5853,
+          "sourceEndLine": 5883
+        },
+        {
+          "id": "v5-c043",
+          "title": "天元一字诗诀",
+          "volumeId": "v5",
+          "order": 43,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c043.md",
+          "sourceStartLine": 5884,
+          "sourceEndLine": 5896
+        },
+        {
+          "id": "v5-c044",
+          "title": "刑冲诗诀",
+          "volumeId": "v5",
+          "order": 44,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c044.md",
+          "sourceStartLine": 5897,
+          "sourceEndLine": 5903
+        },
+        {
+          "id": "v5-c045",
+          "title": "克妻诗诀",
+          "volumeId": "v5",
+          "order": 45,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c045.md",
+          "sourceStartLine": 5904,
+          "sourceEndLine": 5910
+        },
+        {
+          "id": "v5-c046",
+          "title": "克子诗诀",
+          "volumeId": "v5",
+          "order": 46,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c046.md",
+          "sourceStartLine": 5911,
+          "sourceEndLine": 5925
+        },
+        {
+          "id": "v5-c047",
+          "title": "运通诗诀",
+          "volumeId": "v5",
+          "order": 47,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c047.md",
+          "sourceStartLine": 5926,
+          "sourceEndLine": 5938
+        },
+        {
+          "id": "v5-c048",
+          "title": "运晦诗诀",
+          "volumeId": "v5",
+          "order": 48,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c048.md",
+          "sourceStartLine": 5939,
+          "sourceEndLine": 5951
+        },
+        {
+          "id": "v5-c049",
+          "title": "带疾诗诀",
+          "volumeId": "v5",
+          "order": 49,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c049.md",
+          "sourceStartLine": 5952,
+          "sourceEndLine": 5964
+        },
+        {
+          "id": "v5-c050",
+          "title": "寿元诗诀",
+          "volumeId": "v5",
+          "order": 50,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c050.md",
+          "sourceStartLine": 5965,
+          "sourceEndLine": 5973
+        },
+        {
+          "id": "v5-c051",
+          "title": "飘荡诗诀",
+          "volumeId": "v5",
+          "order": 51,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c051.md",
+          "sourceStartLine": 5974,
+          "sourceEndLine": 5980
+        },
+        {
+          "id": "v5-c052",
+          "title": "女命诗诀",
+          "volumeId": "v5",
+          "order": 52,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c052.md",
+          "sourceStartLine": 5981,
+          "sourceEndLine": 5995
+        },
+        {
+          "id": "v5-c053",
+          "title": "长生诗诀",
+          "volumeId": "v5",
+          "order": 53,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c053.md",
+          "sourceStartLine": 5996,
+          "sourceEndLine": 6002
+        },
+        {
+          "id": "v5-c054",
+          "title": "沐浴诗诀",
+          "volumeId": "v5",
+          "order": 54,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c054.md",
+          "sourceStartLine": 6003,
+          "sourceEndLine": 6015
+        },
+        {
+          "id": "v5-c055",
+          "title": "冠带诗诀",
+          "volumeId": "v5",
+          "order": 55,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c055.md",
+          "sourceStartLine": 6016,
+          "sourceEndLine": 6022
+        },
+        {
+          "id": "v5-c056",
+          "title": "临官诗诀",
+          "volumeId": "v5",
+          "order": 56,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c056.md",
+          "sourceStartLine": 6023,
+          "sourceEndLine": 6027
+        },
+        {
+          "id": "v5-c057",
+          "title": "帝旺诗诀",
+          "volumeId": "v5",
+          "order": 57,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c057.md",
+          "sourceStartLine": 6028,
+          "sourceEndLine": 6032
+        },
+        {
+          "id": "v5-c058",
+          "title": "衰病死诗诀",
+          "volumeId": "v5",
+          "order": 58,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c058.md",
+          "sourceStartLine": 6033,
+          "sourceEndLine": 6039
+        },
+        {
+          "id": "v5-c059",
+          "title": "墓库诗诀",
+          "volumeId": "v5",
+          "order": 59,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c059.md",
+          "sourceStartLine": 6040,
+          "sourceEndLine": 6046
+        },
+        {
+          "id": "v5-c060",
+          "title": "绝胎诗诀",
+          "volumeId": "v5",
+          "order": 60,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c060.md",
+          "sourceStartLine": 6047,
+          "sourceEndLine": 6053
+        },
+        {
+          "id": "v5-c061",
+          "title": "胎养诗诀",
+          "volumeId": "v5",
+          "order": 61,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c061.md",
+          "sourceStartLine": 6054,
+          "sourceEndLine": 6058
+        },
+        {
+          "id": "v5-c062",
+          "title": "五行生克赋",
+          "volumeId": "v5",
+          "order": 62,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c062.md",
+          "sourceStartLine": 6059,
+          "sourceEndLine": 6081
+        },
+        {
+          "id": "v5-c063",
+          "title": "珞琭子消息赋",
+          "volumeId": "v5",
+          "order": 63,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c063.md",
+          "sourceStartLine": 6082,
+          "sourceEndLine": 6182
+        },
+        {
+          "id": "v5-c064",
+          "title": "论八字撮要法",
+          "volumeId": "v5",
+          "order": 64,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c064.md",
+          "sourceStartLine": 6183,
+          "sourceEndLine": 6189
+        },
+        {
+          "id": "v5-c065",
+          "title": "会命要说",
+          "volumeId": "v5",
+          "order": 65,
+          "path": "content/books/yuanhaiziping/chapters/v5/v5-c065.md",
+          "sourceStartLine": 6190,
+          "sourceEndLine": 6197
+        }
+      ]
+    }
+  ]
+}

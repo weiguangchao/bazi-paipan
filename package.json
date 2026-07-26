@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
     "test:e2e": "playwright test",
+    "check:book-build": "node scripts/check-book-build.mjs",
+    "check:release": "npm run typecheck && npm test && npm run build && npm run check:book-build && npm run test:e2e",
     "test:watch": "vitest",
     "check:ascii-identifiers": "node scripts/check-ascii-identifiers.mjs",
     "check:identifier-vocabulary": "node scripts/check-identifier-vocabulary.mjs",
@@ -34,10 +36,13 @@
     "react": "^19.2.8",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.8",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.1",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
