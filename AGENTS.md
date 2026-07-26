@@ -10,6 +10,7 @@
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
+├── content/           # 命理古籍原文与分章内容
 ├── docs/
 │   ├── adr/           # 架构决策记录
 │   └── agents/        # agent 工作流细则
