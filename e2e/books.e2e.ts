@@ -40,6 +40,7 @@ test("canonical 与异常地址遵守 replace 和原 URL 保留规则", async ({
     `${root}/chapters/v1_c001`,
     `${root}/chapters/unknown`,
     `${root}/chapters`,
+    `${root}/chapters/v1-c001/extra`,
   ]) {
     await page.goto(invalid);
     await expect(page.getByRole("heading", { name: /不存在/ })).toBeVisible();

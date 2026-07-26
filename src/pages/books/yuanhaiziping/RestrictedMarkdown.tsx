@@ -1,3 +1,4 @@
+import { Component, type ErrorInfo, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -65,16 +66,57 @@ const components: Components = {
   },
 };
 
-export function RestrictedMarkdown({ source }: { source: string }) {
-  validateChapterMarkdown(source);
+function MarkdownSafetyError({ message }: { message: string }) {
   return (
-    <ReactMarkdown
-      allowedElements={allowedElements}
-      components={components}
-      remarkPlugins={[remarkGfm]}
-      skipHtml
-    >
-      {source}
-    </ReactMarkdown>
+    <div className="reader-error" role="alert">
+      <strong>本篇内容无法安全渲染</strong>
+      <p>{message}</p>
+    </div>
+  );
+}
+
+export class MarkdownErrorBoundary extends Component<
+  { children: ReactNode },
+  { message?: string }
+> {
+  override state: { message?: string } = {};
+
+  static getDerivedStateFromError(error: unknown) {
+    return {
+      message: error instanceof Error ? error.message : "Markdown 解析失败",
+    };
+  }
+
+  override componentDidCatch(_error: unknown, _info: ErrorInfo) {
+    // The safe fallback keeps the reader navigation usable.
+  }
+
+  override render() {
+    if (this.state.message) return <MarkdownSafetyError message={this.state.message} />;
+    return this.props.children;
+  }
+}
+
+export function RestrictedMarkdown({ source }: { source: string }) {
+  try {
+    validateChapterMarkdown(source);
+  } catch (error) {
+    return (
+      <MarkdownSafetyError
+        message={error instanceof Error ? error.message : "Markdown 校验失败"}
+      />
+    );
+  }
+  return (
+    <MarkdownErrorBoundary key={source}>
+      <ReactMarkdown
+        allowedElements={allowedElements}
+        components={components}
+        remarkPlugins={[remarkGfm]}
+        skipHtml
+      >
+        {source}
+      </ReactMarkdown>
+    </MarkdownErrorBoundary>
   );
 }

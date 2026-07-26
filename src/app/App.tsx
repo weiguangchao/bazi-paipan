@@ -14,7 +14,7 @@ export default function App() {
       <Suspense fallback={<main className="book-loading" aria-live="polite">正在打开页面…</main>}>
         <Routes>
           <Route path="/" element={<PaipanPage />} />
-          <Route path="/books/yuanhaiziping/chapters/:chapterId/*" element={<ChapterEntry />} />
+          <Route path="/books/yuanhaiziping/chapters/:chapterId" element={<ChapterEntry />} />
           <Route path="/books/*" element={<CatalogRoutes />} />
         </Routes>
       </Suspense>

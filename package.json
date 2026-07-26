@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
     "test:e2e": "playwright test",
+    "build:book-volume-map": "node scripts/build-book-volume-map.mjs",
     "check:book-build": "node scripts/check-book-build.mjs",
     "check:release": "npm run typecheck && npm test && npm run build && npm run check:book-build && npm run test:e2e",
     "test:watch": "vitest",

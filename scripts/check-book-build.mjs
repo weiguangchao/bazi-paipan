@@ -5,6 +5,17 @@ import path from "node:path";
 const root = process.cwd();
 const manifest = JSON.parse(readFileSync(path.join(root, "dist/.vite/manifest.json"), "utf8"));
 const catalog = JSON.parse(readFileSync(path.join(root, "src/pages/books/yuanhaiziping/catalog.json"), "utf8"));
+const chapterVolumeMapPath = path.join(root, "src/pages/books/yuanhaiziping/chapter-volume-map.json");
+const chapterVolumeMap = JSON.parse(readFileSync(chapterVolumeMapPath, "utf8"));
+const expectedChapterVolumeMap = Object.fromEntries(
+  catalog.volumes.flatMap((volume) =>
+    volume.chapters.map((chapter) => [chapter.id, volume.id]),
+  ),
+);
+
+if (JSON.stringify(chapterVolumeMap) !== JSON.stringify(expectedChapterVolumeMap)) {
+  throw new Error("篇章卷映射与 catalog.json 不一致；请运行 npm run build:book-volume-map");
+}
 
 const volumeEntries = Object.entries(manifest)
   .filter(([source]) => /src\/pages\/books\/yuanhaiziping\/volumes\/v[1-5]\.ts$/.test(source))
