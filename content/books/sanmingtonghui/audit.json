@@ -3776,7 +3776,7 @@
   "review": {
     "importedAt": "2026-07-26",
     "importer": "Codex primary agent",
-    "verificationCommit": null,
+    "verificationCommit": "1e24b95571ee71c2dee377976f92a213ebb0f96a",
     "independentReviewer": "Codex independent content audit agent",
     "reviewedAt": "2026-07-26",
     "conclusion": "passed independent full review of all 366 chapters"
