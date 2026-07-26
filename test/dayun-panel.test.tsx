@@ -114,6 +114,26 @@ describe("DayunPanel 自动携带", () => {
 });
 
 describe("DayunPanel 手动切换与重置", () => {
+  it("朱签标记真实当前项，并与手动选择态保持独立", async () => {
+    const user = userEvent.setup();
+    const data = dayun({ currentDayunStartYear: 2020, currentYear: 2025 });
+    data.zhu[2]!.liunian[5]!.liuyue[3]!.isCurrent = true;
+    render(<DayunPanel data={data} />);
+
+    const currentDayunMarker = screen.getByText("当前", { exact: true });
+    const currentYearMarker = screen.getByText("今年", { exact: true });
+    const currentLiuyueMarker = screen.getByText("本月", { exact: true });
+    expect(currentDayunMarker).toHaveAttribute("data-current-marker", "seal");
+    expect(currentYearMarker).toHaveAttribute("data-current-marker", "seal");
+    expect(currentLiuyueMarker).toHaveAttribute("data-current-marker", "seal");
+
+    const currentDayunCard = currentDayunMarker.closest('[data-testid="dayun-card"]');
+    expect(currentDayunCard).toHaveAttribute("data-state", "on");
+    await user.click(screen.getAllByTestId("dayun-card")[0]!);
+    expect(currentDayunCard).toHaveAttribute("data-state", "off");
+    expect(currentDayunMarker).toBeVisible();
+  });
+
   it("切换大运按目标状态选择默认流年，切换流年清空流月，重复点击不折叠", async () => {
     const user = userEvent.setup();
     render(<DayunPanel data={dayun({ currentDayunStartYear: 2020, currentYear: 2025 })} />);
