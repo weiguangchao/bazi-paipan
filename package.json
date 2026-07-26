@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
+    "test:e2e": "playwright test",
     "test:watch": "vitest",
     "check:ascii-identifiers": "node scripts/check-ascii-identifiers.mjs",
     "check:identifier-vocabulary": "node scripts/check-identifier-vocabulary.mjs",
@@ -37,6 +38,7 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.1.1",
@@ -44,7 +46,6 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "autoprefixer": "^10.5.4",
-    "playwright": "^1.61.1",
     "postcss": "^8.5.22",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.1",

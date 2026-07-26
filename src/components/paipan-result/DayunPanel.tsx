@@ -1,4 +1,4 @@
-// 大运、流年下钻流月面板：用户点击大运、流年后展开下一层；流月卡只读。
+// 大运、流年、流月三级面板：每层均有独立点击态，上层切换时重置下层。
 // 词汇遵循 CONTEXT.md（大运、流年、流月、流月柱、十神、节）。
 import { type ReactNode, useEffect, useState } from "react";
 import type { DayunOut } from "@/domain/paipan/mingpan";
@@ -13,9 +13,10 @@ interface DayunPanelProps {
 const selectableCardBaseClass =
   "group flex h-auto w-16 shrink-0 flex-col gap-0.5 rounded-md border border-border p-1.5 shadow-none data-[state=on]:bg-transparent";
 
-function selectableCardClass(selected: boolean): string {
+function selectableCardClass(selected: boolean, relative = false): string {
   return cn(
     selectableCardBaseClass,
+    relative && "relative",
     selected ? "hover:bg-transparent" : "hover:bg-accent/5",
   );
 }
@@ -81,26 +82,32 @@ function SelectionUnderline({ selected }: { selected: boolean }) {
   );
 }
 
+function CurrentBadge({ children }: { children: ReactNode }) {
+  return (
+    <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
+      {children}
+    </span>
+  );
+}
+
 function GanzhiRows({
   ganzhi,
   tianganShishen,
   dizhiShishen,
   selected,
   liuyueFields,
-  selectable = true,
 }: {
   ganzhi: string;
   tianganShishen: string;
   dizhiShishen: string;
   selected: boolean;
   liuyueFields?: boolean;
-  selectable?: boolean;
 }) {
   return (
     <div className="relative flex flex-col gap-0.5 pb-[3px]">
       <ZhuRow character={ganzhi[0]!} shishen={tianganShishen} bold={selected} field={liuyueFields} />
       <ZhuRow character={ganzhi[1]!} shishen={dizhiShishen} bold={selected} field={liuyueFields} />
-      {selectable && <SelectionUnderline selected={selected} />}
+      <SelectionUnderline selected={selected} />
     </div>
   );
 }
@@ -108,10 +115,12 @@ function GanzhiRows({
 export function DayunPanel({ data }: DayunPanelProps) {
   const [selectedDayunIndex, setSelectedDayunIndex] = useState("");
   const [selectedLiunianIndex, setSelectedLiunianIndex] = useState("");
+  const [selectedLiuyueIndex, setSelectedLiuyueIndex] = useState("");
 
   useEffect(() => {
     setSelectedDayunIndex("");
     setSelectedLiunianIndex("");
+    setSelectedLiuyueIndex("");
   }, [data]);
 
   const selectedDayunzhu =
@@ -124,12 +133,20 @@ export function DayunPanel({ data }: DayunPanelProps) {
     if (value !== selectedDayunIndex) {
       setSelectedDayunIndex(value);
       setSelectedLiunianIndex("");
+      setSelectedLiuyueIndex("");
     }
   }
 
   function selectLiunian(value: string) {
     if (!value) return;
-    if (value !== selectedLiunianIndex) setSelectedLiunianIndex(value);
+    if (value !== selectedLiunianIndex) {
+      setSelectedLiunianIndex(value);
+      setSelectedLiuyueIndex("");
+    }
+  }
+
+  function selectLiuyue(value: string) {
+    if (value) setSelectedLiuyueIndex(value);
   }
 
   return (
@@ -158,9 +175,7 @@ export function DayunPanel({ data }: DayunPanelProps) {
                   {zhu.startYear}
                 </span>
                 {zhu.isCurrent && (
-                  <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
-                    当前
-                  </span>
+                  <CurrentBadge>当前</CurrentBadge>
                 )}
               </span>
               <span className="text-[0.6rem] leading-none text-muted-foreground">
@@ -198,9 +213,7 @@ export function DayunPanel({ data }: DayunPanelProps) {
                     {item.year}
                   </span>
                   {item.isCurrentYear && (
-                    <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
-                      今年
-                    </span>
+                    <CurrentBadge>今年</CurrentBadge>
                   )}
                 </span>
                 <GanzhiRows
@@ -216,40 +229,44 @@ export function DayunPanel({ data }: DayunPanelProps) {
       )}
 
       {selectedLiunianzhu && (
-        <div
-          role="group"
-          aria-label="流月"
-          className="flex w-full flex-nowrap gap-1.5 overflow-x-auto rounded-lg border border-border p-1"
+        <SelectableLayer
+          value={selectedLiuyueIndex}
+          onValueChange={selectLiuyue}
+          label="流月"
         >
-          {selectedLiunianzhu.liuyue.map((item) => (
-            <div
-              key={item.startUtcMs}
-              data-testid="liuyue-card"
-              aria-label={`${item.startJie}${item.startMonth}月${item.startDay}日流月${item.isCurrent ? "，当前" : ""}`}
-              className="relative flex h-auto w-16 shrink-0 flex-col gap-0.5 rounded-md border border-border bg-card p-1.5 text-center"
-            >
-              {item.isCurrent && (
-                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-3 whitespace-nowrap rounded-full bg-accent px-1 text-[0.55rem] font-bold leading-tight text-accent-foreground">
-                  当前
+          {selectedLiunianzhu.liuyue.map((item, index) => {
+            const isSelected = selectedLiuyueIndex === String(index);
+            return (
+              <ToggleGroupItem
+                key={item.startUtcMs}
+                value={String(index)}
+                data-testid="liuyue-card"
+                aria-label={`${item.startJie}${item.startMonth}月${item.startDay}日流月${item.isCurrent ? "，当前" : ""}`}
+                className={selectableCardClass(isSelected, true)}
+              >
+                {item.isCurrent && (
+                  <CurrentBadge>当前</CurrentBadge>
+                )}
+                <span
+                  data-liuyue-field
+                  className={cn("text-xs font-semibold", isSelected ? "text-accent" : "text-muted-foreground")}
+                >
+                  {item.startJie}
                 </span>
-              )}
-              <span data-liuyue-field className="text-xs font-semibold text-muted-foreground">
-                {item.startJie}
-              </span>
-              <span data-liuyue-field className="text-[0.6rem] leading-none text-muted-foreground">
-                {item.startMonth}/{item.startDay}
-              </span>
-              <GanzhiRows
-                ganzhi={item.ganzhi}
-                tianganShishen={item.tianganShishen}
-                dizhiShishen={item.dizhiShishen}
-                selected={false}
-                liuyueFields
-                selectable={false}
-              />
-            </div>
-          ))}
-        </div>
+                <span data-liuyue-field className="text-[0.6rem] leading-none text-muted-foreground">
+                  {item.startMonth}/{item.startDay}
+                </span>
+                <GanzhiRows
+                  ganzhi={item.ganzhi}
+                  tianganShishen={item.tianganShishen}
+                  dizhiShishen={item.dizhiShishen}
+                  selected={isSelected}
+                  liuyueFields
+                />
+              </ToggleGroupItem>
+            );
+          })}
+        </SelectableLayer>
       )}
     </div>
   );
