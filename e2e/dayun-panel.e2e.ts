@@ -1,8 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const ordinaryMonthNow = new Date("2025-01-20T04:00:00.000Z");
+const preLichunNow = new Date("2025-01-20T04:00:00.000Z");
 
-async function openMingpan(page: Page, now = ordinaryMonthNow): Promise<void> {
+async function openMingpan(page: Page, now = preLichunNow): Promise<void> {
   await page.clock.setFixedTime(now);
   await page.goto("/");
   await page.getByRole("button", { name: "排盘", exact: true }).click();
@@ -79,6 +79,19 @@ test("当前徽标与点击态分离，流月字段按规定顺序展示", async
   await currentLiuyue.click();
   await expect(currentLiuyue).toHaveAttribute("data-state", "on");
   await expect(currentLiuyue.getByText("当前", { exact: true })).toBeVisible();
+});
+
+test("普通月份今年与当前流月同属同一流年", async ({ page }) => {
+  await openMingpan(page, new Date("2025-07-20T04:00:00.000Z"));
+  await selectDayunStartingIn(page, 2017);
+
+  const currentYear = page.getByTestId("liunian-card").filter({ hasText: "今年" });
+  await expect(currentYear).toContainText("2025");
+  await currentYear.click();
+
+  const currentLiuyue = page.getByTestId("liuyue-card").filter({ hasText: "当前" });
+  await expect(currentLiuyue).toHaveCount(1);
+  await expect(currentLiuyue).toContainText("小暑");
 });
 
 for (const scenario of [
