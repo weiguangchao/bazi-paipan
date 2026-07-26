@@ -16,6 +16,12 @@ export interface Liunianzhu {
 /** 流年输出长度：给定公历年起向后 10 柱。 */
 const liunianzhuCount = 10;
 
+/** 单个公历年的流年柱。 */
+export function liunianzhu(year: number): Liunianzhu {
+  const index = (((year - 4) % 60) + 60) % 60;
+  return { year, ganzhi: liushijiazi(index) };
+}
+
 /**
  * 流年纯函数：给定起始公历年，返回从该年起向后 10 柱干支。
  * 每柱 = 六十甲子((公历年 - 4) mod 60)，公历年每 +1，序号 +1。
@@ -26,9 +32,7 @@ const liunianzhuCount = 10;
 export function liunian(startGregorianYear: number): Liunianzhu[] {
   const zhu: Liunianzhu[] = [];
   for (let i = 0; i < liunianzhuCount; i++) {
-    const year = startGregorianYear + i;
-    const index = (((year - 4) % 60) + 60) % 60;
-    zhu.push({ year, ganzhi: liushijiazi(index) });
+    zhu.push(liunianzhu(startGregorianYear + i));
   }
   return zhu;
 }

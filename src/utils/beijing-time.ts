@@ -8,7 +8,15 @@ export const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
 /** 按北京时间（UTC+8）读取机器时钟，返回当前公历年月。 */
 export function getBeijingYearMonth(): { year: number; month: number } {
-  const now = Date.now();
-  const beijingNow = new Date(now + BEIJING_OFFSET_MS);
-  return { year: beijingNow.getUTCFullYear(), month: beijingNow.getUTCMonth() + 1 };
+  const { year, month } = getBeijingCurrentMoment();
+  return { year, month };
+}
+
+/** 在调用瞬间读取完整当前时刻，并附带对应的北京时间公历年月。 */
+export function getBeijingCurrentMoment(): { year: number; month: number; utcMs: number } {
+  const utcMs = Date.now();
+  const beijingNow = new Date(utcMs + BEIJING_OFFSET_MS);
+  const year = beijingNow.getUTCFullYear();
+  const month = beijingNow.getUTCMonth() + 1;
+  return { year, month, utcMs };
 }
