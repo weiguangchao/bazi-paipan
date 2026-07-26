@@ -43,10 +43,10 @@ export interface LiunianItemOut {
   tianganShishen: string;
   dizhiShishen: string;
   isCurrentYear: boolean;
-  liuyue: LiuyueItemOut[];
+  liuyue: LiuyuezhuOut[];
 }
 
-export interface LiuyueItemOut {
+export interface LiuyuezhuOut {
   ganzhi: string;
   startJie: string;
   startUtcMs: number;

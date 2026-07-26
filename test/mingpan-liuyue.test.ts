@@ -53,4 +53,23 @@ describe("命盘 - 完整流月嵌套", () => {
       isCurrent: true,
     });
   });
+
+  it("跨调用的流年与流月不共享可变对象", () => {
+    const now = {
+      year: 2025,
+      month: 1,
+      utcMs: Date.UTC(2025, 0, 20),
+    };
+    const first = mingpan(birthProfile(), now);
+    const second = mingpan(birthProfile(), now);
+    const firstLiunianzhu = first.dayun.zhu[0]!.liunian[0]!;
+    const secondLiunianzhu = second.dayun.zhu[0]!.liunian[0]!;
+    const expectedFirstLiuyue = secondLiunianzhu.liuyue[0]!.ganzhi;
+
+    firstLiunianzhu.liuyue[0]!.ganzhi = "甲子";
+    firstLiunianzhu.liuyue.pop();
+
+    expect(secondLiunianzhu.liuyue).toHaveLength(12);
+    expect(secondLiunianzhu.liuyue[0]!.ganzhi).toBe(expectedFirstLiuyue);
+  });
 });

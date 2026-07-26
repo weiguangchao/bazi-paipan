@@ -47,6 +47,7 @@ describe("流月 - 交节区间", () => {
 
     expect(liuyue(2024, transitionUtcMs - 1).find((item) => item.isCurrent)?.ganzhi).toBe("丙寅");
     expect(liuyue(2024, transitionUtcMs).find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
+    expect(liuyue(2024, transitionUtcMs + 1).find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
   });
 
   it("立春交节采用真实 UTC 时刻，卡片日期按北京时间显示", () => {

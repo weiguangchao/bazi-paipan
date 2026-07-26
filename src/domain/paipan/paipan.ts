@@ -15,6 +15,7 @@ import {
 import { applyTrueSolarTime } from "@/domain/time/solar-time";
 import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
 import { dayun, type Gender, type DayunResult } from "@/domain/paipan/dayun";
+import { BEIJING_OFFSET_MS } from "@/domain/time/beijing-offset";
 import { getLichunMoment, getSolarTermMoment } from "@/domain/time/jieqi";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
@@ -63,9 +64,6 @@ const RIZHU_ANCHOR_YEAR = 2000;
 const RIZHU_ANCHOR_MONTH = 1; // 1 月
 const RIZHU_ANCHOR_DAY = 1;
 const RIZHU_ANCHOR_INDEX = 54;
-
-/** 北京时间 UTC+8 偏移（毫秒） */
-const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
 
 // 月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)、惊蛰->卯(3)…小寒->丑(1)
 // 与 JIE_TERM_INDEXES 一一对应（节序号见 ganzhi.ts）。

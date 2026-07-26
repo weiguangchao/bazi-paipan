@@ -9,7 +9,6 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
-    "test:e2e": "tsx scripts/e2e-liuyue.ts",
     "test:watch": "vitest",
     "check:ascii-identifiers": "node scripts/check-ascii-identifiers.mjs",
     "check:identifier-vocabulary": "node scripts/check-identifier-vocabulary.mjs",
