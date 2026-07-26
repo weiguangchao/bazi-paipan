@@ -7,7 +7,7 @@ import {
   MarkdownErrorBoundary,
   RestrictedMarkdown,
   validateChapterMarkdown,
-} from "@/pages/books/yuanhaiziping/RestrictedMarkdown";
+} from "@/books/shared/RestrictedMarkdown";
 
 describe("受限 Markdown", () => {
   test("按原顺序完整渲染白名单、特殊字符与命例，并保留可复制文本", async () => {

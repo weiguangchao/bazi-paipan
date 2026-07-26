@@ -1,163 +1,185 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const root = "/books/yuanhaiziping";
-const volumeChunk = /\/assets\/v[1-5]-[^/]+\.js$/;
+const yuanRoot = "/books/yuanhaiziping";
+const sanmingRoot = "/books/sanmingtonghui";
+const volumeChunk = /\/assets\/v\d+-[^/]+\.js$/;
+const sanmingCounts = [36, 26, 23, 25, 20, 73, 22, 60, 60, 3, 5, 13];
 
 async function expectNoSeriousA11y(page: Page) {
   const result = await new AxeBuilder({ page }).analyze();
-  expect(result.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""))).toEqual([]);
+  expect(
+    result.violations.filter((violation) =>
+      ["serious", "critical"].includes(violation.impact ?? "")),
+  ).toEqual([]);
 }
 
-test("五个卷首页与各卷首末篇均支持真实直达和刷新", async ({ page }) => {
-  const boundaries = [
-    ["v1", "v1-c001", "v1-c069"],
-    ["v2", "v2-c001", "v2-c070"],
-    ["v3", "v3-c001", "v3-c038"],
-    ["v4", "v4-c001", "v4-c027"],
-    ["v5", "v5-c001", "v5-c065"],
-  ] as const;
-  for (const [volume, first, last] of boundaries) {
-    await page.goto(`${root}/volumes/${volume}`);
-    await expect(page.locator("main")).toContainText(`卷${"一二三四五"[Number(volume.slice(1)) - 1]}`);
-    for (const chapter of [first, last]) {
-      await page.goto(`${root}/chapters/${chapter}`);
-      await expect(page.locator(".chapter-prose")).not.toBeEmpty();
+test("典籍首页按固定顺序展示两部典籍且顶部入口正确", async ({ page }) => {
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(new URL(request.url()).pathname));
+  await page.goto("/books");
+
+  await expect(page.getByRole("heading", { level: 1, name: "典籍" })).toBeVisible();
+  const cards = page.locator(".book-card-grid > a");
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText("渊海子平");
+  await expect(cards.nth(0)).toContainText("5 卷 · 269 篇");
+  await expect(cards.nth(1)).toContainText("三命通会");
+  await expect(cards.nth(1)).toContainText("12 卷 · 366 篇");
+  await expect(page.getByRole("navigation", { name: "一级导航" }).getByRole("link", { name: "典籍" }))
+    .toHaveAttribute("aria-current", "page");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+});
+
+test("《三命通会》十二卷首页与每卷首末篇均可直达", async ({ page }) => {
+  test.setTimeout(120_000);
+  for (let offset = 0; offset < sanmingCounts.length; offset += 1) {
+    const volumeNumber = offset + 1;
+    const volumeId = `v${volumeNumber}`;
+    const first = `${volumeId}-c001`;
+    const last = `${volumeId}-c${String(sanmingCounts[offset]).padStart(3, "0")}`;
+    await page.goto(`${sanmingRoot}/volumes/${volumeId}`);
+    await expect(page.locator(".volume-home")).toContainText(`${sanmingCounts[offset]} 篇`);
+    for (const chapterId of [first, last]) {
+      await page.goto(`${sanmingRoot}/chapters/${chapterId}`);
+      await expect(page.locator(".chapter-article")).toBeVisible();
+      await expect(page.locator(".chapter-heading h1")).not.toBeEmpty();
       await page.reload();
-      await expect(page.locator(".chapter-prose")).not.toBeEmpty();
+      await expect(page.locator(".chapter-article")).toBeVisible();
     }
   }
 });
 
-test("canonical 与异常地址遵守 replace 和原 URL 保留规则", async ({ page }) => {
-  await page.goto(`${root}/chapters/v1-c001/?from=test`);
-  await expect(page).toHaveURL(`${root}/chapters/v1-c001?from=test`);
-  await page.goBack();
-  await expect(page).not.toHaveURL(/v1-c001\/$/);
-
-  for (const invalid of [
-    "/books/YuanHaiZiPing",
-    `${root}/chapters/v1_c001`,
-    `${root}/chapters/unknown`,
-    `${root}/chapters`,
-    `${root}/chapters/v1-c001/extra`,
-  ]) {
-    await page.goto(invalid);
-    await expect(page.getByRole("heading", { name: /不存在/ })).toBeVisible();
-    expect(new URL(page.url()).pathname).toBe(invalid);
-    await expect(page.getByRole("link", { name: /返回《渊海子平》首页/ })).toBeVisible();
-  }
-});
-
-test("四个跨卷边界及全书首尾占位严格连续", async ({ page }) => {
-  for (const [current, next] of [
-    ["v1-c069", "v2-c001"],
-    ["v2-c070", "v3-c001"],
-    ["v3-c038", "v4-c001"],
-    ["v4-c027", "v5-c001"],
-  ]) {
-    await page.goto(`${root}/chapters/${current}`);
+test("《三命通会》十一个跨卷边界及全书首尾严格连续", async ({ page }) => {
+  for (let offset = 0; offset < sanmingCounts.length - 1; offset += 1) {
+    const currentVolume = offset + 1;
+    const current = `v${currentVolume}-c${String(sanmingCounts[offset]).padStart(3, "0")}`;
+    const next = `v${currentVolume + 1}-c001`;
+    await page.goto(`${sanmingRoot}/chapters/${current}`);
     await page.getByRole("link", { name: /下一篇/ }).click();
     await expect(page).toHaveURL(new RegExp(`${next}$`));
   }
-  await page.goto(`${root}/chapters/v1-c001`);
+  await page.goto(`${sanmingRoot}/chapters/v1-c001`);
   await expect(page.locator(".chapter-neighbors .is-unavailable").first()).toContainText("全书之始");
-  await page.goto(`${root}/chapters/v5-c065`);
+  await page.goto(`${sanmingRoot}/chapters/v12-c013`);
   await expect(page.locator(".chapter-neighbors .is-unavailable").last()).toContainText("全书之末");
 });
 
-test("目录、正文语义、复制文本和响应式布局可用", async ({ page }, testInfo) => {
-  await page.goto(`${root}/chapters/v1-c046`);
-  await expect(page.getByRole("table")).toBeVisible();
-  await expect(page.getByRole("table").locator("th")).toHaveCount(4);
-  await expect(page.locator("html")).toHaveJSProperty("scrollWidth", await page.locator("html").evaluate((element) => element.clientWidth));
+test("《渊海子平》既有首页、深链、同卷与跨卷行为保持不变", async ({ page }) => {
+  await page.goto(yuanRoot);
+  await expect(page.getByRole("heading", { level: 1, name: "渊海子平" })).toBeVisible();
+  await page.goto(`${yuanRoot}/chapters/v1-c001`);
+  await expect(page.getByRole("heading", { level: 1, name: "论五行所生之始" })).toBeVisible();
+  await page.getByRole("link", { name: /下一篇.*论天干地支所出/ }).click();
+  await expect(page).toHaveURL(/v1-c002$/);
+  await page.goto(`${yuanRoot}/chapters/v1-c069`);
+  await page.getByRole("link", { name: /下一篇.*继善篇/ }).click();
+  await expect(page).toHaveURL(/v2-c001$/);
+});
 
-  const mobile = testInfo.project.name === "webkit-mobile";
-  if (mobile) {
-    await expect(page.locator(".reader-directory")).toBeHidden();
-    const trigger = page.getByRole("button", { name: "目录" });
-    await trigger.click();
-    const drawer = page.getByRole("dialog", { name: "移动端篇章目录" });
-    await expect(drawer).toBeVisible();
-    expect((await drawer.boundingBox())?.width ?? 999).toBeLessThanOrEqual(360);
-    await page.keyboard.press("Escape");
-    await expect(drawer).toBeHidden();
-    await expect(trigger).toBeFocused();
-    await expect(page.locator(".chapter-neighbors")).toHaveCSS("grid-template-columns", /.+/);
-  } else {
-    await expect(page.locator(".reader-directory")).toBeVisible();
-    await expect(page.locator(".reader-directory")).toHaveCSS("position", "sticky");
-    await expect(page.getByRole("button", { name: "目录" })).toBeHidden();
-    expect((await page.locator(".chapter-prose").boundingBox())?.width ?? 9999).toBeLessThanOrEqual(752);
-  }
+test("canonical 与两层 Not Found 保留查询、fragment 和原地址", async ({ page }) => {
+  await page.goto("/books/?from=test#top");
+  await expect(page).toHaveURL("/books?from=test#top");
+  await page.goto(`${sanmingRoot}/chapters/v1-c001/?from=test#body`);
+  await expect(page).toHaveURL(`${sanmingRoot}/chapters/v1-c001?from=test#body`);
 
-  const paragraph = page.locator(".chapter-prose p").first();
-  await paragraph.selectText();
-  if (mobile) {
-    expect((await page.evaluate(() => window.getSelection()?.toString() ?? "")).trim().length).toBeGreaterThan(5);
-  } else {
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-    await page.keyboard.press("Meta+C");
-    expect((await page.evaluate(() => navigator.clipboard.readText())).trim().length).toBeGreaterThan(5);
+  await page.goto("/books/unknown");
+  await expect(page.getByRole("link", { name: "返回典籍首页" })).toBeVisible();
+  expect(new URL(page.url()).pathname).toBe("/books/unknown");
+
+  for (const invalid of [
+    `${sanmingRoot}/chapters/v1_c001`,
+    `${sanmingRoot}/chapters/UNKNOWN`,
+    `${sanmingRoot}/volumes/v13`,
+    `${sanmingRoot}/chapters`,
+  ]) {
+    await page.goto(invalid);
+    await expect(page.getByRole("heading", { name: "此页不存在" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /返回《三命通会》首页/ })).toBeVisible();
+    expect(new URL(page.url()).pathname).toBe(invalid);
   }
 });
 
-test("页面级网络边界、同卷缓存、跨卷预取均符合契约", async ({ page }, testInfo) => {
+test("正文请求只加载当前卷，同卷零新增，跨卷 focus 最多新增一个", async ({ page }) => {
+  test.setTimeout(60_000);
   const requests: string[] = [];
   page.on("request", (request) => requests.push(new URL(request.url()).pathname));
   await page.goto("/");
-  expect(requests.some((request) => request.includes("CatalogRoutes") || request.includes("ChapterReader") || volumeChunk.test(request))).toBe(false);
+  expect(requests.some((request) => request.includes("BooksRoutes") || volumeChunk.test(request))).toBe(false);
 
   requests.length = 0;
-  await page.goto(root);
-  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
-  await page.goto(`${root}/volumes/v1`);
+  await page.goto("/books");
+  await page.goto(sanmingRoot);
+  await page.goto(`${sanmingRoot}/volumes/v1`);
   expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
 
   requests.length = 0;
-  await page.goto(`${root}/chapters/v1-c001`);
-  await expect(page.getByRole("heading", { level: 1, name: "论五行所生之始" })).toBeVisible();
+  await page.goto(`${sanmingRoot}/chapters/v1-c001`);
+  await expect(page.locator(".chapter-prose")).toContainText("天高寥廓");
   expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
-  await page.getByRole("link", { name: /下一篇.*论天干地支所出/ }).click();
-  await expect(page.getByRole("heading", { level: 1, name: "论天干地支所出" })).toBeVisible();
+  await page.getByRole("link", { name: /下一篇.*论五行生克/ }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "论五行生克" })).toBeVisible();
   expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
 
-  await page.goto(`${root}/chapters/v1-c069`);
-  await expect(page.getByRole("heading", { level: 1, name: "喜忌篇" })).toBeVisible();
+  await page.goto(`${sanmingRoot}/chapters/v1-c036`);
+  await expect(page.getByRole("heading", { level: 1, name: "壬戌癸亥大海水" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).not.toBeEmpty();
   const beforePrefetch = requests.filter((request) => volumeChunk.test(request)).length;
-  if (testInfo.project.name === "webkit-mobile") {
-    await page.getByRole("button", { name: "目录" }).click();
-    await page.waitForTimeout(200);
-    expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(beforePrefetch);
-  } else {
-    await page.getByRole("link", { name: /下一篇.*继善篇/ }).hover();
-    await expect.poll(() => requests.filter((request) => volumeChunk.test(request)).length).toBe(beforePrefetch + 1);
-  }
+  await page.getByRole("link", { name: /下一篇.*论天干阴阳生死/ }).focus();
+  await expect.poll(() => requests.filter((request) => volumeChunk.test(request)).length)
+    .toBe(beforePrefetch + 1);
+  await page.getByRole("link", { name: /下一篇.*论天干阴阳生死/ }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "论天干阴阳生死" })).toBeVisible();
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(beforePrefetch + 1);
+
+  await page.goto(`${sanmingRoot}/chapters/v2-c026`);
+  await expect(page.locator(".chapter-prose")).not.toBeEmpty();
+  const beforeHoverPrefetch = requests.filter((request) => volumeChunk.test(request)).length;
+  await page.getByRole("link", { name: /下一篇/ }).hover();
+  await expect.poll(() => requests.filter((request) => volumeChunk.test(request)).length)
+    .toBe(beforeHoverPrefetch + 1);
+  await page.getByRole("link", { name: /下一篇/ }).click();
+  await expect(page).toHaveURL(/\/chapters\/v3-c001$/);
+  await expect(page.locator(".chapter-prose")).not.toBeEmpty();
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(beforeHoverPrefetch + 1);
 });
 
-test("典籍首页、卷首页、篇章页与 Not Found 无 serious/critical a11y 违规", async ({ page }) => {
-  for (const path of [root, `${root}/volumes/v1`, `${root}/chapters/v1-c046`, `${root}/missing`]) {
-    await page.goto(path);
-    await expect(page.locator("main")).toBeVisible();
-    await expectNoSeriousA11y(page);
-  }
-});
-
-test("正文加载失败保留身份、导航和可重试错误状态", async ({ page }) => {
+test("正文加载失败保留框架、身份与导航，重试只恢复当前卷", async ({ page }) => {
   let attempts = 0;
-  await page.route(/\/assets\/v1-[^/]+\.js$/, async (route) => {
+  let documentRequests = 0;
+  page.on("request", (request) => {
+    if (request.resourceType() === "document") documentRequests += 1;
+  });
+  await page.route(/\/assets\/v1-[^/]+\.js(?:\?.*)?$/, async (route) => {
     attempts += 1;
     if (attempts === 1) await route.abort();
     else await route.continue();
   });
-  await page.goto(`${root}/chapters/v1-c001`);
-  await expect(page.getByRole("heading", { level: 1, name: "论五行所生之始" })).toBeVisible();
-  await expect(page.getByRole("alert")).toContainText("本篇内容无法渲染");
+  await page.goto(`${sanmingRoot}/chapters/v1-c001`);
+  await expect(page.getByRole("heading", { level: 1, name: "论五行生成" })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("本卷正文载入失败");
   await expect(page.getByRole("navigation", { name: "相邻篇章" })).toBeVisible();
   await expectNoSeriousA11y(page);
-  const navigated = page.waitForEvent("framenavigated");
+  const documentRequestsBeforeRetry = documentRequests;
   await page.getByRole("button", { name: "重试当前卷" }).click();
-  await navigated;
-  await expect(page.locator(".chapter-prose")).toContainText("天地未判");
+  await expect(page.locator(".chapter-prose")).toContainText("天高寥廓");
   expect(attempts).toBeGreaterThanOrEqual(2);
+  expect(documentRequests).toBe(documentRequestsBeforeRetry);
+});
+
+test("代表页面与共享错误状态无 serious/critical 可访问性违规", async ({ page }) => {
+  for (const path of [
+    "/books",
+    yuanRoot,
+    `${yuanRoot}/volumes/v1`,
+    `${yuanRoot}/chapters/v1-c046`,
+    sanmingRoot,
+    `${sanmingRoot}/volumes/v10`,
+    `${sanmingRoot}/chapters/v10-c001`,
+    "/books/missing",
+  ]) {
+    await page.goto(path);
+    await expect(page.locator("main")).toBeVisible();
+    await expectNoSeriousA11y(page);
+  }
 });

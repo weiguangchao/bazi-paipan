@@ -15,7 +15,8 @@ import { checkCoveredIdentifiers, runIdentifierCheck } from "./identifier-check-
 // 目标层分类 fail closed：任何落在 src/ 内但未声明的首段（如 src/hooks/）一律判违规，
 // 使新增分层必须同步更新本表（见 #115「未来变更分层需同步改守卫」）。
 const ALLOWED_DEPENDENCIES = {
-  app: new Set(["app", "pages", "domain", "lib", "data"]),
+  app: new Set(["app", "books", "pages", "domain", "lib", "data"]),
+  books: new Set(["books"]),
   pages: new Set(["pages", "domain", "components", "utils", "lib", "data"]),
   components: new Set(["components", "utils", "domain", "lib", "data"]),
   domain: new Set(["domain", "data"]),
@@ -24,7 +25,7 @@ const ALLOWED_DEPENDENCIES = {
   data: new Set(["data"]),
 };
 
-const LAYERS = ["app", "pages", "components", "domain", "utils", "lib", "data"];
+const LAYERS = ["app", "books", "pages", "components", "domain", "utils", "lib", "data"];
 const SOURCE_EXTENSIONS = new Set([
   ".ts",
   ".mts",

@@ -91,6 +91,23 @@ describe("依赖方向守卫", () => {
     ).toEqual([]);
   });
 
+  it("允许 app -> books，并拒绝共享典籍模块反向依赖 pages", () => {
+    expect(
+      findDependencyViolations(
+        'import BooksRoutes from "@/books/shared/BooksRoutes";',
+        "src/app/App.tsx",
+      ),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(
+        'import { PaipanPage } from "@/pages/paipan/PaipanPage";',
+        "src/books/shared/leak.ts",
+      ),
+    ).toEqual([
+      expect.objectContaining({ fromLayer: "books", toLayer: "pages" }),
+    ]);
+  });
+
   it("formatViolation 报告文件、行列、方向与允许集", () => {
     const source = 'import { Button } from "@/components/ui/button";';
     const [violation] = findDependencyViolations(source, "src/domain/paipan/leak.ts");

@@ -2,10 +2,9 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PaipanPage } from "@/pages/paipan/PaipanPage";
-import { ProductNav } from "@/pages/books/yuanhaiziping/ProductNav";
+import { ProductNav } from "./ProductNav";
 
-const CatalogRoutes = lazy(() => import("@/pages/books/yuanhaiziping/CatalogRoutes"));
-const ChapterEntry = lazy(() => import("@/pages/books/yuanhaiziping/ChapterEntry"));
+const BooksRoutes = lazy(() => import("@/books/shared/BooksRoutes"));
 
 export default function App() {
   return (
@@ -14,8 +13,7 @@ export default function App() {
       <Suspense fallback={<main className="book-loading" aria-live="polite">正在打开页面…</main>}>
         <Routes>
           <Route path="/" element={<PaipanPage />} />
-          <Route path="/books/yuanhaiziping/chapters/:chapterId" element={<ChapterEntry />} />
-          <Route path="/books/*" element={<CatalogRoutes />} />
+          <Route path="/books/*" element={<BooksRoutes />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

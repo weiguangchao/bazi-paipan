@@ -16,11 +16,12 @@ export default defineConfig({
   projects: [
     {
       name: "chromium-desktop",
+      testMatch: ["**/books.e2e.ts", "**/dayun-panel.e2e.ts"],
       use: { browserName: "chromium", viewport: { width: 1280, height: 900 } },
     },
     {
       name: "webkit-mobile",
-      testMatch: "**/books.e2e.ts",
+      testMatch: "**/books-mobile.e2e.ts",
       use: { browserName: "webkit", viewport: { width: 390, height: 844 } },
     },
     {
