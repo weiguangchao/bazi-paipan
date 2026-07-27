@@ -17,6 +17,7 @@ export interface VolumeCatalogEntry {
 export interface BookCatalog {
   book: {
     id: string;
+    order: number;
     title: string;
     author: string;
     description: string;

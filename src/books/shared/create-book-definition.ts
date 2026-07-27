@@ -9,10 +9,14 @@ type VolumeImport = () => Promise<VolumeModule>;
 
 export function createBookDefinition(
   catalog: BookCatalog,
-  chapterVolumeMap: Readonly<Record<string, string>>,
   volumeImports: Readonly<Record<string, VolumeImport>>,
   legacyChapterIds: Readonly<Record<string, string>> = {},
 ): BookDefinition {
+  const chapterVolumeMap = Object.fromEntries(
+    catalog.volumes.flatMap((volume) =>
+      volume.chapters.map((chapter) => [chapter.id, volume.id]),
+    ),
+  );
   const loadedVolumes = new Map<string, Record<string, string>>();
   const failedVolumes = new Set<string>();
 

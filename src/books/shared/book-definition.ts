@@ -19,6 +19,24 @@ export interface BookSummary {
   loadDefinition(): Promise<BookDefinition>;
 }
 
+export function summaryFromCatalog(
+  catalog: BookCatalog,
+  loadDefinition: () => Promise<BookDefinition>,
+): BookSummary {
+  return {
+    bookId: catalog.book.id,
+    title: catalog.book.title,
+    author: catalog.book.author,
+    description: catalog.book.description,
+    volumeCount: catalog.volumes.length,
+    chapterCount: catalog.volumes.reduce(
+      (total, volume) => total + volume.chapters.length,
+      0,
+    ),
+    loadDefinition,
+  };
+}
+
 export class BookRegistry {
   readonly #summaries: readonly BookSummary[];
   readonly #summaryById: ReadonlyMap<string, BookSummary>;

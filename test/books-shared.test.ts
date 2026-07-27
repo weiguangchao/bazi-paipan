@@ -14,6 +14,7 @@ import {
 const catalog = {
   book: {
     id: "fixture",
+    order: 1,
     title: "测试典籍",
     author: "测试作者",
     description: "测试简介",

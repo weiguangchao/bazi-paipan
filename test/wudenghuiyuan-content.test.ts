@@ -100,6 +100,7 @@ describe("《五灯会元》内容包契约", () => {
   test("catalog、稳定 ID、文件与逐篇摘要一一对应", () => {
     expect(catalog.book).toEqual({
       id: "wudenghuiyuan",
+      order: 3,
       title: "五灯会元",
       author: "（宋）释普济",
       description: expect.any(String),

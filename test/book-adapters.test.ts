@@ -1,4 +1,6 @@
 import { describe, expect, test } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { bookRegistry } from "@/books/registry";
 
 const expected = [
@@ -27,6 +29,19 @@ const expected = [
 
 describe.each(expected)("$title adapter", (book) => {
   test("registry 摘要、catalog、定位与逐卷正文满足统一契约", async () => {
+    const audit = JSON.parse(
+      readFileSync(
+        path.join(process.cwd(), "content/books", book.bookId, "audit.json"),
+        "utf8",
+      ),
+    ) as {
+      knownExceptions?: Array<{ kind: string; chapterIds?: string[] }>;
+    };
+    const allowedEmptyChapterIds = new Set(
+      (audit.knownExceptions ?? [])
+        .filter((exception) => exception.kind === "title-only-empty-body")
+        .flatMap((exception) => exception.chapterIds ?? []),
+    );
     const summary = bookRegistry.find(book.bookId);
     expect(summary).toMatchObject(book);
     if (!summary) throw new Error("缺少典籍摘要");
@@ -50,7 +65,7 @@ describe.each(expected)("$title adapter", (book) => {
       expect(Object.keys(content)).toHaveLength(volume.chapters.length);
       for (const chapter of volume.chapters) {
         expect(content).toHaveProperty(chapter.id);
-        if (!["v4-c001", "v4-c007"].includes(chapter.id) || book.bookId !== "sanmingtonghui") {
+        if (!allowedEmptyChapterIds.has(chapter.id)) {
           expect(content[chapter.id]?.trim().length).toBeGreaterThan(0);
         }
       }
