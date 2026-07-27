@@ -228,6 +228,9 @@ describe("renderGeneratedAdapters", () => {
     expect(output["src/books/sample/definition.ts"]).toContain(
       'v2: () => import("./volumes/v2")',
     );
+    expect(output["src/books/registry.ts"]).toContain("loadRuntime");
+    expect(output["src/books/sample/definition.ts"]).toContain("createBookRuntime");
+    expect(output["src/books/sample/definition.ts"]).not.toContain("createBookDefinition");
     expect(output["src/books/sample/volumes/v1.ts"]).toContain(
       'content/books/sample/chapters/v1/*.md',
     );

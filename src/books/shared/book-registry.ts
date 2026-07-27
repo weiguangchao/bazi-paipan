@@ -1,27 +1,18 @@
-import type { BookCatalog } from "./navigation";
-
-export type VolumeLoadMode = "normal" | "retry";
-
-export interface BookDefinition {
-  catalog: BookCatalog;
-  legacyChapterIds: Readonly<Record<string, string>>;
-  locateChapter(chapterId: string): string | undefined;
-  loadVolume(volumeId: string, mode: VolumeLoadMode): Promise<Record<string, string>>;
-}
+import type { BookCatalog, BookRuntime } from "./book-runtime";
 
 export interface BookSummary {
-  bookId: string;
-  title: string;
-  author: string;
-  description: string;
-  volumeCount: number;
-  chapterCount: number;
-  loadDefinition(): Promise<BookDefinition>;
+  readonly bookId: string;
+  readonly title: string;
+  readonly author: string;
+  readonly description: string;
+  readonly volumeCount: number;
+  readonly chapterCount: number;
+  loadRuntime(): Promise<BookRuntime>;
 }
 
 export function summaryFromCatalog(
   catalog: BookCatalog,
-  loadDefinition: () => Promise<BookDefinition>,
+  loadRuntime: () => Promise<BookRuntime>,
 ): BookSummary {
   return {
     bookId: catalog.book.id,
@@ -33,7 +24,7 @@ export function summaryFromCatalog(
       (total, volume) => total + volume.chapters.length,
       0,
     ),
-    loadDefinition,
+    loadRuntime,
   };
 }
 
@@ -43,7 +34,9 @@ export class BookRegistry {
 
   constructor(summaries: readonly BookSummary[]) {
     this.#summaries = [...summaries];
-    this.#summaryById = new Map(summaries.map((summary) => [summary.bookId, summary]));
+    this.#summaryById = new Map(
+      summaries.map((summary) => [summary.bookId, summary]),
+    );
   }
 
   list(): readonly BookSummary[] {

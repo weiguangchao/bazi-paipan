@@ -2,20 +2,20 @@
 import yuanhaizipingCatalog from "./yuanhaiziping/catalog.json";
 import sanmingtonghuiCatalog from "./sanmingtonghui/catalog.json";
 import wudenghuiyuanCatalog from "./wudenghuiyuan/catalog.json";
-import { BookRegistry, summaryFromCatalog } from "./shared/book-definition";
-import type { BookCatalog } from "./shared/navigation";
+import { BookRegistry, summaryFromCatalog } from "./shared/book-registry";
+import type { BookCatalog } from "./shared/book-runtime";
 
 export const bookRegistry = new BookRegistry([
   {
     catalog: yuanhaizipingCatalog as BookCatalog,
-    loadDefinition: () => import("./yuanhaiziping/definition").then((module) => module.default),
+    loadRuntime: () => import("./yuanhaiziping/definition").then((module) => module.default),
   },
   {
     catalog: sanmingtonghuiCatalog as BookCatalog,
-    loadDefinition: () => import("./sanmingtonghui/definition").then((module) => module.default),
+    loadRuntime: () => import("./sanmingtonghui/definition").then((module) => module.default),
   },
   {
     catalog: wudenghuiyuanCatalog as BookCatalog,
-    loadDefinition: () => import("./wudenghuiyuan/definition").then((module) => module.default),
+    loadRuntime: () => import("./wudenghuiyuan/definition").then((module) => module.default),
   }
-].map(({ catalog, loadDefinition }) => summaryFromCatalog(catalog, loadDefinition)));
+].map(({ catalog, loadRuntime }) => summaryFromCatalog(catalog, loadRuntime)));

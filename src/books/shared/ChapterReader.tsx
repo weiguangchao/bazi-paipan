@@ -7,13 +7,12 @@ import {
 } from "react";
 import { ArrowLeft, ArrowRight, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { BookDefinition } from "./book-definition";
-import {
-  buildBookIndex,
-  getChapterNeighbors,
-  type BookCatalog,
-  type ChapterCatalogEntry,
-} from "./navigation";
+import type {
+  BookCatalog,
+  BookRuntime,
+  ChapterCatalogEntry,
+  ChapterLocation,
+} from "./book-runtime";
 import { RestrictedMarkdown } from "./RestrictedMarkdown";
 
 function Directory({
@@ -142,13 +141,13 @@ function Neighbor({
   chapter,
   currentVolumeId,
   root,
-  definition,
+  runtime,
 }: {
   direction: "previous" | "next";
   chapter: ChapterCatalogEntry | null;
   currentVolumeId: string;
   root: string;
-  definition: BookDefinition;
+  runtime: BookRuntime;
 }) {
   const previous = direction === "previous";
   const content: ReactNode = (
@@ -168,7 +167,7 @@ function Neighbor({
   }
   const prefetch = () => {
     if (chapter.volumeId !== currentVolumeId) {
-      void definition.loadVolume(chapter.volumeId, "normal").catch(() => undefined);
+      void runtime.readChapter(chapter.id).catch(() => undefined);
     }
   };
   return (
@@ -187,8 +186,8 @@ function Neighbor({
 }
 
 export interface ChapterReaderProps {
-  definition: BookDefinition;
-  chapter: ChapterCatalogEntry;
+  runtime: BookRuntime;
+  location: ChapterLocation;
   source?: string;
   error?: string;
   loading?: boolean;
@@ -196,18 +195,15 @@ export interface ChapterReaderProps {
 }
 
 export default function ChapterReader({
-  definition,
-  chapter,
+  runtime,
+  location,
   source,
   error,
   loading,
   onRetry,
 }: ChapterReaderProps) {
-  const { catalog } = definition;
-  const index = buildBookIndex(catalog);
-  const volume = index.volumeById.get(chapter.volumeId);
-  if (!volume) throw new Error("篇章卷归属无效");
-  const neighbors = getChapterNeighbors(chapter.id, index);
+  const { catalog } = runtime;
+  const { chapter, volume, previous, next } = location;
   const root = `/books/${catalog.book.id}`;
 
   return (
@@ -250,17 +246,17 @@ export default function ChapterReader({
             <nav className="chapter-neighbors" aria-label="相邻篇章">
               <Neighbor
                 direction="previous"
-                chapter={neighbors.previous}
+                chapter={previous}
                 currentVolumeId={chapter.volumeId}
                 root={root}
-                definition={definition}
+                runtime={runtime}
               />
               <Neighbor
                 direction="next"
-                chapter={neighbors.next}
+                chapter={next}
                 currentVolumeId={chapter.volumeId}
                 root={root}
-                definition={definition}
+                runtime={runtime}
               />
             </nav>
           </article>

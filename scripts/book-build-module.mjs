@@ -163,15 +163,15 @@ function renderRegistry(catalogs) {
   );
   const entries = ordered.map((catalog) => `  {
     catalog: ${catalogBindingName(catalog.book.id)} as BookCatalog,
-    loadDefinition: () => import("./${catalog.book.id}/definition").then((module) => module.default),
+    loadRuntime: () => import("./${catalog.book.id}/definition").then((module) => module.default),
   }`);
   return `${imports.join("\n")}
-import { BookRegistry, summaryFromCatalog } from "./shared/book-definition";
-import type { BookCatalog } from "./shared/navigation";
+import { BookRegistry, summaryFromCatalog } from "./shared/book-registry";
+import type { BookCatalog } from "./shared/book-runtime";
 
 export const bookRegistry = new BookRegistry([
 ${entries.join(",\n")}
-].map(({ catalog, loadDefinition }) => summaryFromCatalog(catalog, loadDefinition)));
+].map(({ catalog, loadRuntime }) => summaryFromCatalog(catalog, loadRuntime)));
 `;
 }
 
@@ -180,14 +180,13 @@ function renderDefinition(bookId, volumes) {
     (volume) => `  ${volume.id}: () => import("./volumes/${volume.id}"),`,
   );
   return `import catalogData from "./catalog.json";
-import { createBookDefinition } from "@/books/shared/create-book-definition";
-import type { BookCatalog } from "@/books/shared/navigation";
+import { createBookRuntime, type BookCatalog } from "@/books/shared/book-runtime";
 
 const volumeImports = {
 ${imports.join("\n")}
 };
 
-export default createBookDefinition(
+export default createBookRuntime(
   catalogData as BookCatalog,
   volumeImports,
 );

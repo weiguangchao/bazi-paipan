@@ -3,22 +3,18 @@ import {
   Suspense,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { bookRegistry } from "@/books/registry";
-import {
-  BookRegistry,
-  type BookDefinition,
-} from "./book-definition";
-import {
-  buildBookIndex,
-  resolveBookPath,
-  resolveBooksPath,
-  type ChapterCatalogEntry,
-} from "./navigation";
+import { BookRegistry } from "./book-registry";
+import { resolveBooksPath } from "./navigation";
+import type {
+  BookRuntime,
+  ChapterLocation,
+  VolumeCatalogEntry,
+} from "./book-runtime";
 
 const ChapterReader = lazy(() => import("./ChapterReader"));
 
@@ -45,11 +41,14 @@ function BooksHome({ registry }: { registry: BookRegistry }) {
   );
 }
 
-function BookHome({ definition }: { definition: BookDefinition }) {
-  const index = useMemo(() => buildBookIndex(definition.catalog), [definition]);
-  const { catalog } = definition;
+function BookHome({ runtime }: { runtime: BookRuntime }) {
+  const { catalog } = runtime;
   const root = `/books/${catalog.book.id}`;
-  const first = index.chapters[0];
+  const first = catalog.volumes[0]?.chapters[0];
+  const chapterCount = catalog.volumes.reduce(
+    (total, volume) => total + volume.chapters.length,
+    0,
+  );
   return (
     <main className="book-home">
       <section className="book-hero">
@@ -57,7 +56,7 @@ function BookHome({ definition }: { definition: BookDefinition }) {
           {catalog.book.sealLines.map((line) => <span key={line}>{line}</span>)}
         </div>
         <div>
-          <p>命理典籍 · {catalog.volumes.length} 卷 · {index.chapters.length} 篇</p>
+          <p>命理典籍 · {catalog.volumes.length} 卷 · {chapterCount} 篇</p>
           <h1>{catalog.book.title}</h1>
           <h2>{catalog.book.author} 编</h2>
           <p className="book-intro">{catalog.book.description}</p>
@@ -86,16 +85,13 @@ function BookHome({ definition }: { definition: BookDefinition }) {
 }
 
 function VolumeHome({
-  definition,
-  volumeId,
+  runtime,
+  volume,
 }: {
-  definition: BookDefinition;
-  volumeId: string;
+  runtime: BookRuntime;
+  volume: VolumeCatalogEntry;
 }) {
-  const index = useMemo(() => buildBookIndex(definition.catalog), [definition]);
-  const volume = index.volumeById.get(volumeId);
-  if (!volume) return null;
-  const { catalog } = definition;
+  const { catalog } = runtime;
   const root = `/books/${catalog.book.id}`;
   return (
     <main className="volume-home">
@@ -118,34 +114,33 @@ function VolumeHome({
   );
 }
 
-function BookNotFound({ definition }: { definition?: BookDefinition }) {
-  const root = definition ? `/books/${definition.catalog.book.id}` : "/books";
+function BookNotFound({ runtime }: { runtime?: BookRuntime }) {
+  const root = runtime ? `/books/${runtime.catalog.book.id}` : "/books";
   return (
     <main className="book-not-found">
       <p>典籍 · 未找到</p>
       <h1>此页不存在</h1>
       <p>地址可能无效或内容已经调整。我们没有替你猜测另一个篇章。</p>
       <Link to={root}>
-        {definition ? `返回《${definition.catalog.book.title}》首页` : "返回典籍首页"}
+        {runtime ? `返回《${runtime.catalog.book.title}》首页` : "返回典籍首页"}
       </Link>
-      {definition && <p><Link to="/books">查看全部典籍</Link></p>}
+      {runtime && <p><Link to="/books">查看全部典籍</Link></p>}
     </main>
   );
 }
 
 function ChapterEntry({
-  definition,
-  chapter,
+  runtime,
+  location,
 }: {
-  definition: BookDefinition;
-  chapter: ChapterCatalogEntry;
+  runtime: BookRuntime;
+  location: ChapterLocation;
 }) {
   const [source, setSource] = useState<string>();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async (
-    mode: "normal" | "retry",
     isActive: () => boolean = () => true,
   ) => {
     if (isActive()) {
@@ -154,18 +149,18 @@ function ChapterEntry({
       setLoading(true);
     }
     try {
-      const volume = await definition.loadVolume(chapter.volumeId, mode);
-      if (isActive()) setSource(volume[chapter.id] ?? "");
+      const reading = await runtime.readChapter(location.chapter.id);
+      if (isActive()) setSource(reading.source);
     } catch {
       if (isActive()) setError("本卷正文载入失败，请稍后重试。");
     } finally {
       if (isActive()) setLoading(false);
     }
-  }, [chapter.id, chapter.volumeId, definition]);
+  }, [location.chapter.id, runtime]);
 
   useEffect(() => {
     let active = true;
-    void load("normal", () => active);
+    void load(() => active);
     return () => {
       active = false;
     };
@@ -174,57 +169,52 @@ function ChapterEntry({
   return (
     <Suspense fallback={<main className="book-loading" aria-live="polite">正在打开阅读器…</main>}>
       <ChapterReader
-        definition={definition}
-        chapter={chapter}
+        runtime={runtime}
+        location={location}
         source={source}
         error={error}
         loading={loading}
-        onRetry={() => void load("retry")}
+        onRetry={() => void load()}
       />
     </Suspense>
   );
 }
 
 function LoadedBookRoutes({
-  definition,
+  runtime,
 }: {
-  definition: BookDefinition;
+  runtime: BookRuntime;
 }) {
   const location = useLocation();
-  const index = useMemo(() => buildBookIndex(definition.catalog), [definition]);
-  const resolution = resolveBookPath(
-    `${location.pathname}${location.search}`,
-    index,
-    definition.legacyChapterIds,
-  );
+  const resolution = runtime.resolvePath(`${location.pathname}${location.search}`);
   if (resolution.kind === "redirect") {
     return <Navigate replace to={`${resolution.to}${location.search}${location.hash}`} />;
   }
-  if (resolution.kind === "book") return <BookHome definition={definition} />;
+  if (resolution.kind === "book") return <BookHome runtime={runtime} />;
   if (resolution.kind === "volume") {
-    return <VolumeHome definition={definition} volumeId={resolution.volume.id} />;
+    return <VolumeHome runtime={runtime} volume={resolution.volume} />;
   }
   if (resolution.kind === "chapter") {
-    return <ChapterEntry definition={definition} chapter={resolution.chapter} />;
+    return <ChapterEntry runtime={runtime} location={resolution} />;
   }
-  return <BookNotFound definition={definition} />;
+  return <BookNotFound runtime={runtime} />;
 }
 
-function BookDefinitionEntry({
+function BookRuntimeEntry({
   summary,
 }: {
   summary: NonNullable<ReturnType<BookRegistry["find"]>>;
 }) {
-  const [definition, setDefinition] = useState<BookDefinition>();
+  const [runtime, setRuntime] = useState<BookRuntime>();
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
     setFailed(false);
-    void summary.loadDefinition()
+    void summary.loadRuntime()
       .then((loaded) => {
-        if (active) setDefinition(loaded);
+        if (active) setRuntime(loaded);
       })
       .catch(() => {
         if (active) setFailed(true);
@@ -242,10 +232,10 @@ function BookDefinitionEntry({
       </main>
     );
   }
-  if (!definition) {
+  if (!runtime) {
     return <main className="book-loading" aria-live="polite">正在打开《{summary.title}》…</main>;
   }
-  return <LoadedBookRoutes definition={definition} />;
+  return <LoadedBookRoutes runtime={runtime} />;
 }
 
 export function BooksRoutes({
@@ -261,7 +251,7 @@ export function BooksRoutes({
   if (resolution.kind === "index") return <BooksHome registry={registry} />;
   if (resolution.kind === "not-found") return <BookNotFound />;
   const summary = registry.find(resolution.bookId);
-  return summary ? <BookDefinitionEntry summary={summary} /> : <BookNotFound />;
+  return summary ? <BookRuntimeEntry summary={summary} /> : <BookNotFound />;
 }
 
 export default BooksRoutes;

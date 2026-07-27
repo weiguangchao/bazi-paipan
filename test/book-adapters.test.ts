@@ -28,7 +28,7 @@ const expected = [
 ];
 
 describe.each(expected)("$title adapter", (book) => {
-  test("registry 摘要、catalog、定位与逐卷正文满足统一契约", async () => {
+  test("registry 摘要、catalog 与逐篇 runtime 读取满足统一契约", async () => {
     const audit = JSON.parse(
       readFileSync(
         path.join(process.cwd(), "content/books", book.bookId, "audit.json"),
@@ -46,27 +46,26 @@ describe.each(expected)("$title adapter", (book) => {
     expect(summary).toMatchObject(book);
     if (!summary) throw new Error("缺少典籍摘要");
 
-    const definition = await summary.loadDefinition();
-    const chapters = definition.catalog.volumes.flatMap((volume) => volume.chapters);
-    expect(definition.catalog.book).toMatchObject({
+    const runtime = await summary.loadRuntime();
+    const chapters = runtime.catalog.volumes.flatMap((volume) => volume.chapters);
+    expect(runtime.catalog.book).toMatchObject({
       id: book.bookId,
       title: book.title,
       author: book.author,
     });
-    expect(definition.catalog.volumes).toHaveLength(book.volumeCount);
+    expect(runtime.catalog.volumes).toHaveLength(book.volumeCount);
     expect(chapters).toHaveLength(book.chapterCount);
     expect(new Set(chapters.map((chapter) => chapter.id)).size).toBe(book.chapterCount);
 
-    for (const volume of definition.catalog.volumes) {
+    for (const volume of runtime.catalog.volumes) {
       for (const chapter of volume.chapters) {
-        expect(definition.locateChapter(chapter.id)).toBe(volume.id);
-      }
-      const content = await definition.loadVolume(volume.id, "normal");
-      expect(Object.keys(content)).toHaveLength(volume.chapters.length);
-      for (const chapter of volume.chapters) {
-        expect(content).toHaveProperty(chapter.id);
+        const reading = await runtime.readChapter(chapter.id);
+        expect(reading).toMatchObject({
+          chapter: { id: chapter.id },
+          volume: { id: volume.id },
+        });
         if (!allowedEmptyChapterIds.has(chapter.id)) {
-          expect(content[chapter.id]?.trim().length).toBeGreaterThan(0);
+          expect(reading.source.trim().length).toBeGreaterThan(0);
         }
       }
     }
