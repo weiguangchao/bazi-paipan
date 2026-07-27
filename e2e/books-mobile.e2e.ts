@@ -5,6 +5,7 @@ test("窄屏共享目录、焦点、正文、表格与相邻导航可用", async
   for (const path of [
     "/books/yuanhaiziping/chapters/v1-c046",
     "/books/sanmingtonghui/chapters/v10-c001",
+    "/books/wudenghuiyuan/chapters/v9-c001",
   ]) {
     await page.goto(path);
     await expect(page.locator(".reader-directory")).toBeHidden();

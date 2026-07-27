@@ -12,8 +12,9 @@ const outputByFile = new Map(
 );
 
 const books = [
-  { bookId: "yuanhaiziping", volumeCount: 5, totalBudgetKb: 250 },
-  { bookId: "sanmingtonghui", volumeCount: 12, totalBudgetKb: 500 },
+  { bookId: "yuanhaiziping", volumeCount: 5, volumeBudgetKb: 80, totalBudgetKb: 250 },
+  { bookId: "sanmingtonghui", volumeCount: 12, volumeBudgetKb: 80, totalBudgetKb: 500 },
+  { bookId: "wudenghuiyuan", volumeCount: 20, volumeBudgetKb: 100, totalBudgetKb: 1280 },
 ];
 let totalVolumeChunks = 0;
 
@@ -48,8 +49,8 @@ for (const book of books) {
   for (const [source, entry] of volumeEntries) {
     const gzipBytes = gzipSync(readFileSync(path.join(root, "dist", entry.file))).byteLength;
     totalGzip += gzipBytes;
-    if (gzipBytes > 80 * 1024) {
-      throw new Error(`${source} 为 ${(gzipBytes / 1024).toFixed(2)} KB gzip，超过 80 KB`);
+    if (gzipBytes > book.volumeBudgetKb * 1024) {
+      throw new Error(`${source} 为 ${(gzipBytes / 1024).toFixed(2)} KB gzip，超过 ${book.volumeBudgetKb} KB`);
     }
   }
   if (totalGzip > book.totalBudgetKb * 1024) {
@@ -79,7 +80,7 @@ for (const book of books) {
   console.log(`${book.bookId}：${volumeEntries.length} 个正文 chunk，合计 ${(totalGzip / 1024).toFixed(2)} KB gzip`);
 }
 
-if (totalVolumeChunks !== 17) {
-  throw new Error(`全站正文 chunk 必须恰好 17 个，实际为 ${totalVolumeChunks}`);
+if (totalVolumeChunks !== 37) {
+  throw new Error(`全站正文 chunk 必须恰好 37 个，实际为 ${totalVolumeChunks}`);
 }
-console.log("典籍构建检查通过：全站恰好 17 个正文 chunk");
+console.log("典籍构建检查通过：全站恰好 37 个正文 chunk");

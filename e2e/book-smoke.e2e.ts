@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("两部典籍首页、篇章直达、正文与跨卷导航 smoke", async ({ page }) => {
+test("三部典籍首页、篇章直达、正文与跨卷导航 smoke", async ({ page }) => {
   for (const book of [
     {
       root: "/books/yuanhaiziping",
@@ -17,6 +17,14 @@ test("两部典籍首页、篇章直达、正文与跨卷导航 smoke", async ({
       currentTitle: "壬戌癸亥大海水",
       next: "v2-c001",
       nextTitle: "论天干阴阳生死",
+    },
+    {
+      root: "/books/wudenghuiyuan",
+      title: "五灯会元",
+      current: "v1-c040",
+      currentTitle: "六祖慧能大鉴禅师",
+      next: "v2-c001",
+      nextTitle: "牛头山法融禅师",
     },
   ]) {
     await page.goto(book.root);

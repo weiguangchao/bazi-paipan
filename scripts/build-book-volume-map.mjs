@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-for (const bookId of ["yuanhaiziping", "sanmingtonghui"]) {
+for (const bookId of ["yuanhaiziping", "sanmingtonghui", "wudenghuiyuan"]) {
   const directory = path.join(root, "src/books", bookId);
   const catalog = JSON.parse(readFileSync(path.join(directory, "catalog.json"), "utf8"));
   const chapterVolumeMap = Object.fromEntries(

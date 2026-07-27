@@ -16,6 +16,13 @@ const expected = [
     volumeCount: 12,
     chapterCount: 366,
   },
+  {
+    bookId: "wudenghuiyuan",
+    title: "五灯会元",
+    author: "（宋）释普济",
+    volumeCount: 20,
+    chapterCount: 1739,
+  },
 ];
 
 describe.each(expected)("$title adapter", (book) => {

@@ -19,4 +19,13 @@ export const bookRegistry = new BookRegistry([
     chapterCount: 366,
     loadDefinition: () => import("./sanmingtonghui/definition").then((module) => module.default),
   },
+  {
+    bookId: "wudenghuiyuan",
+    title: "五灯会元",
+    author: "（宋）释普济",
+    description: "汇集禅宗五灯法脉人物传记与机缘语录，依原卷次查阅二十卷一千七百三十九篇正文。",
+    volumeCount: 20,
+    chapterCount: 1739,
+    loadDefinition: () => import("./wudenghuiyuan/definition").then((module) => module.default),
+  },
 ]);

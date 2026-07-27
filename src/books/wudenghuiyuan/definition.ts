@@ -1,0 +1,33 @@
+import catalogData from "./catalog.json";
+import chapterVolumeMap from "./chapter-volume-map.json";
+import { createBookDefinition } from "@/books/shared/create-book-definition";
+import type { BookCatalog } from "@/books/shared/navigation";
+
+const volumeImports = {
+  v1: () => import("./volumes/v1"),
+  v2: () => import("./volumes/v2"),
+  v3: () => import("./volumes/v3"),
+  v4: () => import("./volumes/v4"),
+  v5: () => import("./volumes/v5"),
+  v6: () => import("./volumes/v6"),
+  v7: () => import("./volumes/v7"),
+  v8: () => import("./volumes/v8"),
+  v9: () => import("./volumes/v9"),
+  v10: () => import("./volumes/v10"),
+  v11: () => import("./volumes/v11"),
+  v12: () => import("./volumes/v12"),
+  v13: () => import("./volumes/v13"),
+  v14: () => import("./volumes/v14"),
+  v15: () => import("./volumes/v15"),
+  v16: () => import("./volumes/v16"),
+  v17: () => import("./volumes/v17"),
+  v18: () => import("./volumes/v18"),
+  v19: () => import("./volumes/v19"),
+  v20: () => import("./volumes/v20"),
+};
+
+export default createBookDefinition(
+  catalogData as BookCatalog,
+  chapterVolumeMap,
+  volumeImports,
+);
