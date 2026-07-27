@@ -5,7 +5,7 @@ const yuanRoot = "/books/yuanhaiziping";
 const sanmingRoot = "/books/sanmingtonghui";
 const wudengRoot = "/books/wudenghuiyuan";
 const volumeChunk = /\/assets\/v\d+-[^/]+\.js$/;
-const sanmingCounts = [36, 26, 23, 25, 20, 73, 22, 60, 60, 3, 5, 13];
+const sanmingCounts = [36, 26, 23, 25, 20, 73, 22, 60, 60, 3, 5, 17];
 const wudengCounts = [
   40, 62, 72, 76, 44, 105, 46, 131, 45, 105,
   50, 98, 70, 123, 171, 137, 68, 118, 56, 122,
@@ -30,7 +30,7 @@ test("典籍首页按固定顺序展示三部典籍且顶部入口正确", async
   await expect(cards.nth(0)).toContainText("渊海子平");
   await expect(cards.nth(0)).toContainText("5 卷 · 269 篇");
   await expect(cards.nth(1)).toContainText("三命通会");
-  await expect(cards.nth(1)).toContainText("12 卷 · 366 篇");
+  await expect(cards.nth(1)).toContainText("12 卷 · 370 篇");
   await expect(cards.nth(2)).toContainText("五灯会元");
   await expect(cards.nth(2)).toContainText("20 卷 · 1739 篇");
   await expect(page.getByRole("navigation", { name: "一级导航" }).getByRole("link", { name: "典籍" }))
@@ -103,7 +103,7 @@ test("《三命通会》十一个跨卷边界及全书首尾严格连续", async
   }
   await page.goto(`${sanmingRoot}/chapters/v1-c001`);
   await expect(page.locator(".chapter-neighbors .is-unavailable").first()).toContainText("全书之始");
-  await page.goto(`${sanmingRoot}/chapters/v12-c013`);
+  await page.goto(`${sanmingRoot}/chapters/v12-c017`);
   await expect(page.locator(".chapter-neighbors .is-unavailable").last()).toContainText("全书之末");
 });
 

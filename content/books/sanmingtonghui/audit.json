@@ -3816,9 +3816,9 @@
   "review": {
     "importedAt": "2026-07-27",
     "importer": "Codex primary agent",
-    "verificationCommit": null,
-    "independentReviewer": null,
-    "reviewedAt": null,
-    "conclusion": "pending independent full review of all 370 chapters"
+    "verificationCommit": "50db204f97f6f21a076e0ba0e649a4773fed26e0",
+    "independentReviewer": "Codex independent spec review agent",
+    "reviewedAt": "2026-07-27",
+    "conclusion": "passed independent full review of all 370 chapters"
   }
 }

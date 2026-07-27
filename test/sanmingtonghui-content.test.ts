@@ -37,6 +37,14 @@ interface Audit {
     kind: string;
     chapterIds: string[];
   }>;
+  review: {
+    importedAt: string;
+    importer: string;
+    verificationCommit: string;
+    independentReviewer: string;
+    reviewedAt: string;
+    conclusion: string;
+  };
 }
 
 interface Catalog {
@@ -117,6 +125,17 @@ describe("《三命通会》校定内容包契约", () => {
       kind: "title-only-empty-body",
       chapterIds: ["v4-c001", "v4-c007"],
       resolution: "按原稿原样保留",
+    });
+  });
+
+  test("独立 agent 已签署新版全量复核", () => {
+    expect(audit.review).toEqual({
+      importedAt: "2026-07-27",
+      importer: "Codex primary agent",
+      verificationCommit: "50db204f97f6f21a076e0ba0e649a4773fed26e0",
+      independentReviewer: "Codex independent spec review agent",
+      reviewedAt: "2026-07-27",
+      conclusion: "passed independent full review of all 370 chapters",
     });
   });
 });
