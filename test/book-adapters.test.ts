@@ -16,7 +16,7 @@ const expected = [
     title: "三命通会",
     author: "（明）万民英",
     volumeCount: 12,
-    chapterCount: 366,
+    chapterCount: 370,
   },
   {
     bookId: "wudenghuiyuan",
@@ -70,4 +70,32 @@ describe.each(expected)("$title adapter", (book) => {
       }
     }
   });
+});
+
+test("《三命通会》卷十二新增篇章不改变既有稳定链接", async () => {
+  const summary = bookRegistry.find("sanmingtonghui");
+  if (!summary) throw new Error("缺少《三命通会》摘要");
+
+  const runtime = await summary.loadRuntime();
+  const volume = runtime.catalog.volumes.find(({ id }) => id === "v12");
+
+  expect(volume?.chapters.map(({ id, title }) => ({ id, title }))).toEqual([
+    { id: "v12-c001", title: "元理赋" },
+    { id: "v12-c002", title: "真寳赋" },
+    { id: "v12-c003", title: "金声玉振赋" },
+    { id: "v12-c004", title: "金鼎神秘赋" },
+    { id: "v12-c005", title: "元机赋" },
+    { id: "v12-c006", title: "络绎赋" },
+    { id: "v12-c007", title: "金玉赋" },
+    { id: "v12-c008", title: "心镜五七赋" },
+    { id: "v12-c014", title: "造微论" },
+    { id: "v12-c009", title: "人鉴论" },
+    { id: "v12-c010", title: "元妙论" },
+    { id: "v12-c015", title: "精微论" },
+    { id: "v12-c011", title: "惊神论" },
+    { id: "v12-c012", title: "明津先生骨髓歌" },
+    { id: "v12-c013", title: "搜髓歌" },
+    { id: "v12-c016", title: "四言独步" },
+    { id: "v12-c017", title: "五言独步" },
+  ]);
 });

@@ -4,7 +4,7 @@
     "order": 2,
     "title": "三命通会",
     "author": "（明）万民英",
-    "description": "汇集干支、神煞、格局与命例论述，依原卷次查阅十二卷三百六十六篇正文。",
+    "description": "汇集干支、神煞、格局与命例论述，依原卷次查阅十二卷三百七十篇正文。",
     "sealLines": [
       "三命",
       "通会"
@@ -102,7 +102,7 @@
         },
         {
           "id": "v1-c015",
-          "title": "甲辰乙已覆灯火",
+          "title": "甲辰乙巳覆灯火",
           "volumeId": "v1",
           "order": 15
         },
@@ -168,7 +168,7 @@
         },
         {
           "id": "v1-c026",
-          "title": "戊寅已卯城头土",
+          "title": "戊寅己卯城头土",
           "volumeId": "v1",
           "order": 26
         },
@@ -2260,34 +2260,58 @@
           "order": 8
         },
         {
+          "id": "v12-c014",
+          "title": "造微论",
+          "volumeId": "v12",
+          "order": 9
+        },
+        {
           "id": "v12-c009",
           "title": "人鉴论",
           "volumeId": "v12",
-          "order": 9
+          "order": 10
         },
         {
           "id": "v12-c010",
           "title": "元妙论",
           "volumeId": "v12",
-          "order": 10
+          "order": 11
+        },
+        {
+          "id": "v12-c015",
+          "title": "精微论",
+          "volumeId": "v12",
+          "order": 12
         },
         {
           "id": "v12-c011",
           "title": "惊神论",
           "volumeId": "v12",
-          "order": 11
+          "order": 13
         },
         {
           "id": "v12-c012",
           "title": "明津先生骨髓歌",
           "volumeId": "v12",
-          "order": 12
+          "order": 14
         },
         {
           "id": "v12-c013",
           "title": "搜髓歌",
           "volumeId": "v12",
-          "order": 13
+          "order": 15
+        },
+        {
+          "id": "v12-c016",
+          "title": "四言独步",
+          "volumeId": "v12",
+          "order": 16
+        },
+        {
+          "id": "v12-c017",
+          "title": "五言独步",
+          "volumeId": "v12",
+          "order": 17
         }
       ]
     }
