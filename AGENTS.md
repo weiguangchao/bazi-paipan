@@ -1,21 +1,19 @@
 # AGENTS.md
 
-- 使用中文同我交流
-
 ## Project structure
 
 ```text
 .
 ├── AGENTS.md          # agent 工作流规则（本文件）
-├── CONTEXT.md         # 命理术语表与规范 token
+├── CONTEXT.md
 ├── index.html         # Vite 入口
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 ├── content/           # 命理古籍原文与分章内容
 ├── docs/
-│   ├── adr/           # 架构决策记录
-│   └── agents/        # agent 工作流细则
+│   ├── adr/        
+│   └── agents/
 ├── src/
 │   ├── domain/        # 命理核心：birth / ganzhi / paipan / time
 │   ├── components/    # React 组件：paipan-form / paipan-result / ui
