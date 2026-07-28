@@ -1,5 +1,7 @@
 # AGENTS.md
 
+- 使用中文同我交流
+
 ## Project structure
 
 ```text
