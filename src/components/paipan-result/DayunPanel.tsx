@@ -354,7 +354,7 @@ export function DayunPanel({ data }: DayunPanelProps) {
               const isSelected = selectedLiuyueIndex === String(index);
               return (
                 <ToggleGroupItem
-                  key={item.startUtcMs}
+                  key={`${item.startJie}-${item.ganzhi}`}
                   value={String(index)}
                   data-testid="liuyue-card"
                   aria-label={`${item.startJie}${item.startMonth}月${item.startDay}日流月${item.isCurrent ? "，当前" : ""}`}

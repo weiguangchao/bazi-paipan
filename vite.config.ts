@@ -7,6 +7,23 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     manifest: true,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          includeDependenciesRecursively: false,
+          groups: [
+            {
+              name: "react-vendor",
+              test: /node_modules\/(?:react|react-dom|react-router|scheduler)\//,
+            },
+            {
+              name: "ui-vendor",
+              test: /node_modules/,
+            },
+          ],
+        },
+      },
+    },
   },
   resolve: {
     alias: {

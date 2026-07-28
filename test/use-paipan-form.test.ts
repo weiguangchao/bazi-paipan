@@ -3,6 +3,7 @@ import {
   resolveInitialBirthDate,
   DEFAULT_BIRTH_DATE,
 } from "@/pages/paipan/use-paipan-form";
+import { getBirthDateLimit } from "@/domain/birth/birth-date";
 
 // 表单层初始出生日期解析：URL 合法 date 优先，否则预填默认 2000-01-01。
 // 默认值是表单关注点（CONTEXT.md「出生资料」定义的是输入本身），领域层对空 date 仍报错。
@@ -34,5 +35,15 @@ describe("resolveInitialBirthDate", () => {
     expect(Number.isNaN(d.getTime())).toBe(false);
     expect(d.getFullYear()).toBe(2000);
     expect(DEFAULT_BIRTH_DATE).toBe("2000-01-01");
+  });
+});
+
+describe("出生日期选择范围", () => {
+  it("固定上限为 2099-12-31", () => {
+    expect(getBirthDateLimit({ year: 2026, month: 7 })).toEqual({
+      year: 2099,
+      month: 12,
+      day: 31,
+    });
   });
 });

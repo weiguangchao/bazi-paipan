@@ -58,6 +58,29 @@ describe("依赖方向守卫", () => {
     expect(findDependencyViolations(source, "src/domain/paipan/mingpan.ts")).toEqual([]);
   });
 
+  it("仅允许天文 facade import 私有寿星核心", () => {
+    const source =
+      'import { equationOfTimeDays } from "@/domain/time/shouxing/solar-core";';
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/paipan.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "private-shouxing-core" }),
+    ]);
+  });
+
+  it("拒绝生产层 import 测试 oracle", () => {
+    const source =
+      'import { fixture } from "../../../test/oracles/independent-astronomy";';
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "test-oracle" }),
+    ]);
+  });
+
   it("允许 utils -> domain（展示适配消费纯核）", () => {
     const source = 'import { characterWuxing } from "@/domain/ganzhi/wuxing";';
     expect(findDependencyViolations(source, "src/utils/wuxing.ts")).toEqual([]);

@@ -13,10 +13,14 @@ import {
   ganzhiDizhi,
   ganzhiFromCharacters,
   ganzhiTiangan,
-  JIE_TERM_INDEXES,
   type Ganzhi,
 } from "@/domain/ganzhi/ganzhi";
-import { getSolarTermMoment } from "@/domain/time/jieqi";
+import {
+  compareDateTime,
+  diffSeconds,
+  type BeijingDateTime,
+} from "@/domain/time/date-time";
+import { JIE_NAMES, jieMoment } from "@/domain/time/astronomy";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
 export type Gender = "男" | "女";
@@ -57,9 +61,7 @@ export interface DayunResult {
   zhu: Dayunzhu[];
 }
 
-/** 3 天折 1 年，即 1 天折 4 个月。用毫秒换算。 */
-const MS_PER_DAY = 86_400_000;
-
+const SECONDS_PER_DAY = 86_400;
 /**
  * 判定大运方向。阳年（年干序号为偶：甲丙戊庚壬）男 / 阴年女顺行；
  * 阴年男 / 阳年女逆行。阳阴按年干序号奇偶：0,2,4,6,8 为阳，1,3,5,7,9 为阴。
@@ -75,18 +77,29 @@ export function determineDayunDirection(gender: Gender, yearTianganIndex: number
  * 找出生时刻方向侧最近一次"节"（交节时刻）：forward=true 取下一节（严格大于出生时刻），
  * forward=false 取上一节（严格小于出生时刻）。
  */
-function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean): number {
-  let best = forward ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-  for (const year of [birthYear - 1, birthYear, birthYear + 1]) {
-    for (const termIndex of JIE_TERM_INDEXES) {
-      const ms = getSolarTermMoment(year, termIndex);
+function findAdjacentJie(
+  birthTime: BeijingDateTime,
+  forward: boolean,
+): BeijingDateTime {
+  let best: BeijingDateTime | undefined;
+  for (const year of [birthTime.year - 1, birthTime.year, birthTime.year + 1]) {
+    for (const jie of JIE_NAMES) {
+      const moment = jieMoment(year, jie);
+      const comparison = compareDateTime(moment, birthTime);
       if (forward) {
-        if (ms > birthUtc && ms < best) best = ms;
+        if (
+          comparison > 0
+          && (!best || compareDateTime(moment, best) < 0)
+        ) best = moment;
       } else {
-        if (ms < birthUtc && ms > best) best = ms;
+        if (
+          comparison < 0
+          && (!best || compareDateTime(moment, best) > 0)
+        ) best = moment;
       }
     }
   }
+  if (!best) throw new RangeError("出生时刻附近不存在可用的节");
   return best;
 }
 
@@ -94,8 +107,8 @@ function findAdjacentJie(birthUtc: number, birthYear: number, forward: boolean):
  * 折算起运岁：由出生时刻到最近一节的天数按 3 天折 1 年折算，
  * 精确到年+月（1 天 ≈ 4 个月）。
  */
-function calculateQiyunsui(diffMs: number): Qiyunsui {
-  const totalDays = diffMs / MS_PER_DAY;
+function calculateQiyunsui(diffSecondsValue: number): Qiyunsui {
+  const totalDays = diffSecondsValue / SECONDS_PER_DAY;
   // 3 天 = 1 年 = 12 月，故 1 天 = 4 月。总月数 = totalDays * 4。
   const totalMonths = totalDays * 4;
   const ageYears = Math.floor(totalMonths / 12);
@@ -136,12 +149,8 @@ export interface DayunInput {
   yearTianganIndex: number;
   /** 性别。 */
   gender: Gender;
-  /** 出生时刻 UTC 毫秒（已做经度修正后的真太阳时；无出生地则钟表时）。 */
-  birthUtc: number;
-  /** 出生公历年（用于圈定候选节范围）。 */
-  birthYear: number;
-  /** 出生公历月（用于起运年月起算）。 */
-  birthMonth: number;
+  /** 出生钟表时；起运间隔只与北京时间的节比较。 */
+  birthTime: BeijingDateTime;
 }
 
 /**
@@ -151,12 +160,14 @@ export interface DayunInput {
  * @returns 大运完整结果（方向 + 起运岁 + 10 柱）
  */
 export function dayun(input: DayunInput): DayunResult {
-  const { yuezhu, yearTianganIndex, gender, birthUtc, birthYear, birthMonth } = input;
+  const { yuezhu, yearTianganIndex, gender, birthTime } = input;
   const direction = determineDayunDirection(gender, yearTianganIndex);
   const forward = direction === "顺";
-  const jieMs = findAdjacentJie(birthUtc, birthYear, forward);
-  const diffMs = forward ? jieMs - birthUtc : birthUtc - jieMs;
-  const qiyunsui = calculateQiyunsui(diffMs);
+  const adjacentJie = findAdjacentJie(birthTime, forward);
+  const intervalSeconds = forward
+    ? diffSeconds(adjacentJie, birthTime)
+    : diffSeconds(birthTime, adjacentJie);
+  const qiyunsui = calculateQiyunsui(intervalSeconds);
 
   const { tianganIndex: monthTianganIndex, dizhiIndex: monthDizhiIndex } = splitZhu(yuezhu);
   const step = forward ? 1 : -1;
@@ -166,7 +177,12 @@ export function dayun(input: DayunInput): DayunResult {
     // 奇偶仍匹配，可直接拼装。
     const tianganIndex = (((monthTianganIndex + step * (i + 1)) % 10) + 10) % 10;
     const dizhiIndex = (((monthDizhiIndex + step * (i + 1)) % 12) + 12) % 12;
-    const startYearMonth = computeStartYearMonth(birthYear, birthMonth, qiyunsui, i);
+    const startYearMonth = computeStartYearMonth(
+      birthTime.year,
+      birthTime.month,
+      qiyunsui,
+      i,
+    );
     zhu.push({
       index: i,
       ganzhi: ganzhiFromCharacters(tiangan[tianganIndex]!, dizhi[dizhiIndex]!),

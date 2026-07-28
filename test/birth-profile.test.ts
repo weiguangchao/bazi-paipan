@@ -19,6 +19,13 @@ describe("fromUrlParams - 无效参数静默忽略", () => {
     expect(fromUrlParams(params).date).toBeUndefined();
   });
 
+  it("正式范围外日期不会从 URL 恢复", () => {
+    expect(fromUrlParams(new URLSearchParams({ date: "1800-12-31" })).date)
+      .toBeUndefined();
+    expect(fromUrlParams(new URLSearchParams({ date: "2100-01-01" })).date)
+      .toBeUndefined();
+  });
+
   it("非法时间被忽略为 undefined", () => {
     const params = new URLSearchParams({ date: "2000-01-01", time: "25:99", gender: "男" });
     expect(fromUrlParams(params).time).toBeUndefined();
@@ -86,6 +93,24 @@ describe("parse - 字段级错误与 typed 值", () => {
     });
   });
 
+  it.each(["1801-01-01", "2099-12-31"])("接受正式范围边界 %s", (date) => {
+    const result = parse(
+      { date, time: "12:00", gender: "男", province: "", city: "" },
+      NOW,
+    );
+    expect(result.ok).toBe(true);
+  });
+
+  it.each(["1800-12-31", "2100-01-01"])("拒绝正式范围外日期 %s", (date) => {
+    const result = parse(
+      { date, time: "12:00", gender: "男", province: "", city: "" },
+      NOW,
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.fields.date).toBeDefined();
+  });
+
   it("失败返回字段级错误，不含 typed 值", () => {
     const r = parse({ date: "2000-13-45", time: "25:99", gender: "", province: "四川省", city: "" }, NOW);
     expect(r.ok).toBe(false);
@@ -120,12 +145,12 @@ describe("parse - 字段校验失败（从 api 层迁入）", () => {
     expect(r.fields.gender).toBeDefined();
   });
 
-  it("超出 100 年边界 -> fields.date", () => {
+  it("超出 2099 正式支持范围 -> fields.date", () => {
     const r = parse({ date: "2200-01-01", time: "12:00", gender: "男", province: "", city: "" }, NOW);
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.fields.date).toBeDefined();
-    expect(r.fields.date).toMatch(/100/);
+    expect(r.fields.date).toBe("出生日期须为有效公历 YYYY-MM-DD");
   });
 
   it("未知省份 -> fields.province", () => {

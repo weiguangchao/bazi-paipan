@@ -40,8 +40,8 @@ describe("排盘 - 日柱 (T1)", () => {
 
 describe("排盘 - 年柱 (T2)", () => {
   // ADR-0001：年柱在交立春那一刻切换。
-  // 立春 2000 = 北京时间 2000-02-05 04:40（UTC 2000-02-04 20:40），
-  // 真值来源：移植自 tyme4ts 的 jieqi.ts（与官方库一致）+ Deep Oracle 确认 2000 年柱 庚辰、1999 年柱 己卯。
+  // 立春 2000 = 北京时间 2000-02-04 20:40:24。
+  // 真值来源：固定寿星天文历原始 JS reference runner。
   // 立春前 -> 己卯（上一干支年）；立春后 -> 庚辰（新干支年）。
 
   it("立春前出生 -> 上一干支年：2000-02-04 12:00 钟表时 -> 年柱 己卯", () => {
@@ -66,11 +66,18 @@ describe("排盘 - 年柱 (T2)", () => {
     expect(result.nianzhu).toBe("庚辰");
   });
 
-  // 跨立春边界：同一公历日 2000-02-05，立春落在 04:40
-  it("跨立春边界：2000-02-05 03:00 -> 己卯；2000-02-05 06:00 -> 庚辰", () => {
-    const before = paipan({ year: 2000, month: 2, day: 5, hour: 3, minute: 0 });
-    const after = paipan({ year: 2000, month: 2, day: 5, hour: 6, minute: 0 });
+  it("交节前一秒属旧年柱，交节当秒及后一秒属新年柱", () => {
+    const before = paipan({
+      year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 23,
+    });
+    const at = paipan({
+      year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 24,
+    });
+    const after = paipan({
+      year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 25,
+    });
     expect(before.nianzhu).toBe("己卯");
+    expect(at.nianzhu).toBe("庚辰");
     expect(after.nianzhu).toBe("庚辰");
   });
 });
@@ -78,41 +85,41 @@ describe("排盘 - 年柱 (T2)", () => {
 describe("排盘 - 月柱 (T3)", () => {
   // ADR-0001：月柱在交每月之"节"（立春、惊蛰、清明……）那一刻切换。
   // 月干由年干 + 月地支经五虎遁推出；立春前出生归上一干支年，月干用该年干推算。
-  // 真值来源：移植自 tyme4ts 的 jieqi.ts 给出的交节时刻 + 五虎遁口诀 +
-  //   Deep Oracle 确认（2000 庚辰年、寅月戊寅、卯月己卯）。
-  // 2000 年交节时刻（北京时间）：小寒 01-06 17:00、立春 02-05 04:40、惊蛰 03-05 22:42。
+  // 真值来源：ADR-0006 固定寿星提交给出的交节时刻 + 五虎遁口诀。
+  // 2000 年交节时刻（北京时间）：小寒 01-06 09:00:42、立春 02-04 20:40:24、
+  // 惊蛰 03-05 14:42:40。
   // 五虎遁：1999 己卯年（甲己丙作首）寅月丙寅→子月丙子、丑月丁丑；
   //         2000 庚辰年（乙庚戊为头）寅月戊寅、卯月己卯。
 
-  it("小寒前出生 -> 子月（1999己年五虎遁）：2000-01-06 16:59 -> 月柱 丙子", () => {
-    const result = paipan({ year: 2000, month: 1, day: 6, hour: 16, minute: 59 });
+  it("小寒前出生 -> 子月（1999己年五虎遁）", () => {
+    const result = paipan({ year: 2000, month: 1, day: 6, hour: 9, minute: 0, second: 41 });
     expect(result.yuezhu).toBe("丙子");
   });
 
-  it("小寒后出生 -> 丑月（丁丑）：2000-01-06 17:01 -> 月柱 丁丑", () => {
-    const result = paipan({ year: 2000, month: 1, day: 6, hour: 17, minute: 1 });
+  it("小寒当秒出生 -> 丑月（丁丑）", () => {
+    const result = paipan({ year: 2000, month: 1, day: 6, hour: 9, minute: 0, second: 42 });
     expect(result.yuezhu).toBe("丁丑");
   });
 
-  it("立春前出生 -> 丑月（仍属上一干支年，己年五虎遁）：2000-02-05 04:39 -> 月柱 丁丑", () => {
-    const result = paipan({ year: 2000, month: 2, day: 5, hour: 4, minute: 39 });
+  it("立春前出生 -> 丑月（仍属上一干支年，己年五虎遁）", () => {
+    const result = paipan({ year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 23 });
     expect(result.nianzhu).toBe("己卯");
     expect(result.yuezhu).toBe("丁丑");
   });
 
-  it("立春后出生 -> 寅月（庚年五虎遁戊寅）：2000-02-05 04:41 -> 月柱 戊寅", () => {
-    const result = paipan({ year: 2000, month: 2, day: 5, hour: 4, minute: 41 });
+  it("立春当秒出生 -> 寅月（庚年五虎遁戊寅）", () => {
+    const result = paipan({ year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 24 });
     expect(result.nianzhu).toBe("庚辰");
     expect(result.yuezhu).toBe("戊寅");
   });
 
-  it("惊蛰前出生 -> 寅月：2000-03-05 22:41 -> 月柱 戊寅", () => {
-    const result = paipan({ year: 2000, month: 3, day: 5, hour: 22, minute: 41 });
+  it("惊蛰前一秒出生 -> 寅月", () => {
+    const result = paipan({ year: 2000, month: 3, day: 5, hour: 14, minute: 42, second: 39 });
     expect(result.yuezhu).toBe("戊寅");
   });
 
-  it("惊蛰后出生 -> 卯月（己卯）：2000-03-05 22:43 -> 月柱 己卯", () => {
-    const result = paipan({ year: 2000, month: 3, day: 5, hour: 22, minute: 43 });
+  it("惊蛰后一秒出生 -> 卯月（己卯）", () => {
+    const result = paipan({ year: 2000, month: 3, day: 5, hour: 14, minute: 42, second: 41 });
     expect(result.yuezhu).toBe("己卯");
   });
 
@@ -200,10 +207,9 @@ describe("排盘 - 子正跨界提示 (T4)", () => {
 });
 
 describe("排盘 - 真太阳时合成（经度修正 + 均时差）(T5/#15)", () => {
-  // ADR：真太阳时合成作为输入预处理，作用于所有柱。
+  // ADR-0006：年柱、月柱和起运使用北京时间；日柱、时柱和近子正使用真太阳时。
   // 真太阳时 = 钟表时 + 经度修正 + 均时差（CONTEXT.md）。
-  // 喀什地区 ~75.99°E，经度修正 ≈ −176 分；2000-01-01 均时差 ≈ −3.8 分。
-  // 双鸭山市 ~131.17°E，经度修正 ≈ +44.6 分；2000-01-01 均时差 ≈ −4.0 分。
+  // 喀什地区 ~75.99°E，经度修正 ≈ −176 分；双鸭山市 ~131.17°E，经度修正 ≈ +44.6 分。
 
   it("未给出生地 -> 经度修正 false", () => {
     const result = paipan({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
@@ -216,6 +222,20 @@ describe("排盘 - 真太阳时合成（经度修正 + 均时差）(T5/#15)", ()
       birthplace: { province: "四川省", city: "成都市" },
     });
     expect(result.longitudeCorrectionApplied).toBe(true);
+  });
+
+  it("出生地令真太阳时跨立春前后，年柱/月柱仍只按北京时间切换", () => {
+    // 2000 立春为北京时间 02-04 20:40:24；20:41 已过节，但喀什真太阳时仍在下午。
+    const clock = paipan({ year: 2000, month: 2, day: 4, hour: 20, minute: 41 });
+    const kashgar = paipan({
+      year: 2000, month: 2, day: 4, hour: 20, minute: 41,
+      birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
+    });
+    expect(clock.nianzhu).toBe("庚辰");
+    expect(clock.yuezhu).toBe("戊寅");
+    expect(kashgar.nianzhu).toBe(clock.nianzhu);
+    expect(kashgar.yuezhu).toBe(clock.yuezhu);
+    expect(kashgar.shizhu).not.toBe(clock.shizhu);
   });
 
   // 同一钟表时刻给/不给地名 -> 时柱不同。
@@ -236,8 +256,7 @@ describe("排盘 - 真太阳时合成（经度修正 + 均时差）(T5/#15)", ()
     expect(trueSolarTime.longitudeCorrectionApplied).toBe(true);
   });
 
-  // 跨子正用例：真太阳时合成使真太阳时跨越子正（00:00），日柱与时柱同时变化，
-  // 体现"时间平移作用于所有柱"。
+  // 跨子正用例：真太阳时合成使真太阳时跨越子正（00:00），日柱与时柱同时变化。
   // 2000-01-01 23:20 钟表时（晚子时）：日柱 戊午、时柱 壬子（戊日壬子起）。
   // 双鸭山经度修正 +44.6 分 + 均时差 −4.0 分 -> 真太阳时 2000-01-02 00:00（早子时）：
   // 日柱 己未、时柱 甲子（己日甲子起）；近子正由 false 变 true。
@@ -276,7 +295,7 @@ describe("排盘 - 真太阳时合成（经度修正 + 均时差）(T5/#15)", ()
   // 真太阳时 ≈ 次日 00:04（早子时），日柱、时柱同时切换：
   //   钟表时：日柱 辛巳、时柱 戊子（辛日戊子起）
   //   trueSolarTime：日柱 壬午、时柱 庚子（壬日庚子起）
-  // 验证均时差在出生 UTC 时刻求值并作用于排盘（经度修正 ≈ 0 时由均时差主导）。
+  // 验证寿星均时差作用于排盘（经度修正 ≈ 0 时由均时差主导）。
   it("均时差使近子正真太阳时跨子正 -> 日柱/时柱同时切换（常州 11 月初）", () => {
     const clock = paipan({ year: 2026, month: 11, day: 3, hour: 23, minute: 48 });
     const trueSolarTime = paipan({

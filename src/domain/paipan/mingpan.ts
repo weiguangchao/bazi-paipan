@@ -3,7 +3,7 @@
 //
 // 日主推导与十神附加在此统一完成：四柱、大运柱、流年柱共用 shishen() 一处规则，
 // 调用方（adapter）不再自行取日主、不再重复附加十神。命盘不读时钟，当前时刻由调用方注入。
-// 遵循 ADR-0001/0002/0003/0004，领域规则全部委托既有纯函数（paipan/shishen/ganzhiRelations/...）。
+// 遵循 ADR-0001/0002/0003/0006，领域规则全部委托既有纯函数（paipan/shishen/ganzhiRelations/...）。
 
 import { paipan } from "@/domain/paipan/paipan";
 import { liunian } from "@/domain/paipan/liunian";
@@ -16,6 +16,7 @@ import {
 } from "@/domain/ganzhi/ganzhi-relations";
 import { personalInfo, type PersonalInfo } from "@/domain/birth/personal-info";
 import type { BirthProfile } from "@/domain/birth/birth-profile";
+import type { BeijingDateTime } from "@/domain/time/date-time";
 
 /** 藏干及其相对日主的十神。 */
 export interface CangganOut {
@@ -49,8 +50,6 @@ export interface LiunianItemOut {
 export interface LiuyuezhuOut {
   ganzhi: string;
   startJie: string;
-  startUtcMs: number;
-  endUtcMs: number;
   startMonth: number;
   startDay: number;
   tianganShishen: string;
@@ -83,11 +82,11 @@ export interface Mingpan {
   dayun: DayunOut;
 }
 
-/** 当前北京时间语义：公历年月用于大运/今年，完整 UTC 时刻用于准确交节区间。 */
+/** 当前北京时间语义：公历年月用于大运/今年，完整钟表时用于准确交节区间。 */
 export interface CurrentMoment {
   year: number;
   month: number;
-  utcMs: number;
+  dateTime: BeijingDateTime;
 }
 
 /** 统一十神附加：干支天干十神 + 地支藏干十神（按藏干顺序）。命盘各柱共用此处。 */
@@ -126,10 +125,13 @@ function liunianZhu(
     ganzhi: item.ganzhi,
     ...zhuShishen(item.ganzhi, dayMaster),
     isCurrentYear: item.year === now.year,
-    liuyue: liuyue(item.year, now.utcMs).map((liuyuezhu) => ({
-      ...liuyuezhu,
-      ...zhuShishen(liuyuezhu.ganzhi, dayMaster),
-    })),
+    liuyue: liuyue(item.year, now.dateTime).map((liuyuezhu) => {
+      const { startTime: _startTime, endTime: _endTime, ...visible } = liuyuezhu;
+      return {
+        ...visible,
+        ...zhuShishen(liuyuezhu.ganzhi, dayMaster),
+      };
+    }),
   };
 }
 

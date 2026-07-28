@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "@/domain/birth/birth-profile";
 import { mingpan } from "@/domain/paipan/mingpan";
+import { beijingDateTime } from "@/domain/time/date-time";
+
+const NOW = {
+  year: 2025,
+  month: 1,
+  dateTime: beijingDateTime({
+    year: 2025, month: 1, day: 20, hour: 8, minute: 0, second: 0,
+  }),
+};
 
 function birthProfile() {
   const result = parse(
@@ -13,11 +22,7 @@ function birthProfile() {
 
 describe("命盘 - 完整流月嵌套", () => {
   it("十个大运各含十个流年，每个流年各含十二个流月", () => {
-    const result = mingpan(birthProfile(), {
-      year: 2025,
-      month: 1,
-      utcMs: Date.UTC(2025, 0, 20),
-    });
+    const result = mingpan(birthProfile(), NOW);
 
     expect(result.dayun.zhu).toHaveLength(10);
     expect(result.dayun.zhu.every((dayunzhu) => dayunzhu.liunian.length === 10)).toBe(true);
@@ -29,11 +34,7 @@ describe("命盘 - 完整流月嵌套", () => {
   });
 
   it("立春前今年与当前流月分属 2025 和 2024 流年，并附加流月柱十神", () => {
-    const result = mingpan(birthProfile(), {
-      year: 2025,
-      month: 1,
-      utcMs: Date.UTC(2025, 0, 20),
-    });
+    const result = mingpan(birthProfile(), NOW);
     const liunian = result.dayun.zhu.flatMap((dayunzhu) => dayunzhu.liunian);
     const year2024 = liunian.find((item) => item.year === 2024)!;
     const year2025 = liunian.find((item) => item.year === 2025)!;
@@ -55,13 +56,8 @@ describe("命盘 - 完整流月嵌套", () => {
   });
 
   it("跨调用的流年与流月不共享可变对象", () => {
-    const now = {
-      year: 2025,
-      month: 1,
-      utcMs: Date.UTC(2025, 0, 20),
-    };
-    const first = mingpan(birthProfile(), now);
-    const second = mingpan(birthProfile(), now);
+    const first = mingpan(birthProfile(), NOW);
+    const second = mingpan(birthProfile(), NOW);
     const firstLiunianzhu = first.dayun.zhu[0]!.liunian[0]!;
     const secondLiunianzhu = second.dayun.zhu[0]!.liunian[0]!;
     const expectedFirstLiuyue = secondLiunianzhu.liuyue[0]!.ganzhi;

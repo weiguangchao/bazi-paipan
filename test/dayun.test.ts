@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { paipan } from "@/domain/paipan/paipan";
 import { dayun, determineDayunDirection, type Gender } from "@/domain/paipan/dayun";
+import { beijingDateTime } from "@/domain/time/date-time";
 
 // 大运命理规则（依共识与 CONTEXT.md）：
 // - 方向：阳年（年干序号偶：甲丙戊庚壬）男 / 阴年女顺行；阴年男 / 阳年女逆行。
@@ -10,7 +11,7 @@ import { dayun, determineDayunDirection, type Gender } from "@/domain/paipan/day
 //
 // 真值来源：
 // - 方向与干支序列由月柱顺/逆推进 + 五虎遁推出（与 tyme4ts 规则一致）。
-// - 起运岁以移植自 tyme4ts 的 jieqi.ts 交节时刻为准。
+// - 起运岁以 ADR-0006 固定寿星提交的北京时间 `Jie` facade 为准。
 // 2000 庚辰年（庚=7，阳年）；2001 辛巳年（辛=7，阴年）。
 
 describe("大运 - 方向 (T6)", () => {
@@ -38,7 +39,7 @@ describe("排盘 - 大运顺行 10 柱", () => {
     expect(result.dayun).toBeDefined();
     const { direction, qiyun, zhu } = result.dayun!;
     expect(direction).toBe("顺");
-    expect(qiyun).toEqual({ ageYears: 8, ageMonths: 6 });
+    expect(qiyun).toEqual({ ageYears: 8, ageMonths: 5 });
     expect(zhu).toHaveLength(10);
     const ganzhi = zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
@@ -52,7 +53,7 @@ describe("排盘 - 大运顺行 10 柱", () => {
     const qiyunsuiAges = result.dayun!.zhu.map((p) => p.qiyun.ageYears);
     expect(qiyunsuiAges).toEqual([8, 18, 28, 38, 48, 58, 68, 78, 88, 98]);
     // 月数从起运岁继承，各柱相同
-    expect(result.dayun!.zhu.every((p) => p.qiyun.ageMonths === 6)).toBe(true);
+    expect(result.dayun!.zhu.every((p) => p.qiyun.ageMonths === 5)).toBe(true);
   });
 
   // 起运年月：第 0 柱 = 出生年月 + 起运岁。出生 2000-03，起运 8岁6月 -> 2008-09。
@@ -60,9 +61,9 @@ describe("排盘 - 大运顺行 10 柱", () => {
   it("顺行起运年月：2000-03 出生起运 8岁6月 -> 第 0 柱 2008-09", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "男" });
     const firstZhu = result.dayun!.zhu[0]!;
-    expect(firstZhu.startYearMonth).toEqual({ year: 2008, month: 9 });
+    expect(firstZhu.startYearMonth).toEqual({ year: 2008, month: 8 });
     const lastZhu = result.dayun!.zhu[9]!;
-    expect(lastZhu.startYearMonth).toEqual({ year: 2098, month: 9 });
+    expect(lastZhu.startYearMonth).toEqual({ year: 2098, month: 8 });
   });
 });
 
@@ -72,7 +73,7 @@ describe("排盘 - 大运逆行 10 柱", () => {
     const result = paipan({ year: 2000, month: 3, day: 10, hour: 12, minute: 0, gender: "女" });
     const { direction, qiyun, zhu } = result.dayun!;
     expect(direction).toBe("逆");
-    expect(qiyun).toEqual({ ageYears: 1, ageMonths: 6 });
+    expect(qiyun).toEqual({ ageYears: 1, ageMonths: 7 });
     const ganzhi = zhu.map((p) => p.ganzhi);
     expect(ganzhi).toEqual([
       "戊寅", "丁丑", "丙子", "乙亥",
@@ -108,12 +109,12 @@ describe("排盘 - 大运逆行 10 柱", () => {
 
 describe("排盘 - 起运岁命例 (T6)", () => {
   // 起运岁由出生时刻到最近一节的天数按 3 天折 1 年折算，精确到年+月。
-  // 立春后刚出生阳男 2000-02-05 04:41（立春 04:40 后 1 分钟）顺行数到下一节（惊蛰 03-05 22:42）。
-  // 约 29.75 天 -> 29.75*4 = 119 月 -> 9 岁 11 月。
-  it("立春后出生阳男 -> 顺行数到惊蛰，起运 9岁11月", () => {
+  // 2000-02-05 04:41 在立春（02-04 20:40:24）后，顺行数到惊蛰（03-05 14:42:40）。
+  // 约 29.42 天 -> 29.42*4 ≈ 118 月 -> 9 岁 9 月（四舍五入前保留完整秒精度）。
+  it("立春后出生阳男 -> 顺行数到惊蛰，起运 9岁9月", () => {
     const result = paipan({ year: 2000, month: 2, day: 5, hour: 4, minute: 41, gender: "男" });
     expect(result.dayun!.direction).toBe("顺");
-    expect(result.dayun!.qiyun).toEqual({ ageYears: 9, ageMonths: 11 });
+    expect(result.dayun!.qiyun).toEqual({ ageYears: 9, ageMonths: 9 });
   });
 
   // 逆行命例：2000-01-01 12:00 庚辰年（实为 1999 己卯年，立春前）男 -> 阳年男顺
@@ -139,7 +140,14 @@ describe("排盘 - 无性别不算大运 (T6)", () => {
 describe("大运 - 纯函数单测 (T6)", () => {
   // 直接调用 大运 纯函数，绕过排盘前置。
   it("月柱 戊寅、阳年（年干戊=4 阳年）男顺行 -> 第 0 柱 己卯", () => {
-    const r = dayun({ yuezhu: "戊寅", yearTianganIndex: 4, gender: "男", birthUtc: Date.UTC(2000, 1, 5, 4, 41) - 8 * 3600 * 1000, birthYear: 2000, birthMonth: 2 });
+    const r = dayun({
+      yuezhu: "戊寅",
+      yearTianganIndex: 4,
+      gender: "男",
+      birthTime: beijingDateTime({
+        year: 2000, month: 2, day: 5, hour: 4, minute: 41, second: 0,
+      }),
+    });
     expect(r.direction).toBe("顺");
     expect(r.zhu[0]!.ganzhi).toBe("己卯");
   });

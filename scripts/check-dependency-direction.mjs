@@ -129,6 +129,37 @@ export function findDependencyViolations(source, fileName = "fixture.ts") {
   const allowed = ALLOWED_DEPENDENCIES[fromLayer];
   const violations = [];
   for (const { specifier, line, column } of collectImportSpecifiers(source, fileName)) {
+    const normalizedFile = String(fileName).replace(/\\/g, "/");
+    const importsPrivateShouxingCore =
+      specifier.includes("/domain/time/shouxing/")
+      || specifier.includes("../time/shouxing/")
+      || specifier.startsWith("./shouxing/");
+    if (
+      importsPrivateShouxingCore
+      && !normalizedFile.endsWith("/src/domain/time/astronomy.ts")
+      && normalizedFile !== "src/domain/time/astronomy.ts"
+    ) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "private-shouxing-core",
+        allowed: ["src/domain/time/astronomy.ts facade"],
+        line,
+        column,
+      });
+      continue;
+    }
+    if (specifier.includes("test/oracles") || specifier.includes("/oracles/")) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "test-oracle",
+        allowed: [...allowed],
+        line,
+        column,
+      });
+      continue;
+    }
     const toLayer = targetLayerOfSpecifier(specifier, fileName);
     if (!toLayer) continue;
     if (!allowed.has(toLayer)) {

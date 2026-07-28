@@ -1,6 +1,9 @@
-// 出生日期解析与上限校验：供排盘校验与个人信息计算共用。
-// 上限按当前北京年月（{ year, month }）为基准加 100 个日历年，取该月最后一日。
-// 不读机器时钟——当前年月由调用方（边缘）注入。
+// 出生日期解析与正式支持范围校验：供排盘、URL 恢复与个人信息计算共用。
+
+import {
+  MAX_SUPPORTED_YEAR,
+  MIN_SUPPORTED_YEAR,
+} from "@/domain/time/date-time";
 
 /** 出生日期各部分。 */
 export interface BirthDateParts {
@@ -23,6 +26,7 @@ export function parseBirthDate(value: unknown): BirthDateParts | null {
   const year = parseInt(match[1]!, 10);
   const month = parseInt(match[2]!, 10);
   const day = parseInt(match[3]!, 10);
+  if (year < MIN_SUPPORTED_YEAR || year > MAX_SUPPORTED_YEAR) return null;
   const parsed = new Date(Date.UTC(year, month - 1, day));
   if (
     parsed.getUTCFullYear() !== year ||
@@ -34,24 +38,16 @@ export function parseBirthDate(value: unknown): BirthDateParts | null {
   return { year, month, day };
 }
 
-/** 某年某月（1-12）的最后一日。 */
-function lastDayOfMonth(year: number, month: number): number {
-  return new Date(Date.UTC(year, month, 0)).getUTCDate();
-}
-
-/** 以当前北京年月为基准的出生日期上限（当月 + 100 个日历年，取该月最后一日）。 */
-export function getBirthDateLimit(now: CurrentYearMonth): BirthDateParts {
+/** 正式支持的出生日期上限。参数保留为边缘调用的稳定接口，不参与固定范围计算。 */
+export function getBirthDateLimit(_now: CurrentYearMonth): BirthDateParts {
   return {
-    year: now.year + 100,
-    month: now.month,
-    day: lastDayOfMonth(now.year + 100, now.month),
+    year: MAX_SUPPORTED_YEAR,
+    month: 12,
+    day: 31,
   };
 }
 
-/** 出生日期是否晚于上限（按年、月、日逐位比较）。 */
-export function isAfterBirthDateLimit(birthDate: BirthDateParts, now: CurrentYearMonth): boolean {
-  const limit = getBirthDateLimit(now);
-  if (birthDate.year !== limit.year) return birthDate.year > limit.year;
-  if (birthDate.month !== limit.month) return birthDate.month > limit.month;
-  return birthDate.day > limit.day;
+/** 出生日期是否超出正式支持范围。 */
+export function isOutsideBirthDateRange(birthDate: BirthDateParts): boolean {
+  return birthDate.year < MIN_SUPPORTED_YEAR || birthDate.year > MAX_SUPPORTED_YEAR;
 }

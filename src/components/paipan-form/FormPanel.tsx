@@ -83,7 +83,7 @@ export function FormPanel({
               selected={selectedDate}
               onSelect={onDateChange}
               captionLayout="dropdown"
-              startMonth={new Date(1900, 0)}
+              startMonth={new Date(1801, 0)}
               endMonth={new Date(limit.year, limit.month - 1)}
               locale={zhCN}
               autoFocus
