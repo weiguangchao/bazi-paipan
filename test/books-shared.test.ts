@@ -14,7 +14,10 @@ const catalog: BookCatalog = {
     id: "fixture",
     order: 1,
     title: "测试典籍",
-    author: "测试作者",
+    attribution: {
+      name: "测试译者",
+      role: "译",
+    },
     description: "测试简介",
     sealLines: ["测试", "典籍"],
   },
@@ -55,7 +58,10 @@ describe("BookRegistry", () => {
       {
         bookId: "fixture",
         title: "测试典籍",
-        author: "测试作者",
+        attribution: {
+          name: "测试译者",
+          role: "译",
+        },
         description: "测试简介",
         volumeCount: 2,
         chapterCount: 3,
@@ -167,7 +173,10 @@ describe("共享典籍入口", () => {
     {
       bookId: "fixture",
       title: "测试典籍",
-      author: "测试作者",
+      attribution: {
+        name: "测试译者",
+        role: "译",
+      },
       description: "测试简介",
       volumeCount: 2,
       chapterCount: 3,

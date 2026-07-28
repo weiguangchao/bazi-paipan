@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "sourceSnapshot": {
+    "path": "content/books/xinjing/source.md",
+    "sha256": "26095c8a7d0ec2268908c01654ec1119d543cb840f665d9499fc5abafcf33b5e",
+    "bytes": 1133,
+    "lines": 19
+  },
+  "inventory": {
+    "volumeCount": 1,
+    "chapterCount": 1,
+    "volumes": [
+      {
+        "id": "v1",
+        "order": 1,
+        "chapterCount": 1
+      }
+    ]
+  },
+  "volumeMapping": {
+    "volumeId": "v1",
+    "title": "全卷",
+    "sourceTitle": "",
+    "resolution": "原稿无显式卷次，以一个代表全书的阅读单元承载正文"
+  },
+  "chapters": [
+    {
+      "chapterId": "v1-c001",
+      "title": "正文",
+      "source": {
+        "startLine": 13,
+        "endLine": 16
+      },
+      "outputPath": "content/books/xinjing/chapters/v1/v1-c001.md",
+      "bytes": 939,
+      "sha256": "147c0d71ca94e13929190c3ab8ba9be41a794a0d1c6662a164cf97028945320e"
+    }
+  ],
+  "structuralSegments": [
+    {
+      "kind": "source-front-matter",
+      "source": {
+        "startLine": 1,
+        "endLine": 12
+      },
+      "resolution": "书名、目录元数据、分隔线与正文标题不进入篇章正文"
+    },
+    {
+      "kind": "source-closing",
+      "source": {
+        "startLine": 17,
+        "endLine": 19
+      },
+      "resolution": "正文后分隔线与重复书名不进入篇章正文"
+    }
+  ],
+  "warnings": [],
+  "knownExceptions": [],
+  "review": {
+    "importedAt": "2026-07-28",
+    "importer": "Codex primary agent",
+    "verificationCommit": "pending final commit",
+    "independentReviewer": "Codex independent spec review agent",
+    "reviewedAt": "2026-07-28",
+    "conclusion": "passed independent full review of the single chapter"
+  }
+}

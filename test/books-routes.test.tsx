@@ -22,7 +22,10 @@ const catalog: BookCatalog = {
     id: "fixture",
     order: 1,
     title: "测试典籍",
-    author: "测试作者",
+    attribution: {
+      name: "测试译者",
+      role: "译",
+    },
     description: "测试简介",
     sealLines: ["测试", "典籍"],
   },
@@ -84,8 +87,26 @@ describe("共享典籍页面", () => {
       "href",
       "/books/fixture",
     );
+    expect(screen.getByRole("link", { name: /测试典籍/ })).toHaveTextContent(
+      "测试译者 译",
+    );
     expect(loadRuntime).not.toHaveBeenCalled();
     expect(readChapter).not.toHaveBeenCalled();
+  });
+
+  test("单部典籍首页使用主题中立身份并展示 catalog 署名", async () => {
+    const { registry } = fixture();
+    renderPath("/books/fixture", registry);
+
+    expect(await screen.findByRole("heading", {
+      level: 1,
+      name: "测试典籍",
+    })).toBeVisible();
+    expect(screen.getByText("典籍 · 2 卷 · 3 篇")).toBeVisible();
+    expect(screen.getByRole("heading", {
+      level: 2,
+      name: "测试译者 译",
+    })).toBeVisible();
   });
 
   test("正文读取未完成时显示加载提示并保留篇章身份", async () => {

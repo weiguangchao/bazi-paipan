@@ -11,4 +11,8 @@ export const bookBuildStrategies = {
     volumeGzipBytes: 100 * 1024,
     bookGzipBytes: 1280 * 1024,
   },
+  xinjing: {
+    volumeGzipBytes: 10 * 1024,
+    bookGzipBytes: 10 * 1024,
+  },
 };

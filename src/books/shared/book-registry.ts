@@ -1,9 +1,13 @@
-import type { BookCatalog, BookRuntime } from "./book-runtime";
+import type {
+  BookAttribution,
+  BookCatalog,
+  BookRuntime,
+} from "./book-runtime";
 
 export interface BookSummary {
   readonly bookId: string;
   readonly title: string;
-  readonly author: string;
+  readonly attribution: BookAttribution;
   readonly description: string;
   readonly volumeCount: number;
   readonly chapterCount: number;
@@ -17,7 +21,7 @@ export function summaryFromCatalog(
   return {
     bookId: catalog.book.id,
     title: catalog.book.title,
-    author: catalog.book.author,
+    attribution: catalog.book.attribution,
     description: catalog.book.description,
     volumeCount: catalog.volumes.length,
     chapterCount: catalog.volumes.reduce(

@@ -63,7 +63,11 @@ interface Audit {
 }
 
 interface Catalog {
-  book: { id: string; title: string; author: string };
+  book: {
+    id: string;
+    title: string;
+    attribution: { name: string; role: string };
+  };
   volumes: Array<{
     id: string;
     order: number;
@@ -102,7 +106,7 @@ describe("《五灯会元》内容包契约", () => {
       id: "wudenghuiyuan",
       order: 3,
       title: "五灯会元",
-      author: "（宋）释普济",
+      attribution: { name: "（宋）释普济", role: "编" },
       description: expect.any(String),
       sealLines: ["五灯", "会元"],
     });

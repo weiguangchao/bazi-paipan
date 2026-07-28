@@ -8,6 +8,7 @@ import {
 import { ArrowRight } from "lucide-react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { bookRegistry } from "@/books/registry";
+import { formatBookAttribution } from "./book-attribution";
 import { BookRegistry } from "./book-registry";
 import { resolveBooksPath } from "./navigation";
 import type {
@@ -22,16 +23,16 @@ function BooksHome({ registry }: { registry: BookRegistry }) {
   return (
     <main className="books-home">
       <header className="books-heading">
-        <p>命理文献</p>
+        <p>文献阅读</p>
         <h1>典籍</h1>
-        <span>循原卷次，读古人论命之法。</span>
+        <span>循典籍结构，查阅原文。</span>
       </header>
       <section className="book-card-grid" aria-label="典籍列表">
         {registry.list().map((book) => (
           <Link key={book.bookId} to={`/books/${book.bookId}`}>
             <span>{book.volumeCount} 卷 · {book.chapterCount} 篇</span>
             <h2>{book.title}</h2>
-            <strong>{book.author} 编</strong>
+            <strong>{formatBookAttribution(book.attribution)}</strong>
             <p>{book.description}</p>
             <small>进入典籍 <ArrowRight aria-hidden="true" size={16} /></small>
           </Link>
@@ -56,9 +57,9 @@ function BookHome({ runtime }: { runtime: BookRuntime }) {
           {catalog.book.sealLines.map((line) => <span key={line}>{line}</span>)}
         </div>
         <div>
-          <p>命理典籍 · {catalog.volumes.length} 卷 · {chapterCount} 篇</p>
+          <p>典籍 · {catalog.volumes.length} 卷 · {chapterCount} 篇</p>
           <h1>{catalog.book.title}</h1>
-          <h2>{catalog.book.author} 编</h2>
+          <h2>{formatBookAttribution(catalog.book.attribution)}</h2>
           <p className="book-intro">{catalog.book.description}</p>
           {first && (
             <Link className="book-primary-link" to={`${root}/chapters/${first.id}`}>

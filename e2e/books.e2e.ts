@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 const yuanRoot = "/books/yuanhaiziping";
 const sanmingRoot = "/books/sanmingtonghui";
 const wudengRoot = "/books/wudenghuiyuan";
+const xinjingRoot = "/books/xinjing";
 const volumeChunk = /\/assets\/v\d+-[^/]+\.js$/;
 const sanmingCounts = [36, 26, 23, 25, 20, 73, 22, 60, 60, 3, 5, 17];
 const wudengCounts = [
@@ -19,23 +20,59 @@ async function expectNoSeriousA11y(page: Page) {
   ).toEqual([]);
 }
 
-test("典籍首页按固定顺序展示三部典籍且顶部入口正确", async ({ page }) => {
+test("典籍首页按固定顺序展示四部典籍且顶部入口正确", async ({ page }) => {
   const requests: string[] = [];
   page.on("request", (request) => requests.push(new URL(request.url()).pathname));
   await page.goto("/books");
 
   await expect(page.getByRole("heading", { level: 1, name: "典籍" })).toBeVisible();
   const cards = page.locator(".book-card-grid > a");
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(4);
   await expect(cards.nth(0)).toContainText("渊海子平");
   await expect(cards.nth(0)).toContainText("5 卷 · 269 篇");
   await expect(cards.nth(1)).toContainText("三命通会");
   await expect(cards.nth(1)).toContainText("12 卷 · 370 篇");
   await expect(cards.nth(2)).toContainText("五灯会元");
   await expect(cards.nth(2)).toContainText("20 卷 · 1739 篇");
+  await expect(cards.nth(3)).toContainText("般若波罗蜜多心经");
+  await expect(cards.nth(3)).toContainText("唐三藏法师玄奘 译");
+  await expect(cards.nth(3)).toContainText("1 卷 · 1 篇");
   await expect(page.getByRole("navigation", { name: "一级导航" }).getByRole("link", { name: "典籍" }))
     .toHaveAttribute("aria-current", "page");
   expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+});
+
+test("《心经》全卷、正文、译者署名与全书首尾完整可读", async ({ page }) => {
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(new URL(request.url()).pathname));
+
+  await page.goto(xinjingRoot);
+  await expect(page.getByRole("heading", {
+    level: 1,
+    name: "般若波罗蜜多心经",
+  })).toBeVisible();
+  await expect(page.getByRole("heading", {
+    level: 2,
+    name: "唐三藏法师玄奘 译",
+  })).toBeVisible();
+  await expect(page.locator(".book-hero")).toContainText("典籍 · 1 卷 · 1 篇");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+
+  await page.goto(`${xinjingRoot}/volumes/v1`);
+  await expect(page.getByRole("heading", { level: 1, name: "全卷" })).toBeVisible();
+  await expect(page.locator(".volume-home")).toContainText("1 篇");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+
+  await page.goto(`${xinjingRoot}/chapters/v1-c001`);
+  await expect(page.getByRole("heading", { level: 1, name: "正文" })).toBeVisible();
+  await expect(page.locator(".chapter-heading")).toContainText("唐三藏法师玄奘 译");
+  await expect(page.locator(".chapter-prose")).toContainText("观自在菩萨。行深般若波罗蜜多时。");
+  await expect(page.locator(".chapter-prose")).toContainText("般罗僧揭帝。菩提僧莎诃。");
+  await expect(page.locator(".chapter-prose")).not.toContainText("大正藏第8册");
+  await expect(page.locator(".chapter-neighbors .is-unavailable").first()).toContainText("全书之始");
+  await expect(page.locator(".chapter-neighbors .is-unavailable").last()).toContainText("全书之末");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
+  await expectNoSeriousA11y(page);
 });
 
 test("《五灯会元》二十卷首页与每卷首末篇均可直达", async ({ page }) => {
@@ -250,6 +287,9 @@ test("代表页面与共享错误状态无 serious/critical 可访问性违规",
     wudengRoot,
     `${wudengRoot}/volumes/v3`,
     `${wudengRoot}/chapters/v3-c001`,
+    xinjingRoot,
+    `${xinjingRoot}/volumes/v1`,
+    `${xinjingRoot}/chapters/v1-c001`,
     "/books/missing",
   ]) {
     await page.goto(path);

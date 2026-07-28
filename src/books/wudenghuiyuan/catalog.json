@@ -3,7 +3,10 @@
     "id": "wudenghuiyuan",
     "order": 3,
     "title": "五灯会元",
-    "author": "（宋）释普济",
+    "attribution": {
+      "name": "（宋）释普济",
+      "role": "编"
+    },
     "description": "汇集禅宗五灯法脉人物传记与机缘语录，依原卷次查阅二十卷一千七百三十九篇正文。",
     "sealLines": [
       "五灯",
