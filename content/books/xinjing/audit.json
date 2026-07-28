@@ -59,7 +59,7 @@
   "review": {
     "importedAt": "2026-07-28",
     "importer": "Codex primary agent",
-    "verificationCommit": "pending final commit",
+    "verificationCommit": "f336a1799cc804126b7b1d56ca8ec77d6aaeb603",
     "independentReviewer": "Codex independent spec review agent",
     "reviewedAt": "2026-07-28",
     "conclusion": "passed independent full review of the single chapter"
