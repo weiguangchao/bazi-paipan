@@ -14,15 +14,14 @@ import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
 import { dayun, type Gender, type DayunResult } from "@/domain/paipan/dayun";
 import {
   beijingDateTime,
-  compareDateTime,
   type BeijingDateTime,
   type TrueSolarDateTime,
 } from "@/domain/time/date-time";
+import { toTrueSolarDateTime } from "@/domain/time/astronomy";
 import {
-  JIE_NAMES,
-  jieMoment,
-  toTrueSolarDateTime,
-} from "@/domain/time/astronomy";
+  locateJie,
+  type JieOccurrence,
+} from "@/domain/time/jie-chronology";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
 export interface PaipanInput {
@@ -73,7 +72,20 @@ const RIZHU_ANCHOR_DAY = 1;
 const RIZHU_ANCHOR_INDEX = 54;
 
 // 月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)…小寒->丑(1)。
-const JIE_MONTH_DIZHI_INDEX = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1] as const;
+const JIE_MONTH_DIZHI_INDEX: Readonly<Record<JieOccurrence["jie"], number>> = {
+  "立春": 2,
+  "惊蛰": 3,
+  "清明": 4,
+  "立夏": 5,
+  "芒种": 6,
+  "小暑": 7,
+  "立秋": 8,
+  "白露": 9,
+  "寒露": 10,
+  "立冬": 11,
+  "大雪": 0,
+  "小寒": 1,
+};
 
 /**
  * 五虎遁：由年干推出寅月天干（起月诀）。
@@ -134,14 +146,8 @@ function resolveTimes(input: PaipanInput): {
  * 干支年序号 = (公历年 - 4) mod 60（甲子=0）。
  * 返回 [年柱, 年干序号]。
  */
-function computeNianzhu(
-  clockTime: BeijingDateTime,
-): [Ganzhi, number] {
-  const lichun = jieMoment(clockTime.year, "立春");
-  // 出生在立春之前 -> 归上一公历年
-  const ganzhiYear =
-    compareDateTime(clockTime, lichun) < 0 ? clockTime.year - 1 : clockTime.year;
-  const index = (((ganzhiYear - 4) % 60) + 60) % 60;
+function computeNianzhu(lichunYear: number): [Ganzhi, number] {
+  const index = (((lichunYear - 4) % 60) + 60) % 60;
   return [liushijiazi(index), index % 10];
 }
 
@@ -152,27 +158,10 @@ function computeNianzhu(
  * 上一年的年干推算，与年柱归属保持一致。
  */
 function computeYuezhu(
-  clockTime: BeijingDateTime,
+  jie: JieOccurrence["jie"],
   yearTianganIndex: number,
 ): Ganzhi {
-  // 候选：本公历年与上一公历年的所有"节"交节时刻。取 <= birth 的最近一个。
-  let bestJieIdx = -1;
-  let bestMoment: BeijingDateTime | undefined;
-  for (const year of [clockTime.year - 1, clockTime.year]) {
-    for (let i = 0; i < JIE_NAMES.length; i++) {
-      const moment = jieMoment(year, JIE_NAMES[i]!);
-      if (
-        compareDateTime(moment, clockTime) <= 0
-        && (!bestMoment || compareDateTime(moment, bestMoment) > 0)
-      ) {
-        bestMoment = moment;
-        bestJieIdx = i;
-      }
-    }
-  }
-
-  // 命理上出生时刻必落在某个节月内（不存在最早的节），bestJieIdx 必有解。
-  const monthDizhiIndex = JIE_MONTH_DIZHI_INDEX[bestJieIdx]!;
+  const monthDizhiIndex = JIE_MONTH_DIZHI_INDEX[jie];
   // 寅月天干 + 从寅月起算的步数（寅=0、卯=1…子=10、丑=11），10 天干循环
   const firstMonthTiangan = firstMonthTianganIndex(yearTianganIndex);
   const step = ((monthDizhiIndex - 2) + 12) % 12;
@@ -234,17 +223,18 @@ function isNearZizheng(hour: number, minute: number): boolean {
  */
 export function paipan(input: PaipanInput): PaipanResult {
   const { clockTime, trueSolarTime } = resolveTimes(input);
+  const jieLocation = locateJie(clockTime);
   const offset = daysSinceAnchor(
     trueSolarTime.year,
     trueSolarTime.month,
     trueSolarTime.day,
   );
-  const [nianzhu, yearTianganIndex] = computeNianzhu(clockTime);
+  const [nianzhu, yearTianganIndex] = computeNianzhu(jieLocation.interval.lichunYear);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
   // 不包装会让天干/地支取到 undefined。dayTianganIndex 与 日柱 复用同一归一化结果。
   const dayIndex = (((RIZHU_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayTianganIndex = dayIndex % 10;
-  const yuezhu = computeYuezhu(clockTime, yearTianganIndex);
+  const yuezhu = computeYuezhu(jieLocation.interval.start.jie, yearTianganIndex);
   const result: PaipanResult = {
     nianzhu,
     yuezhu,

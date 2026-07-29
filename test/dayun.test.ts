@@ -126,6 +126,27 @@ describe("排盘 - 起运岁命例 (T6)", () => {
     expect(result.nianzhu).toBe("己卯"); // 立春前归 1999 阴年
     expect(result.dayun!.direction).toBe("逆"); // 阴年男逆
   });
+
+  it("交节当秒顺行取严格下一节、逆行取严格上一节，起运间隔不为零", () => {
+    const birthTime = beijingDateTime({
+      year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 24,
+    });
+    const forward = dayun({
+      yuezhu: "戊寅",
+      yearTianganIndex: 6,
+      gender: "男",
+      birthTime,
+    });
+    const backward = dayun({
+      yuezhu: "戊寅",
+      yearTianganIndex: 6,
+      gender: "女",
+      birthTime,
+    });
+
+    expect(forward.qiyun).toEqual({ ageYears: 9, ageMonths: 11 });
+    expect(backward.qiyun).toEqual({ ageYears: 9, ageMonths: 9 });
+  });
 });
 
 describe("排盘 - 无性别不算大运 (T6)", () => {

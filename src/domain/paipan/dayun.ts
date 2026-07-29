@@ -16,11 +16,10 @@ import {
   type Ganzhi,
 } from "@/domain/ganzhi/ganzhi";
 import {
-  compareDateTime,
   diffSeconds,
   type BeijingDateTime,
 } from "@/domain/time/date-time";
-import { JIE_NAMES, jieMoment } from "@/domain/time/astronomy";
+import { locateJie } from "@/domain/time/jie-chronology";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
 export type Gender = "男" | "女";
@@ -71,36 +70,6 @@ export function determineDayunDirection(gender: Gender, yearTianganIndex: number
   // 阳男、阴女顺；阴男、阳女逆
   const forward = isYangYear === (gender === "男");
   return forward ? "顺" : "逆";
-}
-
-/**
- * 找出生时刻方向侧最近一次"节"（交节时刻）：forward=true 取下一节（严格大于出生时刻），
- * forward=false 取上一节（严格小于出生时刻）。
- */
-function findAdjacentJie(
-  birthTime: BeijingDateTime,
-  forward: boolean,
-): BeijingDateTime {
-  let best: BeijingDateTime | undefined;
-  for (const year of [birthTime.year - 1, birthTime.year, birthTime.year + 1]) {
-    for (const jie of JIE_NAMES) {
-      const moment = jieMoment(year, jie);
-      const comparison = compareDateTime(moment, birthTime);
-      if (forward) {
-        if (
-          comparison > 0
-          && (!best || compareDateTime(moment, best) < 0)
-        ) best = moment;
-      } else {
-        if (
-          comparison < 0
-          && (!best || compareDateTime(moment, best) > 0)
-        ) best = moment;
-      }
-    }
-  }
-  if (!best) throw new RangeError("出生时刻附近不存在可用的节");
-  return best;
 }
 
 /**
@@ -163,10 +132,13 @@ export function dayun(input: DayunInput): DayunResult {
   const { yuezhu, yearTianganIndex, gender, birthTime } = input;
   const direction = determineDayunDirection(gender, yearTianganIndex);
   const forward = direction === "顺";
-  const adjacentJie = findAdjacentJie(birthTime, forward);
+  const jieLocation = locateJie(birthTime);
+  const adjacentJie = forward
+    ? jieLocation.strictLater
+    : jieLocation.strictEarlier;
   const intervalSeconds = forward
-    ? diffSeconds(adjacentJie, birthTime)
-    : diffSeconds(birthTime, adjacentJie);
+    ? diffSeconds(adjacentJie.moment, birthTime)
+    : diffSeconds(birthTime, adjacentJie.moment);
   const qiyunsui = calculateQiyunsui(intervalSeconds);
 
   const { tianganIndex: monthTianganIndex, dizhiIndex: monthDizhiIndex } = splitZhu(yuezhu);

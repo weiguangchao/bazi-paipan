@@ -11,23 +11,17 @@ import {
 } from "@/domain/ganzhi/ganzhi";
 import { liunianzhu } from "@/domain/paipan/liunian";
 import {
-  compareDateTime,
   type BeijingDateTime,
 } from "@/domain/time/date-time";
 import {
-  JIE_NAMES,
-  jieMoment,
-  type Jie,
-} from "@/domain/time/astronomy";
-
-const liuyueJie = JIE_NAMES.map((jie) => ({
-  jie,
-  yearOffset: jie === "小寒" ? 1 : 0,
-}));
+  jieIntervals,
+  locateJie,
+  type JieOccurrence,
+} from "@/domain/time/jie-chronology";
 
 export interface Liuyuezhu {
   ganzhi: Ganzhi;
-  startJie: Jie;
+  startJie: JieOccurrence["jie"];
   startTime: BeijingDateTime;
   endTime: BeijingDateTime;
   startMonth: number;
@@ -43,29 +37,27 @@ function liuyueStartTianganIndex(year: number): number {
 }
 
 export function liuyue(year: number, currentTime: BeijingDateTime): Liuyuezhu[] {
+  const intervals = jieIntervals(year);
+  const currentInterval = locateJie(currentTime).interval;
   const startTianganIndex = liuyueStartTianganIndex(year);
-  const nextLichun = jieMoment(year + 1, "立春");
 
-  return liuyueJie.map(({ jie, yearOffset }, index) => {
-    const startTime = jieMoment(year + yearOffset, jie);
-    const nextJie = liuyueJie[index + 1];
-    const endTime = nextJie
-      ? jieMoment(year + nextJie.yearOffset, nextJie.jie)
-      : nextLichun;
+  return intervals.map((interval, index) => {
+    const startTime = interval.start.moment;
+    const endTime = interval.end.moment;
 
     return {
       ganzhi: ganzhiFromCharacters(
         tiangan[(startTianganIndex + index) % tiangan.length]!,
         dizhi[(2 + index) % dizhi.length]!,
       ),
-      startJie: jie,
+      startJie: interval.start.jie,
       startTime,
       endTime,
       startMonth: startTime.month,
       startDay: startTime.day,
       isCurrent:
-        compareDateTime(currentTime, startTime) >= 0
-        && compareDateTime(currentTime, endTime) < 0,
+        interval.lichunYear === currentInterval.lichunYear
+        && interval.start.jie === currentInterval.start.jie,
     };
   });
 }
