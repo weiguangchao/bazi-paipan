@@ -66,7 +66,7 @@ interface Catalog {
   book: {
     id: string;
     title: string;
-    attribution: { name: string; role: string };
+    attribution: Array<{ name: string; role: string }>;
   };
   volumes: Array<{
     id: string;
@@ -106,7 +106,7 @@ describe("《五灯会元》内容包契约", () => {
       id: "wudenghuiyuan",
       order: 3,
       title: "五灯会元",
-      attribution: { name: "（宋）释普济", role: "编" },
+      attribution: [{ name: "（宋）释普济", role: "编" }],
       description: expect.any(String),
       sealLines: ["五灯", "会元"],
     });

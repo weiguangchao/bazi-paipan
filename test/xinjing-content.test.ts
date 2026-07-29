@@ -51,7 +51,7 @@ interface Catalog {
   book: {
     id: string;
     title: string;
-    attribution: { name: string; role: string };
+    attribution: Array<{ name: string; role: string }>;
   };
   volumes: Array<{
     id: string;
@@ -87,10 +87,7 @@ describe("《心经》内容包契约", () => {
     expect(catalog.book).toMatchObject({
       id: "xinjing",
       title: "般若波罗蜜多心经",
-      attribution: {
-        name: "唐三藏法师玄奘",
-        role: "译",
-      },
+      attribution: [{ name: "唐三藏法师玄奘", role: "译" }],
     });
     expect(catalog.volumes).toEqual([
       {

@@ -7,30 +7,40 @@ const expected = [
   {
     bookId: "yuanhaiziping",
     title: "渊海子平",
-    attribution: { name: "（宋）徐大升", role: "编" },
+    attribution: [{ name: "（宋）徐大升", role: "编" }],
     volumeCount: 5,
     chapterCount: 269,
   },
   {
     bookId: "sanmingtonghui",
     title: "三命通会",
-    attribution: { name: "（明）万民英", role: "编" },
+    attribution: [{ name: "（明）万民英", role: "编" }],
     volumeCount: 12,
     chapterCount: 370,
   },
   {
     bookId: "wudenghuiyuan",
     title: "五灯会元",
-    attribution: { name: "（宋）释普济", role: "编" },
+    attribution: [{ name: "（宋）释普济", role: "编" }],
     volumeCount: 20,
     chapterCount: 1739,
   },
   {
     bookId: "xinjing",
     title: "般若波罗蜜多心经",
-    attribution: { name: "唐三藏法师玄奘", role: "译" },
+    attribution: [{ name: "唐三藏法师玄奘", role: "译" }],
     volumeCount: 1,
     chapterCount: 1,
+  },
+  {
+    bookId: "qiongtongbaojian",
+    title: "穷通宝鉴",
+    attribution: [
+      { name: "（清）余春台", role: "辑" },
+      { name: "徐乐吾", role: "评注" },
+    ],
+    volumeCount: 1,
+    chapterCount: 108,
   },
 ];
 

@@ -22,10 +22,7 @@ const catalog: BookCatalog = {
     id: "fixture",
     order: 1,
     title: "测试典籍",
-    attribution: {
-      name: "测试译者",
-      role: "译",
-    },
+    attribution: [{ name: "测试译者", role: "译" }],
     description: "测试简介",
     sealLines: ["测试", "典籍"],
   },

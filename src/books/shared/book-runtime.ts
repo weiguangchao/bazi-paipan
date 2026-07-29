@@ -12,10 +12,12 @@ export interface VolumeCatalogEntry {
   readonly chapters: readonly ChapterCatalogEntry[];
 }
 
-export interface BookAttribution {
+export interface BookAttributionEntry {
   readonly name: string;
   readonly role: string;
 }
+
+export type BookAttribution = readonly BookAttributionEntry[];
 
 export interface BookCatalog {
   readonly book: {

@@ -7,6 +7,7 @@ test("窄屏共享目录、焦点、正文、表格与相邻导航可用", async
     "/books/sanmingtonghui/chapters/v10-c001",
     "/books/wudenghuiyuan/chapters/v9-c001",
     "/books/xinjing/chapters/v1-c001",
+    "/books/qiongtongbaojian/chapters/v1-c005",
   ]) {
     await page.goto(path);
     await expect(page.locator(".reader-directory")).toBeHidden();
@@ -33,4 +34,8 @@ test("窄屏共享目录、焦点、正文、表格与相邻导航可用", async
   await expect(table).toBeVisible();
   await expect(table.locator("th")).toHaveCount(4);
   await expect(table.locator("..")).toHaveCSS("overflow-x", "auto");
+
+  await page.goto("/books/qiongtongbaojian/chapters/v1-c005");
+  await expect(page.getByRole("table")).toBeVisible();
+  await expect(page.locator(".chapter-prose blockquote")).toContainText("徐乐吾评注");
 });

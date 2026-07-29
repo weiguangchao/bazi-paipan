@@ -7,6 +7,7 @@ import {
   createBookRuntime,
   type BookCatalog,
 } from "@/books/shared/book-runtime";
+import { formatBookAttribution } from "@/books/shared/book-attribution";
 import { resolveBooksPath } from "@/books/shared/navigation";
 
 const catalog: BookCatalog = {
@@ -14,10 +15,7 @@ const catalog: BookCatalog = {
     id: "fixture",
     order: 1,
     title: "测试典籍",
-    attribution: {
-      name: "测试译者",
-      role: "译",
-    },
+    attribution: [{ name: "测试译者", role: "译" }],
     description: "测试简介",
     sealLines: ["测试", "典籍"],
   },
@@ -58,10 +56,7 @@ describe("BookRegistry", () => {
       {
         bookId: "fixture",
         title: "测试典籍",
-        attribution: {
-          name: "测试译者",
-          role: "译",
-        },
+        attribution: [{ name: "测试译者", role: "译" }],
         description: "测试简介",
         volumeCount: 2,
         chapterCount: 3,
@@ -73,6 +68,20 @@ describe("BookRegistry", () => {
     expect(registry.list()).toEqual(summaries);
     expect(registry.find("fixture")).toBe(summaries[0]);
     expect(loadRuntime).not.toHaveBeenCalled();
+  });
+});
+
+describe("典籍署名 formatter", () => {
+  test("统一展示一项与多项有序责任者", () => {
+    expect(
+      formatBookAttribution([{ name: "唐三藏法师玄奘", role: "译" }]),
+    ).toBe("唐三藏法师玄奘 译");
+    expect(
+      formatBookAttribution([
+        { name: "（清）余春台", role: "辑" },
+        { name: "徐乐吾", role: "评注" },
+      ]),
+    ).toBe("（清）余春台 辑 · 徐乐吾 评注");
   });
 });
 
@@ -173,10 +182,7 @@ describe("共享典籍入口", () => {
     {
       bookId: "fixture",
       title: "测试典籍",
-      attribution: {
-        name: "测试译者",
-        role: "译",
-      },
+      attribution: [{ name: "测试译者", role: "译" }],
       description: "测试简介",
       volumeCount: 2,
       chapterCount: 3,

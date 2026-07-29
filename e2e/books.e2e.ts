@@ -5,6 +5,7 @@ const yuanRoot = "/books/yuanhaiziping";
 const sanmingRoot = "/books/sanmingtonghui";
 const wudengRoot = "/books/wudenghuiyuan";
 const xinjingRoot = "/books/xinjing";
+const qiongtongRoot = "/books/qiongtongbaojian";
 const volumeChunk = /\/assets\/v\d+-[^/]+\.js$/;
 const sanmingCounts = [36, 26, 23, 25, 20, 73, 22, 60, 60, 3, 5, 17];
 const wudengCounts = [
@@ -20,14 +21,14 @@ async function expectNoSeriousA11y(page: Page) {
   ).toEqual([]);
 }
 
-test("典籍首页按固定顺序展示四部典籍且顶部入口正确", async ({ page }) => {
+test("典籍首页按固定顺序展示五部典籍且顶部入口正确", async ({ page }) => {
   const requests: string[] = [];
   page.on("request", (request) => requests.push(new URL(request.url()).pathname));
   await page.goto("/books");
 
   await expect(page.getByRole("heading", { level: 1, name: "典籍" })).toBeVisible();
   const cards = page.locator(".book-card-grid > a");
-  await expect(cards).toHaveCount(4);
+  await expect(cards).toHaveCount(5);
   await expect(cards.nth(0)).toContainText("渊海子平");
   await expect(cards.nth(0)).toContainText("5 卷 · 269 篇");
   await expect(cards.nth(1)).toContainText("三命通会");
@@ -37,9 +38,93 @@ test("典籍首页按固定顺序展示四部典籍且顶部入口正确", async
   await expect(cards.nth(3)).toContainText("般若波罗蜜多心经");
   await expect(cards.nth(3)).toContainText("唐三藏法师玄奘 译");
   await expect(cards.nth(3)).toContainText("1 卷 · 1 篇");
+  await expect(cards.nth(4)).toContainText("穷通宝鉴");
+  await expect(cards.nth(4)).toContainText("（清）余春台 辑 · 徐乐吾 评注");
+  await expect(cards.nth(4)).toContainText("1 卷 · 108 篇");
   await expect(page.getByRole("navigation", { name: "一级导航" }).getByRole("link", { name: "典籍" }))
     .toHaveAttribute("aria-current", "page");
   expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+});
+
+test("《穷通宝鉴》108 篇共享阅读体验、保真结构与单卷请求契约", async ({ page }) => {
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(new URL(request.url()).pathname));
+
+  await page.goto(qiongtongRoot);
+  await expect(page.getByRole("heading", { level: 1, name: "穷通宝鉴" })).toBeVisible();
+  await expect(page.getByRole("heading", {
+    level: 2,
+    name: "（清）余春台 辑 · 徐乐吾 评注",
+  })).toBeVisible();
+  await expect(page.locator(".book-hero")).toContainText("典籍 · 1 卷 · 108 篇");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+
+  await page.goto(`${qiongtongRoot}/volumes/v1`);
+  await expect(page.getByRole("heading", { level: 1, name: "全卷" })).toBeVisible();
+  await expect(page.locator(".volume-home")).toContainText("108 篇");
+  await expect(page.locator(".volume-home ol").getByRole("link")).toHaveCount(108);
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+
+  requests.length = 0;
+  await page.goto(`${qiongtongRoot}/chapters/v1-c005`);
+  await expect(page.getByRole("heading", { level: 1, name: "三春甲木" })).toBeVisible();
+  await expect(page.locator(".chapter-heading")).toContainText(
+    "（清）余春台 辑 · 徐乐吾 评注",
+  );
+  await expect(page.locator(".chapter-prose blockquote")).toContainText("徐乐吾评注");
+  await expect(page.getByRole("table")).toBeVisible();
+  const loadedChunks = requests.filter((request) => volumeChunk.test(request));
+  expect(loadedChunks).toHaveLength(1);
+
+  const next = page.getByRole("link", { name: /下一篇.*三夏甲木/ });
+  await expect(page.locator(".reader-directory")).toBeVisible();
+  await next.focus();
+  await next.hover();
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
+  await next.click();
+  await expect(page.getByRole("heading", { level: 1, name: "三夏甲木" })).toBeVisible();
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
+
+  await page.goto(`${qiongtongRoot}/chapters/v1-c034`);
+  await expect(page.getByRole("heading", { level: 1, name: "四月丁火" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).toContainText("三夏丁火");
+  await expect(page.locator(".chapter-prose")).toContainText("四月丁火");
+
+  await page.goto(`${qiongtongRoot}/chapters/v1-c008`);
+  await expect(page.locator(".chapter-prose")).toContainText("三秋甲木");
+  await expect(page.locator(".chapter-prose")).not.toBeEmpty();
+
+  await page.goto(`${qiongtongRoot}/chapters/v1-c001`);
+  await expect(page.locator(".chapter-neighbors .is-unavailable").first()).toContainText("全书之始");
+  await page.goto(`${qiongtongRoot}/chapters/v1-c108`);
+  await expect(page.getByRole("heading", { level: 1, name: "十二月癸水" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).toContainText("【徐乐吾评注】");
+  await expect(page.locator(".chapter-neighbors .is-unavailable").last()).toContainText("全书之末");
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1, name: "十二月癸水" })).toBeVisible();
+  await expectNoSeriousA11y(page);
+});
+
+test("《穷通宝鉴》正文加载失败后由共享重试恢复当前单卷", async ({ page }) => {
+  let attempts = 0;
+  let documentRequests = 0;
+  page.on("request", (request) => {
+    if (request.resourceType() === "document") documentRequests += 1;
+  });
+  await page.route(/\/assets\/v1-[^/]+\.js(?:\?.*)?$/, async (route) => {
+    attempts += 1;
+    if (attempts === 1) await route.abort();
+    else await route.continue();
+  });
+
+  await page.goto(`${qiongtongRoot}/chapters/v1-c005`);
+  await expect(page.getByRole("heading", { level: 1, name: "三春甲木" })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("本卷正文载入失败");
+  const documentRequestsBeforeRetry = documentRequests;
+  await page.getByRole("button", { name: "重试当前卷" }).click();
+  await expect(page.locator(".chapter-prose")).toContainText("三春甲木");
+  expect(attempts).toBeGreaterThanOrEqual(2);
+  expect(documentRequests).toBe(documentRequestsBeforeRetry);
 });
 
 test("《心经》全卷、正文、译者署名与全书首尾完整可读", async ({ page }) => {
@@ -290,6 +375,9 @@ test("代表页面与共享错误状态无 serious/critical 可访问性违规",
     xinjingRoot,
     `${xinjingRoot}/volumes/v1`,
     `${xinjingRoot}/chapters/v1-c001`,
+    qiongtongRoot,
+    `${qiongtongRoot}/volumes/v1`,
+    `${qiongtongRoot}/chapters/v1-c008`,
     "/books/missing",
   ]) {
     await page.goto(path);

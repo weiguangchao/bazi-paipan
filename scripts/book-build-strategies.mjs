@@ -15,4 +15,8 @@ export const bookBuildStrategies = {
     volumeGzipBytes: 10 * 1024,
     bookGzipBytes: 10 * 1024,
   },
+  qiongtongbaojian: {
+    volumeGzipBytes: 64 * 1024,
+    bookGzipBytes: 64 * 1024,
+  },
 };

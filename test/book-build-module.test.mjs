@@ -12,10 +12,7 @@ function catalog(overrides = {}) {
       id: "sample",
       order: 2,
       title: "示例典籍",
-      attribution: {
-        name: "示例作者",
-        role: "编",
-      },
+      attribution: [{ name: "示例作者", role: "编" }],
       description: "示例简介",
       sealLines: ["示例"],
     },
@@ -72,10 +69,7 @@ describe("deriveBookBuild", () => {
         bookId: "sample",
         order: 2,
         title: "示例典籍",
-        attribution: {
-          name: "示例作者",
-          role: "编",
-        },
+        attribution: [{ name: "示例作者", role: "编" }],
         description: "示例简介",
         volumeCount: 2,
         chapterCount: 3,

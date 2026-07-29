@@ -3,10 +3,12 @@
     "id": "xinjing",
     "order": 4,
     "title": "般若波罗蜜多心经",
-    "attribution": {
-      "name": "唐三藏法师玄奘",
-      "role": "译"
-    },
+    "attribution": [
+      {
+        "name": "唐三藏法师玄奘",
+        "role": "译"
+      }
+    ],
     "description": "唐三藏法师玄奘译本，以全卷一篇阅读经文正文。",
     "sealLines": [
       "般若",

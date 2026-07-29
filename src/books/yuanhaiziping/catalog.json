@@ -3,10 +3,12 @@
     "id": "yuanhaiziping",
     "order": 1,
     "title": "渊海子平",
-    "attribution": {
-      "name": "（宋）徐大升",
-      "role": "编"
-    },
+    "attribution": [
+      {
+        "name": "（宋）徐大升",
+        "role": "编"
+      }
+    ],
     "description": "从五行生克、干支源流到诸格命例，按原卷次查阅二百六十九篇正文。",
     "sealLines": [
       "渊海",
