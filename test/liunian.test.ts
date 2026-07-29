@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { liunian } from "@/domain/paipan/liunian";
-import { getBeijingYearMonth } from "@/utils/beijing-time";
 
 // 流年纯函数（ADR-0003）：给定起始公历年，返回从该年起向后 10 柱干支。
 // 每柱 = 六十甲子((公历年 - 4) mod 60)，公历年每 +1，序号 +1。
@@ -56,31 +55,5 @@ describe("流年 - 纯函数定点 (T9)", () => {
     // (1 - 4) = -3，归一化 ((-3 % 60) + 60) % 60 = 57 -> 天干 57%10=7 辛，地支 57%12=9 酉
     const zhu = liunian(1);
     expect(zhu[0]).toEqual({ year: 1, ganzhi: "辛酉" });
-  });
-});
-
-// getBeijingYearMonth：Web API 边缘按北京时间（UTC+8）读机器时钟算"今年"。
-// 跨时区/跨年仍按中国历法判断今年（ADR-0003）--用例注入固定时钟避免跨年时间炸弹。
-describe("getBeijingYearMonth - 北京时间跨年 (T9)", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  // UTC 2024-12-31 16:00 = 北京时间 2025-01-01 00:00 -> 按中国历法已进 2025 年。
-  it("UTC 2024-12-31 16:00（北京 2025-01-01 00:00）-> 归 2025", () => {
-    vi.setSystemTime(new Date(Date.UTC(2024, 11, 31, 16, 0)));
-    expect(getBeijingYearMonth().year).toBe(2025);
-  });
-
-  // UTC 2024-12-31 15:59 = 北京时间 2024-12-31 23:59 -> 仍属 2024 年。
-  it("UTC 2024-12-31 15:59（北京 2024-12-31 23:59）-> 归 2024", () => {
-    vi.setSystemTime(new Date(Date.UTC(2024, 11, 31, 15, 59)));
-    expect(getBeijingYearMonth().year).toBe(2024);
-  });
-
-  // UTC 2024-01-01 00:00 = 北京时间 2024-01-01 08:00 -> 2024。
-  it("UTC 2024-01-01 00:00（北京 2024-01-01 08:00）-> 归 2024", () => {
-    vi.setSystemTime(new Date(Date.UTC(2024, 0, 1, 0, 0)));
-    expect(getBeijingYearMonth().year).toBe(2024);
   });
 });

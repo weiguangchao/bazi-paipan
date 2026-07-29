@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, expectTypeOf } from "vitest";
 import {
   resolveInitialBirthDate,
   DEFAULT_BIRTH_DATE,
@@ -39,8 +39,12 @@ describe("resolveInitialBirthDate", () => {
 });
 
 describe("出生日期选择范围", () => {
+  it("固定上限计算不接收当前时刻", () => {
+    expectTypeOf(getBirthDateLimit).parameters.toEqualTypeOf<[]>();
+  });
+
   it("固定上限为 2099-12-31", () => {
-    expect(getBirthDateLimit({ year: 2026, month: 7 })).toEqual({
+    expect(getBirthDateLimit()).toEqual({
       year: 2099,
       month: 12,
       day: 31,

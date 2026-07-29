@@ -2,13 +2,10 @@
 // 词汇遵循 CONTEXT.md（出生资料、性别、出生地）。
 //
 // 校验逻辑（性别、正式日期范围、时间、省市同时性、出生地查找）集中在此处的 parse，
-// adapter 与表单共用一处。模块不读时钟；当前年月参数仅为保留既有调用接口。
+// adapter 与表单共用一处。模块不读时钟。
 // 时间解析（parseTime）在 birth-time，URL 序列化在 pages/paipan/url-params。
 
-import {
-  parseBirthDate,
-  type CurrentYearMonth,
-} from "@/domain/birth/birth-date";
+import { parseBirthDate } from "@/domain/birth/birth-date";
 import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
 import { parseTime } from "@/domain/birth/birth-time";
 import type { Gender } from "@/domain/paipan/dayun";
@@ -42,7 +39,7 @@ export type ParseResult =
  * 校验出生资料字符串并转为 typed 值。失败返回字段级错误（字段名 → 中文消息）。
  * 校验项：性别、1801–2099 日期范围、时间、省市同时性、出生地查找。
  */
-export function parse(input: BirthDataInput, _now: CurrentYearMonth): ParseResult {
+export function parse(input: BirthDataInput): ParseResult {
   const fields: Record<string, string> = {};
 
   if (input.gender !== "男" && input.gender !== "女") {

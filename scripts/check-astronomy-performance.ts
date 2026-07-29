@@ -11,22 +11,18 @@ const input = {
   gender: "男" as const,
   birthplace: { province: "四川省", city: "成都市" },
 };
-const now = {
-  year: 2026,
-  month: 7,
-  dateTime: beijingDateTime({
-    year: 2026, month: 7, day: 28, hour: 12, minute: 0, second: 0,
-  }),
-};
+const currentTime = beijingDateTime({
+  year: 2026, month: 7, day: 28, hour: 12, minute: 0, second: 0,
+});
 
 const firstStartedAt = performance.now();
-mingpan(input, now);
+mingpan(input, currentTime);
 const firstDuration = performance.now() - firstStartedAt;
 
 const durations: number[] = [];
 for (let index = 0; index < 50; index += 1) {
   const startedAt = performance.now();
-  mingpan(input, now);
+  mingpan(input, currentTime);
   durations.push(performance.now() - startedAt);
 }
 durations.sort((left, right) => left - right);

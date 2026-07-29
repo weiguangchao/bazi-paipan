@@ -4,7 +4,7 @@ import { useState } from "react";
 import { parse, type BirthDataInput } from "@/domain/birth/birth-profile";
 import { getBirthDateLimit, parseBirthDate } from "@/domain/birth/birth-date";
 import { mingpan, type Mingpan } from "@/domain/paipan/mingpan";
-import { getBeijingCurrentMoment, getBeijingYearMonth } from "@/utils/beijing-time";
+import { getCurrentBeijingDateTime } from "@/utils/beijing-time";
 
 export interface PaipanFormState {
   date: string;
@@ -55,8 +55,7 @@ export function resolveInitialBirthDate(date?: string): Date {
 }
 
 export function usePaipanForm(defaultValues?: Partial<BirthDataInput>): PaipanFormResult {
-  const now = getBeijingYearMonth();
-  const dateLimit = getBirthDateLimit(now);
+  const dateLimit = getBirthDateLimit();
 
   const initialDate = resolveInitialBirthDate(defaultValues?.date);
 
@@ -80,8 +79,7 @@ export function usePaipanForm(defaultValues?: Partial<BirthDataInput>): PaipanFo
     const dateString = selectedDate ? formatDateString(selectedDate) : "";
 
     const strings: BirthDataInput = { date: dateString, time, gender, province, city };
-    const currentMoment = getBeijingCurrentMoment();
-    const parsed = parse(strings, currentMoment);
+    const parsed = parse(strings);
     if (!parsed.ok) {
       setErrors(parsed.fields);
       setGeneralError(Object.values(parsed.fields)[0] ?? "");
@@ -90,7 +88,8 @@ export function usePaipanForm(defaultValues?: Partial<BirthDataInput>): PaipanFo
 
     setSubmitting(true);
     try {
-      const mingpanResult = mingpan(parsed.value, currentMoment);
+      const currentTime = getCurrentBeijingDateTime();
+      const mingpanResult = mingpan(parsed.value, currentTime);
       setSubmittedInput(strings);
       setResult(mingpanResult);
     } finally {

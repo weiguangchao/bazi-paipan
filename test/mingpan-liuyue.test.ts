@@ -1,26 +1,25 @@
-import { describe, expect, it } from "vitest";
-import { parse } from "@/domain/birth/birth-profile";
+import { describe, expect, expectTypeOf, it } from "vitest";
+import { parse, type BirthProfile } from "@/domain/birth/birth-profile";
 import { mingpan } from "@/domain/paipan/mingpan";
-import { beijingDateTime } from "@/domain/time/date-time";
+import { beijingDateTime, type BeijingDateTime } from "@/domain/time/date-time";
 
-const NOW = {
-  year: 2025,
-  month: 1,
-  dateTime: beijingDateTime({
-    year: 2025, month: 1, day: 20, hour: 8, minute: 0, second: 0,
-  }),
-};
+const NOW = beijingDateTime({
+  year: 2025, month: 1, day: 20, hour: 8, minute: 0, second: 0,
+});
 
 function birthProfile() {
   const result = parse(
     { date: "2000-01-01", time: "12:00", gender: "男", province: "", city: "" },
-    { year: 2025, month: 1 },
   );
   if (!result.ok) throw new Error("测试出生资料应合法");
   return result.value;
 }
 
 describe("命盘 - 完整流月嵌套", () => {
+  it("公开输入只包含 BirthProfile 与 BeijingDateTime", () => {
+    expectTypeOf(mingpan).parameters.toEqualTypeOf<[BirthProfile, BeijingDateTime]>();
+  });
+
   it("十个大运各含十个流年，每个流年各含十二个流月", () => {
     const result = mingpan(birthProfile(), NOW);
 
@@ -33,13 +32,16 @@ describe("命盘 - 完整流月嵌套", () => {
     ).toBe(true);
   });
 
-  it("立春前今年与当前流月分属 2025 和 2024 流年，并附加流月柱十神", () => {
+  it("同一时刻派生当前大运、今年及立春前仍属 2024 流年的当前流月", () => {
     const result = mingpan(birthProfile(), NOW);
     const liunian = result.dayun.zhu.flatMap((dayunzhu) => dayunzhu.liunian);
     const year2024 = liunian.find((item) => item.year === 2024)!;
     const year2025 = liunian.find((item) => item.year === 2025)!;
+    const currentDayun = result.dayun.zhu.filter((item) => item.isCurrent);
     const currentLiuyue = liunian.flatMap((item) => item.liuyue).filter((item) => item.isCurrent);
 
+    expect(currentDayun).toHaveLength(1);
+    expect(currentDayun[0]).toMatchObject({ startYear: 2018, startMonth: 3 });
     expect(year2024.isCurrentYear).toBe(false);
     expect(year2025.isCurrentYear).toBe(true);
     expect(year2025.liuyue.some((item) => item.isCurrent)).toBe(false);

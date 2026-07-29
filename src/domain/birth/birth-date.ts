@@ -12,12 +12,6 @@ export interface BirthDateParts {
   day: number;
 }
 
-/** 当前北京年月，由边缘注入，core 不读时钟。 */
-export interface CurrentYearMonth {
-  year: number;
-  month: number;
-}
-
 /** 解析 YYYY-MM-DD 为公历日期各部分；非法或非该格式返回 null。 */
 export function parseBirthDate(value: unknown): BirthDateParts | null {
   if (typeof value !== "string") return null;
@@ -38,8 +32,8 @@ export function parseBirthDate(value: unknown): BirthDateParts | null {
   return { year, month, day };
 }
 
-/** 正式支持的出生日期上限。参数保留为边缘调用的稳定接口，不参与固定范围计算。 */
-export function getBirthDateLimit(_now: CurrentYearMonth): BirthDateParts {
+/** 正式支持的出生日期上限。 */
+export function getBirthDateLimit(): BirthDateParts {
   return {
     year: MAX_SUPPORTED_YEAR,
     month: 12,

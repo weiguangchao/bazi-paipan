@@ -82,13 +82,6 @@ export interface Mingpan {
   dayun: DayunOut;
 }
 
-/** 当前北京时间语义：公历年月用于大运/今年，完整钟表时用于准确交节区间。 */
-export interface CurrentMoment {
-  year: number;
-  month: number;
-  dateTime: BeijingDateTime;
-}
-
 /** 统一十神附加：干支天干十神 + 地支藏干十神（按藏干顺序）。命盘各柱共用此处。 */
 function shishenOf(ganzhi: Ganzhi, dayMaster: Tiangan) {
   return shishen(dayMaster, ganzhi);
@@ -118,14 +111,14 @@ function zhuShishen(
 function liunianZhu(
   item: { year: number; ganzhi: Ganzhi },
   dayMaster: Tiangan,
-  now: CurrentMoment,
+  currentTime: BeijingDateTime,
 ): LiunianItemOut {
   return {
     year: item.year,
     ganzhi: item.ganzhi,
     ...zhuShishen(item.ganzhi, dayMaster),
-    isCurrentYear: item.year === now.year,
-    liuyue: liuyue(item.year, now.dateTime).map((liuyuezhu) => {
+    isCurrentYear: item.year === currentTime.year,
+    liuyue: liuyue(item.year, currentTime).map((liuyuezhu) => {
       const { startTime: _startTime, endTime: _endTime, ...visible } = liuyuezhu;
       return {
         ...visible,
@@ -143,10 +136,10 @@ function dayunZhu(
     startYearMonth: { year: number; month: number };
   },
   dayMaster: Tiangan,
-  now: CurrentMoment,
+  currentTime: BeijingDateTime,
 ): DayunzhuOut {
   const startMonthIndex = p.startYearMonth.year * 12 + p.startYearMonth.month - 1;
-  const currentMonthIndex = now.year * 12 + now.month - 1;
+  const currentMonthIndex = currentTime.year * 12 + currentTime.month - 1;
   return {
     ganzhi: p.ganzhi,
     ...zhuShishen(p.ganzhi, dayMaster),
@@ -156,7 +149,7 @@ function dayunZhu(
     isCurrent:
       currentMonthIndex >= startMonthIndex && currentMonthIndex < startMonthIndex + 120,
     liunian: liunian(p.startYearMonth.year).map((item) =>
-      liunianZhu(item, dayMaster, now),
+      liunianZhu(item, dayMaster, currentTime),
     ),
   };
 }
@@ -168,7 +161,7 @@ function dayunZhu(
  */
 export function mingpan(
   input: BirthProfile,
-  now: CurrentMoment,
+  currentTime: BeijingDateTime,
 ): Mingpan {
   const result = paipan(input);
   const dayMaster = ganzhiTiangan(result.rizhu);
@@ -194,7 +187,7 @@ export function mingpan(
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
     zhu: dayun.zhu.map((p) =>
-      dayunZhu(p, dayMaster, now),
+      dayunZhu(p, dayMaster, currentTime),
     ),
   };
 
