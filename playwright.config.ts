@@ -18,6 +18,7 @@ export default defineConfig({
       name: "chromium-desktop",
       testMatch: [
         "**/books.e2e.ts",
+        "**/birth-data-form.e2e.ts",
         "**/dayun-panel.e2e.ts",
         "**/astronomy-range.e2e.ts",
       ],

@@ -24,6 +24,26 @@ export function fromUrlParams(params: URLSearchParams): Partial<BirthDataInput> 
   };
 }
 
+/**
+ * 把 URL decoder 的可缺省字段收拢为 smart form 的可选完整草稿。
+ * 空 URL 不提供初始草稿；partial URL 用空字符串表达未解码字段，由 form 内部应用默认值。
+ */
+export function initialInputFromUrlParams(
+  params: URLSearchParams,
+): BirthDataInput | undefined {
+  const restored = fromUrlParams(params);
+  if (!Object.values(restored).some((value) => value !== undefined)) {
+    return undefined;
+  }
+  return {
+    date: restored.date ?? "",
+    time: restored.time ?? "",
+    gender: restored.gender ?? "",
+    province: restored.province ?? "",
+    city: restored.city ?? "",
+  };
+}
+
 /** 把出生资料字符串序列化为 URL 参数；省市同时给时才写入，格式保持向后兼容。 */
 export function toUrlParams(input: BirthDataInput): URLSearchParams {
   const params = new URLSearchParams();

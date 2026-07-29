@@ -102,7 +102,7 @@ describe("依赖方向守卫", () => {
   it("允许 pages -> components / domain / utils，允许 app -> pages", () => {
     expect(
       findDependencyViolations(
-        'import { FormPanel } from "@/components/paipan-form/FormPanel";',
+        'import { BirthDataForm } from "@/components/paipan-form/BirthDataForm";',
         "src/pages/paipan/PaipanPage.tsx",
       ),
     ).toEqual([]);
