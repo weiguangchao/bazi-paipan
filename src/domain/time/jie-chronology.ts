@@ -21,7 +21,10 @@ export interface JieLocation {
   readonly strictLater: JieOccurrence;
 }
 
-function occurrence(lichunYear: number, jie: Jie): JieOccurrence {
+function lichunCycleOccurrence(
+  lichunYear: number,
+  jie: Jie,
+): JieOccurrence {
   const calendarYear = jie === "小寒" ? lichunYear + 1 : lichunYear;
   return { jie, moment: jieMoment(calendarYear, jie) };
 }
@@ -40,8 +43,10 @@ export function jieIntervals(lichunYear: number): readonly JieInterval[] {
     throw new RangeError(`lichunYear 必须是整数：${String(lichunYear)}`);
   }
 
-  const occurrences = JIE_NAMES.map((jie) => occurrence(lichunYear, jie));
-  const nextLichun = occurrence(lichunYear + 1, "立春");
+  const occurrences = JIE_NAMES.map((jie) =>
+    lichunCycleOccurrence(lichunYear, jie),
+  );
+  const nextLichun = lichunCycleOccurrence(lichunYear + 1, "立春");
 
   return occurrences.map((start, index) => ({
     lichunYear,
