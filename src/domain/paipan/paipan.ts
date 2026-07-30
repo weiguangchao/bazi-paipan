@@ -241,7 +241,7 @@ export function paipan(input: PaipanInput): PaipanResult {
     rizhu: liushijiazi(dayIndex),
     shizhu: computeShizhu(trueSolarTime.hour, dayTianganIndex),
     nearZizheng: isNearZizheng(trueSolarTime.hour, trueSolarTime.minute),
-    longitudeCorrectionApplied: trueSolarTime.longitudeCorrectionApplied,
+    longitudeCorrectionApplied: input.birthplace !== undefined,
   };
   if (input.gender !== undefined) {
     result.dayun = dayun({

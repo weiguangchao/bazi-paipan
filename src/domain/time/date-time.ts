@@ -13,12 +13,15 @@ export interface DateTimeFields {
   readonly second: number;
 }
 
+export interface MillisecondDateTimeFields extends DateTimeFields {
+  readonly millisecond: number;
+}
+
 export interface BeijingDateTime extends DateTimeFields {
   readonly [beijingDateTimeBrand]: true;
 }
 
-export interface TrueSolarDateTime extends DateTimeFields {
-  readonly longitudeCorrectionApplied: boolean;
+export interface TrueSolarDateTime extends MillisecondDateTimeFields {
   readonly [trueSolarDateTimeBrand]: true;
 }
 
@@ -53,7 +56,15 @@ function assertValidFields(fields: DateTimeFields): void {
   }
 }
 
-function fieldsFromTimestamp(timestamp: number): DateTimeFields {
+function assertValidMillisecond(millisecond: number): void {
+  if (!Number.isInteger(millisecond) || millisecond < 0 || millisecond > 999) {
+    throw new RangeError(
+      `millisecond 须为 0–999 的整数：${String(millisecond)}`,
+    );
+  }
+}
+
+function fieldsFromTimestamp(timestamp: number): MillisecondDateTimeFields {
   const date = new Date(timestamp);
   return {
     year: date.getUTCFullYear(),
@@ -62,11 +73,16 @@ function fieldsFromTimestamp(timestamp: number): DateTimeFields {
     hour: date.getUTCHours(),
     minute: date.getUTCMinutes(),
     second: date.getUTCSeconds(),
+    millisecond: date.getUTCMilliseconds(),
   };
 }
 
 export function dateTimeTimestamp(value: DateTimeFields): number {
   assertValidFields(value);
+  const millisecond = "millisecond" in value
+    ? (value as MillisecondDateTimeFields).millisecond
+    : 0;
+  assertValidMillisecond(millisecond);
   return Date.UTC(
     value.year,
     value.month - 1,
@@ -74,6 +90,7 @@ export function dateTimeTimestamp(value: DateTimeFields): number {
     value.hour,
     value.minute,
     value.second,
+    millisecond,
   );
 }
 
@@ -94,11 +111,11 @@ export function derivedBeijingDateTime(fields: DateTimeFields): BeijingDateTime 
 }
 
 export function trueSolarDateTime(
-  fields: DateTimeFields,
-  longitudeCorrectionApplied: boolean,
+  fields: MillisecondDateTimeFields,
 ): TrueSolarDateTime {
   assertValidFields(fields);
-  return { ...fields, longitudeCorrectionApplied } as TrueSolarDateTime;
+  assertValidMillisecond(fields.millisecond);
+  return { ...fields } as TrueSolarDateTime;
 }
 
 export function compareDateTime(left: DateTimeFields, right: DateTimeFields): -1 | 0 | 1 {
@@ -124,11 +141,21 @@ export function addSeconds(
     throw new RangeError(`seconds 必须是整数：${String(seconds)}`);
   }
   const fields = fieldsFromTimestamp(dateTimeTimestamp(value) + seconds * 1000);
-  if ("longitudeCorrectionApplied" in value) {
-    return trueSolarDateTime(
-      fields,
-      (value as TrueSolarDateTime).longitudeCorrectionApplied,
-    );
+  if ("millisecond" in value) {
+    return trueSolarDateTime(fields);
   }
-  return fields as BeijingDateTime;
+  const { millisecond: _millisecond, ...secondFields } = fields;
+  return secondFields as BeijingDateTime;
+}
+
+export function addMilliseconds(
+  value: TrueSolarDateTime,
+  milliseconds: number,
+): TrueSolarDateTime {
+  if (!Number.isInteger(milliseconds)) {
+    throw new RangeError(`milliseconds 必须是整数：${String(milliseconds)}`);
+  }
+  return trueSolarDateTime(
+    fieldsFromTimestamp(dateTimeTimestamp(value) + milliseconds),
+  );
 }

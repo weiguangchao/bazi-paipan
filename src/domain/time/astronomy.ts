@@ -22,6 +22,7 @@ export type Jie = typeof JIE_NAMES[number];
 const J2000 = 2451545;
 const JULIAN_UNIX_EPOCH = 2440587.5;
 const SECONDS_PER_DAY = 86_400;
+const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
 const BEIJING_OFFSET_DAYS = 1 / 3;
 const TWO_PI = Math.PI * 2;
 
@@ -76,6 +77,26 @@ function fieldsFromLocalJulianDay(localJulianDay: number): DateTimeFields {
   };
 }
 
+function trueSolarDateTimeFromLocalJulianDay(
+  localJulianDay: number,
+  correctionSeconds = 0,
+): TrueSolarDateTime {
+  const roundedTimestamp = Math.round(
+    (localJulianDay - JULIAN_UNIX_EPOCH) * MILLISECONDS_PER_DAY
+      + correctionSeconds * 1000,
+  );
+  const result = new Date(roundedTimestamp);
+  return trueSolarDateTime({
+    year: result.getUTCFullYear(),
+    month: result.getUTCMonth() + 1,
+    day: result.getUTCDate(),
+    hour: result.getUTCHours(),
+    minute: result.getUTCMinutes(),
+    second: result.getUTCSeconds(),
+    millisecond: result.getUTCMilliseconds(),
+  });
+}
+
 export function jieMoment(year: number, jie: Jie): BeijingDateTime {
   if (!Number.isInteger(year)) {
     throw new RangeError(`year 必须是整数：${String(year)}`);
@@ -86,12 +107,42 @@ export function jieMoment(year: number, jie: Jie): BeijingDateTime {
   return derivedBeijingDateTime(fieldsFromLocalJulianDay(localJ2000Days + J2000));
 }
 
+export function trueSolarJieMoment(
+  year: number,
+  jie: Jie,
+  longitude?: number,
+): TrueSolarDateTime {
+  if (!Number.isInteger(year)) {
+    throw new RangeError(`year 必须是整数：${String(year)}`);
+  }
+  if (
+    longitude !== undefined
+    && (!Number.isFinite(longitude) || longitude < -180 || longitude > 180)
+  ) {
+    throw new RangeError(`longitude 须在 -180–180：${String(longitude)}`);
+  }
+  const localJ2000Days = solarLongitudeMomentBeijingDays(
+    continuousSolarLongitude(year, jie),
+  );
+  if (longitude === undefined) {
+    return trueSolarDateTimeFromLocalJulianDay(localJ2000Days + J2000);
+  }
+  const universalJ2000Days = localJ2000Days - BEIJING_OFFSET_DAYS;
+  const correctionSeconds =
+    (longitude - 120) * 240
+    + equationOfTimeDays(universalJ2000Days) * SECONDS_PER_DAY;
+  return trueSolarDateTimeFromLocalJulianDay(
+    localJ2000Days + J2000,
+    correctionSeconds,
+  );
+}
+
 export function toTrueSolarDateTime(
   clockTime: BeijingDateTime,
   longitude: number | undefined,
 ): TrueSolarDateTime {
   if (longitude === undefined) {
-    return trueSolarDateTime(clockTime, false);
+    return trueSolarDateTime({ ...clockTime, millisecond: 0 });
   }
   if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
     throw new RangeError(`longitude 须在 -180–180：${String(longitude)}`);
@@ -110,10 +161,9 @@ export function toTrueSolarDateTime(
   const equationOfTimeSeconds =
     equationOfTimeDays(universalJ2000Days) * SECONDS_PER_DAY;
   const roundedTimestamp = Math.round(
-    dateTimeTimestamp(clockTime) / 1000
-      + longitudeCorrectionSeconds
-      + equationOfTimeSeconds,
-  ) * 1000;
+    dateTimeTimestamp(clockTime)
+      + (longitudeCorrectionSeconds + equationOfTimeSeconds) * 1000,
+  );
   const result = new Date(roundedTimestamp);
   return trueSolarDateTime({
     year: result.getUTCFullYear(),
@@ -122,5 +172,6 @@ export function toTrueSolarDateTime(
     hour: result.getUTCHours(),
     minute: result.getUTCMinutes(),
     second: result.getUTCSeconds(),
-  }, true);
+    millisecond: result.getUTCMilliseconds(),
+  });
 }
