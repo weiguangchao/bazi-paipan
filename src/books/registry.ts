@@ -4,6 +4,7 @@ import sanmingtonghuiCatalog from "./sanmingtonghui/catalog.json";
 import wudenghuiyuanCatalog from "./wudenghuiyuan/catalog.json";
 import xinjingCatalog from "./xinjing/catalog.json";
 import qiongtongbaojianCatalog from "./qiongtongbaojian/catalog.json";
+import jingangjingCatalog from "./jingangjing/catalog.json";
 import { BookRegistry, summaryFromCatalog } from "./shared/book-registry";
 import type { BookCatalog } from "./shared/book-runtime";
 
@@ -27,5 +28,9 @@ export const bookRegistry = new BookRegistry([
   {
     catalog: qiongtongbaojianCatalog as BookCatalog,
     loadRuntime: () => import("./qiongtongbaojian/definition").then((module) => module.default),
+  },
+  {
+    catalog: jingangjingCatalog as BookCatalog,
+    loadRuntime: () => import("./jingangjing/definition").then((module) => module.default),
   }
 ].map(({ catalog, loadRuntime }) => summaryFromCatalog(catalog, loadRuntime)));

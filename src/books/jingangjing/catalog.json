@@ -1,0 +1,225 @@
+{
+  "book": {
+    "id": "jingangjing",
+    "order": 6,
+    "title": "金刚般若波罗蜜经",
+    "attribution": [
+      {
+        "name": "姚秦三藏法师鸠摩罗什",
+        "role": "译"
+      }
+    ],
+    "description": "姚秦三藏法师鸠摩罗什译本，以全卷三十三篇阅读开经偈与三十二分经文正文。",
+    "sealLines": [
+      "金刚",
+      "经"
+    ]
+  },
+  "volumes": [
+    {
+      "id": "v1",
+      "title": "全卷",
+      "order": 1,
+      "chapters": [
+        {
+          "id": "v1-c001",
+          "title": "开经偈",
+          "volumeId": "v1",
+          "order": 1
+        },
+        {
+          "id": "v1-c002",
+          "title": "法会因由分第一",
+          "volumeId": "v1",
+          "order": 2
+        },
+        {
+          "id": "v1-c003",
+          "title": "善现启请分第二",
+          "volumeId": "v1",
+          "order": 3
+        },
+        {
+          "id": "v1-c004",
+          "title": "大乘正宗分第三",
+          "volumeId": "v1",
+          "order": 4
+        },
+        {
+          "id": "v1-c005",
+          "title": "妙行无住分第四",
+          "volumeId": "v1",
+          "order": 5
+        },
+        {
+          "id": "v1-c006",
+          "title": "如理实见分第五",
+          "volumeId": "v1",
+          "order": 6
+        },
+        {
+          "id": "v1-c007",
+          "title": "正信希有分第六",
+          "volumeId": "v1",
+          "order": 7
+        },
+        {
+          "id": "v1-c008",
+          "title": "无得无说分第七",
+          "volumeId": "v1",
+          "order": 8
+        },
+        {
+          "id": "v1-c009",
+          "title": "依法出生分第八",
+          "volumeId": "v1",
+          "order": 9
+        },
+        {
+          "id": "v1-c010",
+          "title": "一相无相分第九",
+          "volumeId": "v1",
+          "order": 10
+        },
+        {
+          "id": "v1-c011",
+          "title": "庄严净土分第十",
+          "volumeId": "v1",
+          "order": 11
+        },
+        {
+          "id": "v1-c012",
+          "title": "无为福胜分第十一",
+          "volumeId": "v1",
+          "order": 12
+        },
+        {
+          "id": "v1-c013",
+          "title": "尊重正教分第十二",
+          "volumeId": "v1",
+          "order": 13
+        },
+        {
+          "id": "v1-c014",
+          "title": "如法受持分第十三",
+          "volumeId": "v1",
+          "order": 14
+        },
+        {
+          "id": "v1-c015",
+          "title": "离相寂灭分第十四",
+          "volumeId": "v1",
+          "order": 15
+        },
+        {
+          "id": "v1-c016",
+          "title": "持经功德分第十五",
+          "volumeId": "v1",
+          "order": 16
+        },
+        {
+          "id": "v1-c017",
+          "title": "能净业障分第十六",
+          "volumeId": "v1",
+          "order": 17
+        },
+        {
+          "id": "v1-c018",
+          "title": "究竟无我分第十七",
+          "volumeId": "v1",
+          "order": 18
+        },
+        {
+          "id": "v1-c019",
+          "title": "一体同观分第十八",
+          "volumeId": "v1",
+          "order": 19
+        },
+        {
+          "id": "v1-c020",
+          "title": "法界通化分第十九",
+          "volumeId": "v1",
+          "order": 20
+        },
+        {
+          "id": "v1-c021",
+          "title": "离色离相分第二十",
+          "volumeId": "v1",
+          "order": 21
+        },
+        {
+          "id": "v1-c022",
+          "title": "非说所说分第二十一",
+          "volumeId": "v1",
+          "order": 22
+        },
+        {
+          "id": "v1-c023",
+          "title": "无法可得分第二十二",
+          "volumeId": "v1",
+          "order": 23
+        },
+        {
+          "id": "v1-c024",
+          "title": "净心行善分第二十三",
+          "volumeId": "v1",
+          "order": 24
+        },
+        {
+          "id": "v1-c025",
+          "title": "福智无比分第二十四",
+          "volumeId": "v1",
+          "order": 25
+        },
+        {
+          "id": "v1-c026",
+          "title": "化无所化分第二十五",
+          "volumeId": "v1",
+          "order": 26
+        },
+        {
+          "id": "v1-c027",
+          "title": "法身非相分第二十六",
+          "volumeId": "v1",
+          "order": 27
+        },
+        {
+          "id": "v1-c028",
+          "title": "无断无灭分第二十七",
+          "volumeId": "v1",
+          "order": 28
+        },
+        {
+          "id": "v1-c029",
+          "title": "不受不贪分第二十八",
+          "volumeId": "v1",
+          "order": 29
+        },
+        {
+          "id": "v1-c030",
+          "title": "威仪寂静分第二十九",
+          "volumeId": "v1",
+          "order": 30
+        },
+        {
+          "id": "v1-c031",
+          "title": "一合理相分第三十",
+          "volumeId": "v1",
+          "order": 31
+        },
+        {
+          "id": "v1-c032",
+          "title": "知见不生分第三十一",
+          "volumeId": "v1",
+          "order": 32
+        },
+        {
+          "id": "v1-c033",
+          "title": "应化非真分第三十二",
+          "volumeId": "v1",
+          "order": 33
+        }
+      ]
+    }
+  ]
+}

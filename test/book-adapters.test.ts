@@ -42,6 +42,13 @@ const expected = [
     volumeCount: 1,
     chapterCount: 108,
   },
+  {
+    bookId: "jingangjing",
+    title: "金刚般若波罗蜜经",
+    attribution: [{ name: "姚秦三藏法师鸠摩罗什", role: "译" }],
+    volumeCount: 1,
+    chapterCount: 33,
+  },
 ];
 
 describe.each(expected)("$title adapter", (book) => {
