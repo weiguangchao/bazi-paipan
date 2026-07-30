@@ -173,10 +173,11 @@ export function toTrueSolarDateTime(
   const longitudeCorrectionSeconds = (longitude - 120) * 240;
   const equationOfTimeSeconds =
     equationOfTimeDays(universalJ2000Days) * SECONDS_PER_DAY;
-  const roundedTimestamp = Math.round(
+  const roundedTimestamp =
     dateTimeTimestamp(clockTime)
-      + (longitudeCorrectionSeconds + equationOfTimeSeconds) * 1000,
-  );
+    + Math.round(
+      (longitudeCorrectionSeconds + equationOfTimeSeconds) * 1000,
+    );
   const result = new Date(roundedTimestamp);
   return trueSolarDateTime({
     year: result.getUTCFullYear(),

@@ -112,6 +112,21 @@ describe("寿星太阳 facade", () => {
     });
   });
 
+  it("半毫秒边界先舍入校正量，不受大整数 timestamp 浮点精度影响", () => {
+    const clockTime = beijingDateTime({
+      year: 1997, month: 11, day: 19, hour: 9, minute: 0, second: 0,
+    });
+    expect(toTrueSolarDateTime(clockTime, 128.58324484606248)).toEqual({
+      year: 1997,
+      month: 11,
+      day: 19,
+      hour: 9,
+      minute: 49,
+      second: 1,
+      millisecond: 973,
+    });
+  });
+
   it("强类型 Jie seam 使用事件自身均时差并返回毫秒级真太阳时", () => {
     expect(trueSolarJieMoment(2024, "立春")).toEqual({
       year: 2024,
