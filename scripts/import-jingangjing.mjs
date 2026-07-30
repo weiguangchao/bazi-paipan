@@ -9,8 +9,6 @@ import path from "node:path";
 
 const root = process.cwd();
 const sourcePath = path.join(root, "content/books/jingangjing/source.md");
-const originalPath =
-  "/Users/weiguangchao/Downloads/金刚经_校定简体本_纯经文.md";
 const auditPath = path.join(root, "content/books/jingangjing/audit.json");
 const catalogPath = path.join(root, "src/books/jingangjing/catalog.json");
 const expectedSource = {
@@ -75,14 +73,6 @@ function assertSource(source, label) {
   ) {
     fail(`${label}指纹不符`);
   }
-}
-
-if (!existsSync(sourcePath)) {
-  if (!existsSync(originalPath)) fail("指定 Downloads 原稿不存在");
-  const original = readFileSync(originalPath);
-  assertSource(original, "指定 Downloads 原稿");
-  mkdirSync(path.dirname(sourcePath), { recursive: true });
-  writeFileSync(sourcePath, original);
 }
 
 const source = readFileSync(sourcePath);
