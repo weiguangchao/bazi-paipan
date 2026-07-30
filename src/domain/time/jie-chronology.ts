@@ -1,7 +1,14 @@
-import { JIE_NAMES, jieMoment, type Jie } from "@/domain/time/astronomy";
+import {
+  JIE_NAMES,
+  jieMoment,
+  trueSolarJieMoment,
+  type Jie,
+} from "@/domain/time/astronomy";
 import {
   compareDateTime,
   type BeijingDateTime,
+  type DateTimeFields,
+  type TrueSolarDateTime,
 } from "@/domain/time/date-time";
 
 export interface JieOccurrence {
@@ -21,6 +28,23 @@ export interface JieLocation {
   readonly strictLater: JieOccurrence;
 }
 
+export interface TrueSolarJieOccurrence {
+  readonly jie: Jie;
+  readonly moment: TrueSolarDateTime;
+}
+
+export interface TrueSolarJieInterval {
+  readonly lichunYear: number;
+  readonly start: TrueSolarJieOccurrence;
+  readonly end: TrueSolarJieOccurrence;
+}
+
+export interface TrueSolarJieLocation {
+  readonly interval: TrueSolarJieInterval;
+  readonly strictEarlier: TrueSolarJieOccurrence;
+  readonly strictLater: TrueSolarJieOccurrence;
+}
+
 function lichunCycleOccurrence(
   lichunYear: number,
   jie: Jie,
@@ -36,6 +60,19 @@ function calendarMonthOccurrence(
   const jieIndex = (calendarMonth + JIE_NAMES.length - 2) % JIE_NAMES.length;
   const jie = JIE_NAMES[jieIndex]!;
   return { jie, moment: jieMoment(calendarYear, jie) };
+}
+
+function trueSolarCalendarMonthOccurrence(
+  calendarYear: number,
+  calendarMonth: number,
+  longitude: number | undefined,
+): TrueSolarJieOccurrence {
+  const jieIndex = (calendarMonth + JIE_NAMES.length - 2) % JIE_NAMES.length;
+  const jie = JIE_NAMES[jieIndex]!;
+  return {
+    jie,
+    moment: trueSolarJieMoment(calendarYear, jie, longitude),
+  };
 }
 
 export function jieIntervals(lichunYear: number): readonly JieInterval[] {
@@ -56,13 +93,31 @@ export function jieIntervals(lichunYear: number): readonly JieInterval[] {
 }
 
 export function locateJie(moment: BeijingDateTime): JieLocation {
+  return locateJieByCalendarMonth(moment, calendarMonthOccurrence);
+}
+
+function locateJieByCalendarMonth<T extends {
+  readonly jie: Jie;
+  readonly moment: DateTimeFields;
+}>(
+  moment: DateTimeFields,
+  occurrence: (calendarYear: number, calendarMonth: number) => T,
+): {
+  readonly interval: {
+    readonly lichunYear: number;
+    readonly start: T;
+    readonly end: T;
+  };
+  readonly strictEarlier: T;
+  readonly strictLater: T;
+} {
   const previousMonth = moment.month === 1 ? 12 : moment.month - 1;
   const previousYear = moment.month === 1 ? moment.year - 1 : moment.year;
   const nextMonth = moment.month === 12 ? 1 : moment.month + 1;
   const nextYear = moment.month === 12 ? moment.year + 1 : moment.year;
-  const previous = calendarMonthOccurrence(previousYear, previousMonth);
-  const boundary = calendarMonthOccurrence(moment.year, moment.month);
-  const next = calendarMonthOccurrence(nextYear, nextMonth);
+  const previous = occurrence(previousYear, previousMonth);
+  const boundary = occurrence(moment.year, moment.month);
+  const next = occurrence(nextYear, nextMonth);
   const comparison = compareDateTime(moment, boundary.moment);
   const start = comparison < 0 ? previous : boundary;
   const end = comparison < 0 ? boundary : next;
@@ -75,4 +130,15 @@ export function locateJie(moment: BeijingDateTime): JieLocation {
     strictEarlier: comparison <= 0 ? previous : boundary,
     strictLater: comparison < 0 ? boundary : next,
   };
+}
+
+export function locateTrueSolarJie(
+  moment: TrueSolarDateTime,
+  longitude?: number,
+): TrueSolarJieLocation {
+  return locateJieByCalendarMonth(
+    moment,
+    (calendarYear, calendarMonth) =>
+      trueSolarCalendarMonthOccurrence(calendarYear, calendarMonth, longitude),
+  );
 }

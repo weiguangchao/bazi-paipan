@@ -1,7 +1,7 @@
 // 排盘纯函数
 // 单一测试 seam：输入钟表时出生时刻（可选出生地），返回年柱 + 月柱 + 日柱 + 时柱
 // 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正、早晚子时）
-// 年柱、月柱与起运使用钟表时；日柱、时柱、早晚子时与近子正使用真太阳时。
+// 四柱、早晚子时与近子正使用同一个出生真太阳时；起运将在后续 ticket 迁移。
 
 import {
   liushijiazi,
@@ -19,8 +19,8 @@ import {
 } from "@/domain/time/date-time";
 import { toTrueSolarDateTime } from "@/domain/time/astronomy";
 import {
-  locateJie,
-  type JieOccurrence,
+  locateTrueSolarJie,
+  type TrueSolarJieOccurrence,
 } from "@/domain/time/jie-chronology";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
@@ -53,11 +53,6 @@ export interface PaipanResult {
   /** 出生时刻近子正（00:00）时为 true，CLI 据此打印跨界提示 */
   nearZizheng: boolean;
   /**
-   * 是否对出生时刻做了经度修正（即是否提供了有效出生地）。
-   * CLI 据此决定是否打印"未做经度修正，真太阳时可能偏移"提示。
-   */
-  longitudeCorrectionApplied: boolean;
-  /**
    * 大运（10 柱）。仅当输入带 gender 时给出，否则为 undefined。
    * CLI 据此打印 10 柱大运。
    */
@@ -72,7 +67,7 @@ const RIZHU_ANCHOR_DAY = 1;
 const RIZHU_ANCHOR_INDEX = 54;
 
 // 月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)…小寒->丑(1)。
-const JIE_MONTH_DIZHI_INDEX: Readonly<Record<JieOccurrence["jie"], number>> = {
+const JIE_MONTH_DIZHI_INDEX: Readonly<Record<TrueSolarJieOccurrence["jie"], number>> = {
   "立春": 2,
   "惊蛰": 3,
   "清明": 4,
@@ -112,6 +107,7 @@ function daysSinceAnchor(year: number, month: number, day: number): number {
 function resolveTimes(input: PaipanInput): {
   clockTime: BeijingDateTime;
   trueSolarTime: TrueSolarDateTime;
+  longitude: number | undefined;
 } {
   const clockTime = beijingDateTime({
     year: input.year,
@@ -125,6 +121,7 @@ function resolveTimes(input: PaipanInput): {
     return {
       clockTime,
       trueSolarTime: toTrueSolarDateTime(clockTime, undefined),
+      longitude: undefined,
     };
   }
   const r = findLongitude(input.birthplace);
@@ -137,6 +134,7 @@ function resolveTimes(input: PaipanInput): {
   return {
     clockTime,
     trueSolarTime: toTrueSolarDateTime(clockTime, r.longitude),
+    longitude: r.longitude,
   };
 }
 
@@ -158,7 +156,7 @@ function computeNianzhu(lichunYear: number): [Ganzhi, number] {
  * 上一年的年干推算，与年柱归属保持一致。
  */
 function computeYuezhu(
-  jie: JieOccurrence["jie"],
+  jie: TrueSolarJieOccurrence["jie"],
   yearTianganIndex: number,
 ): Ganzhi {
   const monthDizhiIndex = JIE_MONTH_DIZHI_INDEX[jie];
@@ -210,11 +208,12 @@ function isNearZizheng(hour: number, minute: number): boolean {
 
 /**
  * 排盘纯函数。
- * T5：返回年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
+ * T5：返回年柱 + 月柱 + 日柱 + 时柱。
  * T6：输入带 gender 时附大运（10 柱）。
  * - 真太阳时作为输入预处理：给出出生地时按经度修正 + 均时差合成为真太阳时
  *   （视太阳时）；未给出生地时复制北京时间。
- * - 年柱按立春切换、月柱按节切换，二者与起运间隔都使用北京时间（ADR-0001/0006）
+ * - 年柱按真太阳时立春切换、月柱按真太阳时 Jie 切换（ADR-0007）
+ * - 起运间隔仍暂用北京时间，留待后续 ticket 迁移
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
  * - 日柱、时柱与近子正判定使用真太阳时
@@ -222,8 +221,8 @@ function isNearZizheng(hour: number, minute: number): boolean {
  *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
 export function paipan(input: PaipanInput): PaipanResult {
-  const { clockTime, trueSolarTime } = resolveTimes(input);
-  const jieLocation = locateJie(clockTime);
+  const { clockTime, trueSolarTime, longitude } = resolveTimes(input);
+  const jieLocation = locateTrueSolarJie(trueSolarTime, longitude);
   const offset = daysSinceAnchor(
     trueSolarTime.year,
     trueSolarTime.month,
@@ -241,7 +240,6 @@ export function paipan(input: PaipanInput): PaipanResult {
     rizhu: liushijiazi(dayIndex),
     shizhu: computeShizhu(trueSolarTime.hour, dayTianganIndex),
     nearZizheng: isNearZizheng(trueSolarTime.hour, trueSolarTime.minute),
-    longitudeCorrectionApplied: input.birthplace !== undefined,
   };
   if (input.gender !== undefined) {
     result.dayun = dayun({

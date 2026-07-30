@@ -32,6 +32,26 @@ describe("命盘 - 完整流月嵌套", () => {
     ).toBe(true);
   });
 
+  it("真太阳时跨年或跨星座日期时仍按原始公历出生日期生成个人信息", () => {
+    const kashgar = {
+      province: "新疆维吾尔自治区",
+      city: "喀什地区",
+    };
+    const newYear = mingpan({
+      year: 2024, month: 1, day: 1, hour: 0, minute: 30,
+      gender: "男",
+      birthplace: kashgar,
+    }, NOW);
+    const zodiacBoundary = mingpan({
+      year: 2024, month: 3, day: 21, hour: 0, minute: 30,
+      gender: "男",
+      birthplace: kashgar,
+    }, NOW);
+
+    expect(newYear.personal).toEqual({ shengxiao: "龙", zodiacSign: "摩羯座" });
+    expect(zodiacBoundary.personal.zodiacSign).toBe("白羊座");
+  });
+
   it("同一时刻派生当前大运、今年及立春前仍属 2024 流年的当前流月", () => {
     const result = mingpan(birthProfile(), NOW);
     const liunian = result.dayun.zhu.flatMap((dayunzhu) => dayunzhu.liunian);
