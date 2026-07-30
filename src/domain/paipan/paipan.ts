@@ -1,7 +1,7 @@
 // 排盘纯函数
 // 单一测试 seam：输入钟表时出生时刻（可选出生地），返回年柱 + 月柱 + 日柱 + 时柱
 // 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正、早晚子时）
-// 四柱、早晚子时与近子正使用同一个出生真太阳时；起运将在后续 ticket 迁移。
+// 四柱、早晚子时、近子正与起运使用同一个出生真太阳时。
 
 import {
   liushijiazi,
@@ -14,7 +14,6 @@ import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
 import { dayun, type Gender, type DayunResult } from "@/domain/paipan/dayun";
 import {
   beijingDateTime,
-  type BeijingDateTime,
   type TrueSolarDateTime,
 } from "@/domain/time/date-time";
 import { toTrueSolarDateTime } from "@/domain/time/astronomy";
@@ -105,7 +104,6 @@ function daysSinceAnchor(year: number, month: number, day: number): number {
 }
 
 function resolveTimes(input: PaipanInput): {
-  clockTime: BeijingDateTime;
   trueSolarTime: TrueSolarDateTime;
   longitude: number | undefined;
 } {
@@ -119,7 +117,6 @@ function resolveTimes(input: PaipanInput): {
   });
   if (!input.birthplace) {
     return {
-      clockTime,
       trueSolarTime: toTrueSolarDateTime(clockTime, undefined),
       longitude: undefined,
     };
@@ -132,7 +129,6 @@ function resolveTimes(input: PaipanInput): {
     throw new RangeError(`未知出生地：${where}，无法做经度修正`);
   }
   return {
-    clockTime,
     trueSolarTime: toTrueSolarDateTime(clockTime, r.longitude),
     longitude: r.longitude,
   };
@@ -213,7 +209,7 @@ function isNearZizheng(hour: number, minute: number): boolean {
  * - 真太阳时作为输入预处理：给出出生地时按经度修正 + 均时差合成为真太阳时
  *   （视太阳时）；未给出生地时复制北京时间。
  * - 年柱按真太阳时立春切换、月柱按真太阳时 Jie 切换（ADR-0007）
- * - 起运间隔仍暂用北京时间，留待后续 ticket 迁移
+ * - 起运按严格相邻真太阳时 Jie 求差，起运年月从出生真太阳时年月起算
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
  * - 日柱、时柱与近子正判定使用真太阳时
@@ -221,7 +217,7 @@ function isNearZizheng(hour: number, minute: number): boolean {
  *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
 export function paipan(input: PaipanInput): PaipanResult {
-  const { clockTime, trueSolarTime, longitude } = resolveTimes(input);
+  const { trueSolarTime, longitude } = resolveTimes(input);
   const jieLocation = locateTrueSolarJie(trueSolarTime, longitude);
   const offset = daysSinceAnchor(
     trueSolarTime.year,
@@ -246,7 +242,8 @@ export function paipan(input: PaipanInput): PaipanResult {
       yuezhu,
       yearTianganIndex,
       gender: input.gender,
-      birthTime: clockTime,
+      birthTime: trueSolarTime,
+      longitude,
     });
   }
   return result;

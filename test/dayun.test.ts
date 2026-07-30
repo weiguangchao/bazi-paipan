@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { paipan } from "@/domain/paipan/paipan";
 import { dayun, determineDayunDirection, type Gender } from "@/domain/paipan/dayun";
-import { beijingDateTime } from "@/domain/time/date-time";
+import { trueSolarDateTime } from "@/domain/time/date-time";
+import { trueSolarJieMoment } from "@/domain/time/astronomy";
 
 // 大运命理规则（依共识与 CONTEXT.md）：
 // - 方向：阳年（年干序号偶：甲丙戊庚壬）男 / 阴年女顺行；阴年男 / 阳年女逆行。
@@ -11,7 +12,7 @@ import { beijingDateTime } from "@/domain/time/date-time";
 //
 // 真值来源：
 // - 方向与干支序列由月柱顺/逆推进 + 五虎遁推出（与 tyme4ts 规则一致）。
-// - 起运岁以 ADR-0006 固定寿星提交的北京时间 `Jie` facade 为准。
+// - 起运岁以 ADR-0006 固定寿星提交与 ADR-0007 真太阳时 `Jie` facade 为准。
 // 2000 庚辰年（庚=7，阳年）；2001 辛巳年（辛=7，阴年）。
 
 describe("大运 - 方向 (T6)", () => {
@@ -127,24 +128,66 @@ describe("排盘 - 起运岁命例 (T6)", () => {
     expect(result.dayun!.direction).toBe("逆"); // 阴年男逆
   });
 
-  it("交节当秒顺行取严格下一节、逆行取严格上一节，起运间隔不为零", () => {
-    const birthTime = beijingDateTime({
-      year: 2000, month: 2, day: 4, hour: 20, minute: 40, second: 24,
-    });
-    const forward = dayun({
-      yuezhu: "戊寅",
-      yearTianganIndex: 6,
-      gender: "男",
-      birthTime,
-    });
-    const backward = dayun({
-      yuezhu: "戊寅",
-      yearTianganIndex: 6,
+  it("均时差变化跨过月数取整边界时使用两个真太阳时读数之差", () => {
+    const result = paipan({
+      year: 2024, month: 1, day: 30, hour: 16, minute: 26, second: 27,
       gender: "女",
-      birthTime,
+      birthplace: { province: "四川省", city: "成都市" },
     });
 
-    expect(forward.qiyun).toEqual({ ageYears: 9, ageMonths: 11 });
+    expect(result.dayun!.direction).toBe("顺");
+    expect(result.dayun!.qiyun).toEqual({ ageYears: 1, ageMonths: 7 });
+    expect(result.dayun!.zhu[0]!.startYearMonth)
+      .toEqual({ year: 2025, month: 8 });
+  });
+
+  it("同一出生时刻两端的经度修正常量在起运间隔中抵消", () => {
+    const input = {
+      year: 2000, month: 3, day: 10, hour: 12, minute: 0,
+      gender: "男" as const,
+    };
+    const clock = paipan(input);
+    const chengdu = paipan({
+      ...input,
+      birthplace: { province: "四川省", city: "成都市" },
+    });
+
+    expect(chengdu.dayun!.qiyun).toEqual(clock.dayun!.qiyun);
+  });
+
+  it("真太阳时出生年月跨界时以真太阳时年月生成第一步起运年月", () => {
+    const result = paipan({
+      year: 2024, month: 1, day: 1, hour: 0, minute: 30,
+      gender: "男",
+      birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
+    });
+
+    expect(result.dayun!.qiyun).toEqual({ ageYears: 8, ageMonths: 1 });
+    expect(result.dayun!.zhu[0]!.startYearMonth)
+      .toEqual({ year: 2032, month: 1 });
+    expect(result.dayun!.zhu[1]!.startYearMonth)
+      .toEqual({ year: 2042, month: 1 });
+  });
+
+  it("交节当毫秒顺行取严格下一节、逆行取严格上一节，起运间隔不为零", () => {
+    const longitude = 104.081534;
+    const birthTime = trueSolarJieMoment(2024, "立春", longitude);
+    const forward = dayun({
+      yuezhu: "丙寅",
+      yearTianganIndex: 0,
+      gender: "男",
+      birthTime,
+      longitude,
+    });
+    const backward = dayun({
+      yuezhu: "丙寅",
+      yearTianganIndex: 0,
+      gender: "女",
+      birthTime,
+      longitude,
+    });
+
+    expect(forward.qiyun).toEqual({ ageYears: 9, ageMonths: 10 });
     expect(backward.qiyun).toEqual({ ageYears: 9, ageMonths: 9 });
   });
 });
@@ -165,9 +208,11 @@ describe("大运 - 纯函数单测 (T6)", () => {
       yuezhu: "戊寅",
       yearTianganIndex: 4,
       gender: "男",
-      birthTime: beijingDateTime({
+      birthTime: trueSolarDateTime({
         year: 2000, month: 2, day: 5, hour: 4, minute: 41, second: 0,
+        millisecond: 0,
       }),
+      longitude: undefined,
     });
     expect(r.direction).toBe("顺");
     expect(r.zhu[0]!.ganzhi).toBe("己卯");

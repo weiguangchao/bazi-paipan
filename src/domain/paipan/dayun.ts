@@ -2,9 +2,9 @@
 // 词汇遵循 CONTEXT.md：节、立春。
 //
 // 大运从月柱出发排 10 柱，每柱管 10 年。方向按"阳男阴女顺、阴男阳女逆"
-// （依共识；此时输入须带性别）。起运岁由出生时刻到最近一"节"的天数按
+// （依共识；此时输入须带性别）。起运岁由出生真太阳时到严格相邻"节"的天数按
 // 3 天折 1 年折算，精确到年+月（1 天 ≈ 4 个月），报为"N岁M月起运"。
-// 顺行从出生时刻向前数到下一节，逆行向后数到上一节。每柱天干地支从月柱
+// 顺行从出生时刻向前数到严格下一节，逆行向后数到严格上一节。每柱天干地支从月柱
 // 顺行 +1 或逆行 −1 推出。
 
 import {
@@ -17,9 +17,9 @@ import {
 } from "@/domain/ganzhi/ganzhi";
 import {
   diffSeconds,
-  type BeijingDateTime,
+  type TrueSolarDateTime,
 } from "@/domain/time/date-time";
-import { locateJie } from "@/domain/time/jie-chronology";
+import { locateTrueSolarJie } from "@/domain/time/jie-chronology";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
 export type Gender = "男" | "女";
@@ -46,7 +46,7 @@ export interface Dayunzhu {
   ganzhi: Ganzhi;
   /** 该柱起算的起运岁（第 0 柱起于起运岁，每柱递增 10 岁）。 */
   qiyun: Qiyunsui;
-  /** 该柱起始公历年月（第 0 柱 = 出生年 + 起运岁；每柱递增 10 年）。 */
+  /** 该柱起始年月（第 0 柱 = 出生真太阳时年月 + 起运岁；每柱递增 10 年）。 */
   startYearMonth: { year: number; month: number };
 }
 
@@ -86,7 +86,7 @@ function calculateQiyunsui(diffSecondsValue: number): Qiyunsui {
 }
 
 /**
- * 计算大运起运年月（公历）。第 0 柱起于"出生年 + 起运岁"所在公历年月，
+ * 计算大运起运年月。第 0 柱起于"出生真太阳时年月 + 起运岁"所在年月，
  * 之后每柱递增 10 年。月份按起运岁中的月数加到出生月上。
  */
 function computeStartYearMonth(
@@ -118,8 +118,10 @@ export interface DayunInput {
   yearTianganIndex: number;
   /** 性别。 */
   gender: Gender;
-  /** 出生钟表时；起运间隔只与北京时间的节比较。 */
-  birthTime: BeijingDateTime;
+  /** 出生真太阳时；起运间隔与起运年月都从此值计算。 */
+  birthTime: TrueSolarDateTime;
+  /** 出生地经度；未提供出生地时沿用默认钟表时语义。 */
+  longitude?: number;
 }
 
 /**
@@ -129,10 +131,10 @@ export interface DayunInput {
  * @returns 大运完整结果（方向 + 起运岁 + 10 柱）
  */
 export function dayun(input: DayunInput): DayunResult {
-  const { yuezhu, yearTianganIndex, gender, birthTime } = input;
+  const { yuezhu, yearTianganIndex, gender, birthTime, longitude } = input;
   const direction = determineDayunDirection(gender, yearTianganIndex);
   const forward = direction === "顺";
-  const jieLocation = locateJie(birthTime);
+  const jieLocation = locateTrueSolarJie(birthTime, longitude);
   const adjacentJie = forward
     ? jieLocation.strictLater
     : jieLocation.strictEarlier;
