@@ -19,7 +19,7 @@ import {
   diffSeconds,
   type TrueSolarDateTime,
 } from "@/domain/time/date-time";
-import { locateJie } from "@/domain/time/jie-chronology";
+import type { JieLocation } from "@/domain/time/jie-chronology";
 
 /** 性别。命理上阳男阴女顺行、阴男阳女逆行，须带性别才能定方向。 */
 export type Gender = "男" | "女";
@@ -120,8 +120,8 @@ export interface DayunInput {
   gender: Gender;
   /** 出生真太阳时；起运间隔与起运年月都从此值计算。 */
   birthTime: TrueSolarDateTime;
-  /** 出生地经度；未提供出生地时沿用默认钟表时语义。 */
-  longitude?: number;
+  /** 入口按出生地真太阳时定位出的交节位置。 */
+  jieLocation: JieLocation;
 }
 
 /**
@@ -131,10 +131,9 @@ export interface DayunInput {
  * @returns 大运完整结果（方向 + 起运岁 + 10 柱）
  */
 export function dayun(input: DayunInput): DayunResult {
-  const { yuezhu, yearTianganIndex, gender, birthTime, longitude } = input;
+  const { yuezhu, yearTianganIndex, gender, birthTime, jieLocation } = input;
   const direction = determineDayunDirection(gender, yearTianganIndex);
   const forward = direction === "顺";
-  const jieLocation = locateJie(birthTime, longitude);
   const adjacentJie = forward
     ? jieLocation.strictLater
     : jieLocation.strictEarlier;

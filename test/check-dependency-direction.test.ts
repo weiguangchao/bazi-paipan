@@ -81,6 +81,32 @@ describe("依赖方向守卫", () => {
     ]);
   });
 
+  it("拒绝生产层 import 任意测试 fixture", () => {
+    const source =
+      'import { fixture } from "../../../test/fixtures/astronomy";';
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "test-artifact" }),
+    ]);
+  });
+
+  it("只允许 paipan 与 mingpan 入口定位真太阳时 Jie", () => {
+    const source =
+      'import { locateJie } from "@/domain/time/jie-chronology";';
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/paipan.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/mingpan.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/dayun.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "true-solar-conversion-boundary" }),
+    ]);
+  });
+
   it("拒绝天文 facade 重新暴露旧北京时间 Jie seam", () => {
     const source = `
       import type { BeijingDateTime } from "@/domain/time/date-time";
@@ -91,7 +117,27 @@ describe("依赖方向守卫", () => {
     expect(
       findDependencyViolations(source, "src/domain/time/astronomy.ts"),
     ).toEqual([
-      expect.objectContaining({ toLayer: "legacy-beijing-jie-facade" }),
+      expect.objectContaining({
+        specifier: "jieMoment",
+        toLayer: "unauthorized-astronomy-facade-export",
+      }),
+    ]);
+  });
+
+  it("拒绝天文 facade 改名重新暴露北京时间 Jie seam", () => {
+    const source = `
+      import type { BeijingDateTime } from "@/domain/time/date-time";
+      export function beijingJieMoment(): BeijingDateTime {
+        throw new Error("legacy");
+      }
+    `;
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({
+        specifier: "beijingJieMoment",
+        toLayer: "unauthorized-astronomy-facade-export",
+      }),
     ]);
   });
 

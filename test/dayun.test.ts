@@ -3,6 +3,7 @@ import { paipan } from "@/domain/paipan/paipan";
 import { dayun, determineDayunDirection, type Gender } from "@/domain/paipan/dayun";
 import { trueSolarDateTime } from "@/domain/time/date-time";
 import { trueSolarJieMoment } from "@/domain/time/astronomy";
+import { locateJie } from "@/domain/time/jie-chronology";
 
 // 大运命理规则（依共识与 CONTEXT.md）：
 // - 方向：阳年（年干序号偶：甲丙戊庚壬）男 / 阴年女顺行；阴年男 / 阳年女逆行。
@@ -177,14 +178,14 @@ describe("排盘 - 起运岁命例 (T6)", () => {
       yearTianganIndex: 0,
       gender: "男",
       birthTime,
-      longitude,
+      jieLocation: locateJie(birthTime, longitude),
     });
     const backward = dayun({
       yuezhu: "丙寅",
       yearTianganIndex: 0,
       gender: "女",
       birthTime,
-      longitude,
+      jieLocation: locateJie(birthTime, longitude),
     });
 
     expect(forward.qiyun).toEqual({ ageYears: 9, ageMonths: 10 });
@@ -204,15 +205,16 @@ describe("排盘 - 无性别不算大运 (T6)", () => {
 describe("大运 - 纯函数单测 (T6)", () => {
   // 直接调用 大运 纯函数，绕过排盘前置。
   it("月柱 戊寅、阳年（年干戊=4 阳年）男顺行 -> 第 0 柱 己卯", () => {
+    const birthTime = trueSolarDateTime({
+      year: 2000, month: 2, day: 5, hour: 4, minute: 41, second: 0,
+      millisecond: 0,
+    });
     const r = dayun({
       yuezhu: "戊寅",
       yearTianganIndex: 4,
       gender: "男",
-      birthTime: trueSolarDateTime({
-        year: 2000, month: 2, day: 5, hour: 4, minute: 41, second: 0,
-        millisecond: 0,
-      }),
-      longitude: undefined,
+      birthTime,
+      jieLocation: locateJie(birthTime),
     });
     expect(r.direction).toBe("顺");
     expect(r.zhu[0]!.ganzhi).toBe("己卯");

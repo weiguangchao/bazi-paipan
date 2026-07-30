@@ -22,6 +22,25 @@ const SECONDS_PER_DAY = 86_400;
 const BEIJING_OFFSET_DAYS = 1 / 3;
 const TWO_PI = Math.PI * 2;
 
+function assertLongitude(longitude: number): void {
+  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+    throw new RangeError(`longitude 须在 -180–180：${String(longitude)}`);
+  }
+}
+
+function trueSolarDateTimeFromTimestamp(timestamp: number): TrueSolarDateTime {
+  const result = new Date(timestamp);
+  return trueSolarDateTime({
+    year: result.getUTCFullYear(),
+    month: result.getUTCMonth() + 1,
+    day: result.getUTCDate(),
+    hour: result.getUTCHours(),
+    minute: result.getUTCMinutes(),
+    second: result.getUTCSeconds(),
+    millisecond: result.getUTCMilliseconds(),
+  });
+}
+
 const jieDefinition: Record<
   Jie,
   { longitudeDegrees: number; approximateMonth: number; approximateDay: number }
@@ -108,16 +127,7 @@ function trueSolarDateTimeFromLocalJulianDay(
   ) + Math.round(
     (fields.fractionalSecond + correctionSeconds) * 1000,
   );
-  const result = new Date(roundedTimestamp);
-  return trueSolarDateTime({
-    year: result.getUTCFullYear(),
-    month: result.getUTCMonth() + 1,
-    day: result.getUTCDate(),
-    hour: result.getUTCHours(),
-    minute: result.getUTCMinutes(),
-    second: result.getUTCSeconds(),
-    millisecond: result.getUTCMilliseconds(),
-  });
+  return trueSolarDateTimeFromTimestamp(roundedTimestamp);
 }
 
 export function trueSolarJieMoment(
@@ -128,11 +138,8 @@ export function trueSolarJieMoment(
   if (!Number.isInteger(year)) {
     throw new RangeError(`year 必须是整数：${String(year)}`);
   }
-  if (
-    longitude !== undefined
-    && (!Number.isFinite(longitude) || longitude < -180 || longitude > 180)
-  ) {
-    throw new RangeError(`longitude 须在 -180–180：${String(longitude)}`);
+  if (longitude !== undefined) {
+    assertLongitude(longitude);
   }
   const localJ2000Days = solarLongitudeMomentBeijingDays(
     continuousSolarLongitude(year, jie),
@@ -157,9 +164,7 @@ export function toTrueSolarDateTime(
   if (longitude === undefined) {
     return trueSolarDateTime({ ...clockTime, millisecond: 0 });
   }
-  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
-    throw new RangeError(`longitude 须在 -180–180：${String(longitude)}`);
-  }
+  assertLongitude(longitude);
   const clockLocalJ2000Days =
     julianDayFromFields(
       clockTime.year,
@@ -178,14 +183,5 @@ export function toTrueSolarDateTime(
     + Math.round(
       (longitudeCorrectionSeconds + equationOfTimeSeconds) * 1000,
     );
-  const result = new Date(roundedTimestamp);
-  return trueSolarDateTime({
-    year: result.getUTCFullYear(),
-    month: result.getUTCMonth() + 1,
-    day: result.getUTCDate(),
-    hour: result.getUTCHours(),
-    minute: result.getUTCMinutes(),
-    second: result.getUTCSeconds(),
-    millisecond: result.getUTCMilliseconds(),
-  });
+  return trueSolarDateTimeFromTimestamp(roundedTimestamp);
 }

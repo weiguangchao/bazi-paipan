@@ -1,4 +1,4 @@
-// 流月纯函数：给定流年公历年、当前真太阳时与出生地经度，一次产出十二个流月柱。
+// 流月纯函数：给定流年公历年、真太阳时交节区间与当前交节区间，一次产出十二个流月柱。
 // 流月从出生地真太阳时立春起，依次在十二个"节"的准确交节时刻切换，最后一柱丑月
 // 从下一公历年小寒持续至下一年立春前。
 
@@ -10,13 +10,10 @@ import {
   type Ganzhi,
 } from "@/domain/ganzhi/ganzhi";
 import { liunianzhu } from "@/domain/paipan/liunian";
-import {
-  type TrueSolarDateTime,
-} from "@/domain/time/date-time";
-import {
-  jieIntervals,
-  locateJie,
-  type JieOccurrence,
+import type { TrueSolarDateTime } from "@/domain/time/date-time";
+import type {
+  JieInterval,
+  JieOccurrence,
 } from "@/domain/time/jie-chronology";
 
 export interface Liuyuezhu {
@@ -38,11 +35,9 @@ function liuyueStartTianganIndex(year: number): number {
 
 export function liuyue(
   year: number,
-  currentTime: TrueSolarDateTime,
-  longitude?: number,
+  intervals: readonly JieInterval[],
+  currentInterval: JieInterval,
 ): Liuyuezhu[] {
-  const intervals = jieIntervals(year, longitude);
-  const currentInterval = locateJie(currentTime, longitude).interval;
   const startTianganIndex = liuyueStartTianganIndex(year);
 
   return intervals.map((interval, index) => {

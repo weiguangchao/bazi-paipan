@@ -97,18 +97,23 @@ function collectImportSpecifiers(source, fileName) {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
   const specifiers = [];
 
-  function recordSpecifier(expressionNode) {
+  function recordSpecifier(expressionNode, typeOnly = false) {
     const specifier = moduleSpecifierText(expressionNode);
     if (!specifier) return;
     const position = sourceFile.getLineAndCharacterOfPosition(expressionNode.getStart(sourceFile));
-    specifiers.push({ specifier, line: position.line + 1, column: position.character + 1 });
+    specifiers.push({
+      specifier,
+      typeOnly,
+      line: position.line + 1,
+      column: position.character + 1,
+    });
   }
 
   function visit(node) {
     if (ts.isImportDeclaration(node)) {
-      recordSpecifier(node.moduleSpecifier);
+      recordSpecifier(node.moduleSpecifier, node.importClause?.isTypeOnly === true);
     } else if (ts.isExportDeclaration(node) && node.moduleSpecifier) {
-      recordSpecifier(node.moduleSpecifier);
+      recordSpecifier(node.moduleSpecifier, node.isTypeOnly === true);
     } else if (
       ts.isCallExpression(node)
       && node.expression.kind === ts.SyntaxKind.ImportKeyword
@@ -123,44 +128,68 @@ function collectImportSpecifiers(source, fileName) {
   return specifiers;
 }
 
-function exportedLegacyJieFacadePosition(source, fileName) {
+const ALLOWED_ASTRONOMY_FACADE_EXPORTS = new Set([
+  "JIE_NAMES",
+  "Jie",
+  "trueSolarJieMoment",
+  "toTrueSolarDateTime",
+]);
+
+function unauthorizedAstronomyFacadeExport(source, fileName) {
   const normalizedFile = String(fileName).replace(/\\/g, "/");
   if (!normalizedFile.endsWith("src/domain/time/astronomy.ts")) return null;
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
-  let position = null;
+  let unauthorized = null;
   const isExported = (node) =>
     node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
 
-  function record(node) {
-    if (position !== null) return;
+  function record(node, name) {
+    if (unauthorized !== null || ALLOWED_ASTRONOMY_FACADE_EXPORTS.has(name)) return;
     const start = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
-    position = { line: start.line + 1, column: start.character + 1 };
+    unauthorized = {
+      specifier: name,
+      line: start.line + 1,
+      column: start.character + 1,
+    };
   }
 
   function visit(node) {
     if (
       ts.isFunctionDeclaration(node)
       && isExported(node)
-      && node.name?.text === "jieMoment"
+      && node.name
     ) {
-      record(node.name);
+      record(node.name, node.name.text);
     } else if (ts.isVariableStatement(node) && isExported(node)) {
       for (const declaration of node.declarationList.declarations) {
-        if (ts.isIdentifier(declaration.name) && declaration.name.text === "jieMoment") {
-          record(declaration.name);
+        if (ts.isIdentifier(declaration.name)) {
+          record(declaration.name, declaration.name.text);
         }
       }
+    } else if (
+      (ts.isTypeAliasDeclaration(node)
+        || ts.isInterfaceDeclaration(node)
+        || ts.isClassDeclaration(node)
+        || ts.isEnumDeclaration(node))
+      && isExported(node)
+      && node.name
+    ) {
+      record(node.name, node.name.text);
     } else if (ts.isExportDeclaration(node) && node.exportClause
       && ts.isNamedExports(node.exportClause)) {
       for (const element of node.exportClause.elements) {
-        if (element.name.text === "jieMoment") record(element.name);
+        record(element.name, element.name.text);
       }
+    } else if (ts.isExportDeclaration(node) && !node.exportClause) {
+      record(node, "export *");
+    } else if (ts.isExportAssignment(node)) {
+      record(node, "default");
     }
     ts.forEachChild(node, visit);
   }
 
   visit(sourceFile);
-  return position;
+  return unauthorized;
 }
 
 export function findDependencyViolations(source, fileName = "fixture.ts") {
@@ -168,18 +197,45 @@ export function findDependencyViolations(source, fileName = "fixture.ts") {
   if (!fromLayer) return [];
   const allowed = ALLOWED_DEPENDENCIES[fromLayer];
   const violations = [];
-  const legacyJieFacade = exportedLegacyJieFacadePosition(source, fileName);
-  if (legacyJieFacade) {
+  const unauthorizedAstronomyExport = unauthorizedAstronomyFacadeExport(source, fileName);
+  if (unauthorizedAstronomyExport) {
     violations.push({
-      specifier: "jieMoment",
       fromLayer,
-      toLayer: "legacy-beijing-jie-facade",
-      allowed: ["trueSolarJieMoment facade"],
-      ...legacyJieFacade,
+      toLayer: "unauthorized-astronomy-facade-export",
+      allowed: [...ALLOWED_ASTRONOMY_FACADE_EXPORTS],
+      ...unauthorizedAstronomyExport,
     });
   }
-  for (const { specifier, line, column } of collectImportSpecifiers(source, fileName)) {
+  for (const {
+    specifier,
+    typeOnly,
+    line,
+    column,
+  } of collectImportSpecifiers(source, fileName)) {
     const normalizedFile = String(fileName).replace(/\\/g, "/");
+    const importsJieChronology =
+      specifier.endsWith("/domain/time/jie-chronology")
+      || specifier.endsWith("../time/jie-chronology")
+      || specifier.endsWith("./jie-chronology");
+    const isTrueSolarConversionBoundary =
+      normalizedFile.endsWith("/src/domain/paipan/paipan.ts")
+      || normalizedFile === "src/domain/paipan/paipan.ts"
+      || normalizedFile.endsWith("/src/domain/paipan/mingpan.ts")
+      || normalizedFile === "src/domain/paipan/mingpan.ts";
+    if (importsJieChronology && !typeOnly && !isTrueSolarConversionBoundary) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "true-solar-conversion-boundary",
+        allowed: [
+          "src/domain/paipan/paipan.ts",
+          "src/domain/paipan/mingpan.ts",
+        ],
+        line,
+        column,
+      });
+      continue;
+    }
     const importsPrivateShouxingCore =
       specifier.includes("/domain/time/shouxing/")
       || specifier.includes("../time/shouxing/")
@@ -199,11 +255,15 @@ export function findDependencyViolations(source, fileName = "fixture.ts") {
       });
       continue;
     }
-    if (specifier.includes("test/oracles") || specifier.includes("/oracles/")) {
+    if (
+      specifier.includes("test/")
+      || specifier.includes("/test/")
+      || specifier.includes("/oracles/")
+    ) {
       violations.push({
         specifier,
         fromLayer,
-        toLayer: "test-oracle",
+        toLayer: specifier.includes("oracle") ? "test-oracle" : "test-artifact",
         allowed: [...allowed],
         line,
         column,

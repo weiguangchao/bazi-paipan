@@ -77,7 +77,7 @@ describe("命盘 - 完整流月嵌套", () => {
     });
   });
 
-  it("当前北京时间与喀什真太阳时跨月时按真太阳时年月切换当前大运", () => {
+  it("当前钟表时与喀什真太阳时跨月时按真太阳时年月切换当前大运", () => {
     const input: BirthProfile = {
       year: 2000, month: 3, day: 10, hour: 12, minute: 0,
       gender: "男",
@@ -101,7 +101,7 @@ describe("命盘 - 完整流月嵌套", () => {
     expect(currentYear(after)).toBe(2018);
   });
 
-  it("当前真太阳时跨年时今年仍使用注入的北京时间公历年", () => {
+  it("当前真太阳时跨年时今年仍使用注入的钟表时公历年", () => {
     const result = mingpan({
       year: 2000, month: 3, day: 10, hour: 12, minute: 0,
       gender: "男",

@@ -22,6 +22,11 @@ import type {
   BeijingDateTime,
   TrueSolarDateTime,
 } from "@/domain/time/date-time";
+import {
+  jieIntervals,
+  locateJie,
+  type JieInterval,
+} from "@/domain/time/jie-chronology";
 
 /** 藏干及其相对日主的十神。 */
 export interface CangganOut {
@@ -117,15 +122,15 @@ function liunianZhu(
   item: { year: number; ganzhi: Ganzhi },
   dayMaster: Tiangan,
   currentClockTime: BeijingDateTime,
-  currentTrueSolarTime: TrueSolarDateTime,
-  longitude: number | undefined,
+  intervals: readonly JieInterval[],
+  currentInterval: JieInterval,
 ): LiunianItemOut {
   return {
     year: item.year,
     ganzhi: item.ganzhi,
     ...zhuShishen(item.ganzhi, dayMaster),
     isCurrentYear: item.year === currentClockTime.year,
-    liuyue: liuyue(item.year, currentTrueSolarTime, longitude).map((liuyuezhu) => {
+    liuyue: liuyue(item.year, intervals, currentInterval).map((liuyuezhu) => {
       const { startTime: _startTime, endTime: _endTime, ...visible } = liuyuezhu;
       return {
         ...visible,
@@ -145,7 +150,8 @@ function dayunZhu(
   dayMaster: Tiangan,
   currentTime: TrueSolarDateTime,
   currentClockTime: BeijingDateTime,
-  longitude: number | undefined,
+  intervalsByYear: ReadonlyMap<number, readonly JieInterval[]>,
+  currentInterval: JieInterval,
 ): DayunzhuOut {
   const startMonthIndex = p.startYearMonth.year * 12 + p.startYearMonth.month - 1;
   const currentMonthIndex = currentTime.year * 12 + currentTime.month - 1;
@@ -162,8 +168,8 @@ function dayunZhu(
         item,
         dayMaster,
         currentClockTime,
-        currentTime,
-        longitude,
+        intervalsByYear.get(item.year)!,
+        currentInterval,
       ),
     ),
   };
@@ -193,6 +199,7 @@ export function mingpan(
     currentTime,
     longitude,
   );
+  const currentInterval = locateJie(currentTrueSolarTime, longitude).interval;
   const dayMaster = ganzhiTiangan(result.rizhu);
 
   const personal = personalInfo({ year: input.year, month: input.month, day: input.day });
@@ -212,11 +219,26 @@ export function mingpan(
   });
 
   const dayun = result.dayun!;
+  const liunianYears = new Set(
+    dayun.zhu.flatMap((p) =>
+      liunian(p.startYearMonth.year).map((item) => item.year),
+    ),
+  );
+  const intervalsByYear = new Map(
+    [...liunianYears].map((year) => [year, jieIntervals(year, longitude)]),
+  );
   const dayunOut: DayunOut = {
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
     zhu: dayun.zhu.map((p) =>
-      dayunZhu(p, dayMaster, currentTrueSolarTime, currentTime, longitude),
+      dayunZhu(
+        p,
+        dayMaster,
+        currentTrueSolarTime,
+        currentTime,
+        intervalsByYear,
+        currentInterval,
+      ),
     ),
   };
 

@@ -243,7 +243,7 @@ export function paipan(input: PaipanInput): PaipanResult {
       yearTianganIndex,
       gender: input.gender,
       birthTime: trueSolarTime,
-      longitude,
+      jieLocation,
     });
   }
   return result;

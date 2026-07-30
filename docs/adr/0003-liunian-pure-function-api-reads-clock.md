@@ -1,8 +1,14 @@
 ---
-status: amended by ADR-0006
+status: amended
+amended_by:
+  - ADR-0006
+  - ADR-0007
 ---
 
 # 流年、流月使用独立纯函数，命盘不读时钟
+
+> ADR-0007 已修订本文的流月时刻坐标与当前大运定位：它们改用出生地
+> `TrueSolarDateTime`。流年与“今年”的公历年语义、命盘只接收一次注入时钟的决定继续有效。
 
 流年序列由独立纯函数 `liunian(起始公历年)` 产出，流月序列由独立纯函数 `liuyue(所属流年公历年, 当前 BeijingDateTime)` 产出；两者都不注入 `PaipanInput`、不进 `PaipanResult`。
 

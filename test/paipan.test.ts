@@ -218,7 +218,7 @@ describe("排盘 - 真太阳时合成（经度修正 + 均时差）(T5/#15)", ()
   // 真太阳时 = 钟表时 + 经度修正 + 均时差（CONTEXT.md）。
   // 喀什地区 ~75.99°E，经度修正 ≈ −176 分；双鸭山市 ~131.17°E，经度修正 ≈ +44.6 分。
 
-  it("排盘结果不暴露经度修正实现状态", () => {
+  it("paipan 输出不暴露经度修正实现状态", () => {
     const result = paipan({ year: 2000, month: 1, day: 1, hour: 12, minute: 0 });
     expect(result).not.toHaveProperty("longitudeCorrectionApplied");
   });
