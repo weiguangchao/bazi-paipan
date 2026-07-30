@@ -8,6 +8,7 @@ test("窄屏共享目录、焦点、正文、表格与相邻导航可用", async
     "/books/wudenghuiyuan/chapters/v9-c001",
     "/books/xinjing/chapters/v1-c001",
     "/books/qiongtongbaojian/chapters/v1-c005",
+    "/books/jingangjing/chapters/v1-c015",
   ]) {
     await page.goto(path);
     await expect(page.locator(".reader-directory")).toBeHidden();

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("五部典籍首页、篇章直达、正文与导航 smoke", async ({ page }) => {
+test("六部典籍首页、篇章直达、正文与导航 smoke", async ({ page }) => {
   for (const book of [
     {
       root: "/books/yuanhaiziping",
@@ -55,4 +55,19 @@ test("五部典籍首页、篇章直达、正文与导航 smoke", async ({ page 
   await page.getByRole("link", { name: /下一篇.*五行总论/ }).click();
   await expect(page).toHaveURL(/v1-c002$/);
   await expect(page.getByRole("heading", { level: 1, name: "五行总论" })).toBeVisible();
+
+  await page.goto("/books/jingangjing");
+  await expect(page.getByRole("heading", {
+    level: 1,
+    name: "金刚般若波罗蜜经",
+  })).toBeVisible();
+  await page.goto("/books/jingangjing/chapters/v1-c001");
+  await expect(page.getByRole("heading", { level: 1, name: "开经偈" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).toContainText("无上甚深微妙法");
+  await page.getByRole("link", { name: /下一篇.*法会因由分第一/ }).click();
+  await expect(page).toHaveURL(/v1-c002$/);
+  await expect(page.getByRole("heading", {
+    level: 1,
+    name: "法会因由分第一",
+  })).toBeVisible();
 });

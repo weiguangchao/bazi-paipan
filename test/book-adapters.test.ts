@@ -93,7 +93,7 @@ describe.each(expected)("$title adapter", (book) => {
         }
       }
     }
-  });
+  }, 10_000);
 });
 
 test("《三命通会》卷十二新增篇章不改变既有稳定链接", async () => {

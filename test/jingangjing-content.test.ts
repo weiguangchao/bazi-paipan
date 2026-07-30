@@ -1,5 +1,15 @@
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -270,5 +280,78 @@ describe("《金刚般若波罗蜜经》内容包契约", () => {
     expect(audit.review.independentReviewer).toBeTruthy();
     expect(audit.review.reviewedAt).toBe("2026-07-30");
     expect(audit.review.conclusion).toBeTruthy();
+  });
+
+  test("importer 可确定重放，且仅在生成事实未变时保留独立签署", () => {
+    const tempRoot = mkdtempSync(path.join(tmpdir(), "jingangjing-"));
+    const tempSource = path.join(tempRoot, "content/books/jingangjing/source.md");
+    mkdirSync(path.dirname(tempSource), { recursive: true });
+    copyFileSync(
+      path.join(root, "content/books/jingangjing/source.md"),
+      tempSource,
+    );
+    const importer = path.join(root, "scripts/import-jingangjing.mjs");
+    const run = () =>
+      execFileSync(process.execPath, [importer], {
+        cwd: tempRoot,
+        encoding: "utf8",
+        stdio: "pipe",
+      });
+    const generatedFiles = () =>
+      [
+        path.join(tempRoot, "content/books/jingangjing/audit.json"),
+        path.join(tempRoot, "src/books/jingangjing/catalog.json"),
+        ...readdirSync(
+          path.join(tempRoot, "content/books/jingangjing/chapters/v1"),
+        ).map((file) =>
+          path.join(tempRoot, "content/books/jingangjing/chapters/v1", file)
+        ),
+      ].map((file) => [path.relative(tempRoot, file), sha256(readFileSync(file))]);
+
+    try {
+      run();
+      const first = generatedFiles();
+      run();
+      expect(generatedFiles()).toEqual(first);
+
+      const generatedAuditPath =
+        path.join(tempRoot, "content/books/jingangjing/audit.json");
+      const generatedAudit = JSON.parse(
+        readFileSync(generatedAuditPath, "utf8"),
+      ) as Audit;
+      generatedAudit.review = {
+        status: "passed",
+        verificationCommit: "1234567",
+        reviewedAt: "2026-07-30",
+        independentReviewer: "independent fixture",
+        conclusion: "fixture passed",
+        checks: {
+          chaptersReviewed: 33,
+          structuralSegmentsReviewed: 2,
+          omissions: 0,
+          duplications: 0,
+          orderingErrors: 0,
+          silentRewrites: 0,
+          unknownAnomalies: 0,
+        },
+      };
+      writeFileSync(
+        generatedAuditPath,
+        `${JSON.stringify(generatedAudit, null, 2)}\n`,
+      );
+      run();
+      expect(
+        (JSON.parse(readFileSync(generatedAuditPath, "utf8")) as Audit).review,
+      ).toEqual(generatedAudit.review);
+
+      const changedSource = readFileSync(tempSource, "utf8").replace(
+        "无上甚深微妙法",
+        "无上甚深微妙法改",
+      );
+      writeFileSync(tempSource, changedSource);
+      expect(run).toThrow();
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
   });
 });

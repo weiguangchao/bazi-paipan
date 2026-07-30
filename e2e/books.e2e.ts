@@ -6,6 +6,7 @@ const sanmingRoot = "/books/sanmingtonghui";
 const wudengRoot = "/books/wudenghuiyuan";
 const xinjingRoot = "/books/xinjing";
 const qiongtongRoot = "/books/qiongtongbaojian";
+const jingangRoot = "/books/jingangjing";
 const volumeChunk = /\/assets\/v\d+-[^/]+\.js$/;
 const sanmingCounts = [36, 26, 23, 25, 20, 73, 22, 60, 60, 3, 5, 17];
 const wudengCounts = [
@@ -21,14 +22,14 @@ async function expectNoSeriousA11y(page: Page) {
   ).toEqual([]);
 }
 
-test("典籍首页按固定顺序展示五部典籍且顶部入口正确", async ({ page }) => {
+test("典籍首页按固定顺序展示六部典籍且顶部入口正确", async ({ page }) => {
   const requests: string[] = [];
   page.on("request", (request) => requests.push(new URL(request.url()).pathname));
   await page.goto("/books");
 
   await expect(page.getByRole("heading", { level: 1, name: "典籍" })).toBeVisible();
   const cards = page.locator(".book-card-grid > a");
-  await expect(cards).toHaveCount(5);
+  await expect(cards).toHaveCount(6);
   await expect(cards.nth(0)).toContainText("渊海子平");
   await expect(cards.nth(0)).toContainText("5 卷 · 269 篇");
   await expect(cards.nth(1)).toContainText("三命通会");
@@ -41,9 +42,85 @@ test("典籍首页按固定顺序展示五部典籍且顶部入口正确", async
   await expect(cards.nth(4)).toContainText("穷通宝鉴");
   await expect(cards.nth(4)).toContainText("（清）余春台 辑 · 徐乐吾 评注");
   await expect(cards.nth(4)).toContainText("1 卷 · 108 篇");
+  await expect(cards.nth(5)).toContainText("金刚般若波罗蜜经");
+  await expect(cards.nth(5)).toContainText("姚秦三藏法师鸠摩罗什 译");
+  await expect(cards.nth(5)).toContainText("1 卷 · 33 篇");
   await expect(page.getByRole("navigation", { name: "一级导航" }).getByRole("link", { name: "典籍" }))
     .toHaveAttribute("aria-current", "page");
   expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+});
+
+test("《金刚般若波罗蜜经》33 篇共享阅读、保真、导航与单卷请求契约", async ({ page }) => {
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(new URL(request.url()).pathname));
+
+  await page.goto(jingangRoot);
+  await expect(page.getByRole("heading", {
+    level: 1,
+    name: "金刚般若波罗蜜经",
+  })).toBeVisible();
+  await expect(page.getByRole("heading", {
+    level: 2,
+    name: "姚秦三藏法师鸠摩罗什 译",
+  })).toBeVisible();
+  await expect(page.locator(".book-hero")).toContainText("典籍 · 1 卷 · 33 篇");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+
+  await page.goto(`${jingangRoot}/volumes/v1`);
+  await expect(page.getByRole("heading", { level: 1, name: "全卷" })).toBeVisible();
+  await expect(page.locator(".volume-home ol").getByRole("link")).toHaveCount(33);
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(0);
+
+  requests.length = 0;
+  await page.goto(`${jingangRoot}/chapters/v1-c001`);
+  await expect(page.getByRole("heading", { level: 1, name: "开经偈" })).toBeVisible();
+  await expect(page.locator(".chapter-heading")).toContainText("姚秦三藏法师鸠摩罗什 译");
+  await expect(page.locator(".chapter-prose")).toContainText("无上甚深微妙法　百千万劫难遭遇");
+  await expect(page.locator(".chapter-neighbors .is-unavailable").first()).toContainText("全书之始");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
+
+  const next = page.getByRole("link", { name: /下一篇.*法会因由分第一/ });
+  await next.focus();
+  await next.hover();
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
+  await next.click();
+  await expect(page.getByRole("heading", { level: 1, name: "法会因由分第一" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).toContainText("如是我闻。一时");
+  expect(requests.filter((request) => volumeChunk.test(request))).toHaveLength(1);
+
+  await page.goto(`${jingangRoot}/chapters/v1-c015`);
+  await expect(page.getByRole("heading", { level: 1, name: "离相寂灭分第十四" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).toContainText("如来是真语者、实语者、如语者");
+
+  await page.goto(`${jingangRoot}/chapters/v1-c033`);
+  await expect(page.getByRole("heading", { level: 1, name: "应化非真分第三十二" })).toBeVisible();
+  await expect(page.locator(".chapter-prose")).toContainText("一切有为法，如梦幻泡影");
+  await expect(page.locator(".chapter-neighbors .is-unavailable").last()).toContainText("全书之末");
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1, name: "应化非真分第三十二" })).toBeVisible();
+  await expectNoSeriousA11y(page);
+});
+
+test("《金刚般若波罗蜜经》正文加载失败后由共享重试恢复当前单卷", async ({ page }) => {
+  let attempts = 0;
+  let documentRequests = 0;
+  page.on("request", (request) => {
+    if (request.resourceType() === "document") documentRequests += 1;
+  });
+  await page.route(/\/assets\/v1-[^/]+\.js(?:\?.*)?$/, async (route) => {
+    attempts += 1;
+    if (attempts === 1) await route.abort();
+    else await route.continue();
+  });
+
+  await page.goto(`${jingangRoot}/chapters/v1-c015`);
+  await expect(page.getByRole("heading", { level: 1, name: "离相寂灭分第十四" })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("本卷正文载入失败");
+  const documentRequestsBeforeRetry = documentRequests;
+  await page.getByRole("button", { name: "重试当前卷" }).click();
+  await expect(page.locator(".chapter-prose")).toContainText("如来是真语者、实语者、如语者");
+  expect(attempts).toBeGreaterThanOrEqual(2);
+  expect(documentRequests).toBe(documentRequestsBeforeRetry);
 });
 
 test("《穷通宝鉴》108 篇共享阅读体验、保真结构与单卷请求契约", async ({ page }) => {
@@ -378,6 +455,9 @@ test("代表页面与共享错误状态无 serious/critical 可访问性违规",
     qiongtongRoot,
     `${qiongtongRoot}/volumes/v1`,
     `${qiongtongRoot}/chapters/v1-c008`,
+    jingangRoot,
+    `${jingangRoot}/volumes/v1`,
+    `${jingangRoot}/chapters/v1-c015`,
     "/books/missing",
   ]) {
     await page.goto(path);
