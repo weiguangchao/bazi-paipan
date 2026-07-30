@@ -306,12 +306,12 @@ describe("排盘 - 真太阳时合成（经度修正 + 均时差）(T5/#15)", ()
       ...input,
       birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
     });
-    const pillars = (result: ReturnType<typeof paipan>) => [
+    const sizhuValues = (result: ReturnType<typeof paipan>) => [
       result.nianzhu, result.yuezhu, result.rizhu, result.shizhu,
     ];
 
-    expect(pillars(clock)).toEqual(expectedClock);
-    expect(pillars(kashgar)).toEqual(expectedKashgar);
+    expect(sizhuValues(clock)).toEqual(expectedClock);
+    expect(sizhuValues(kashgar)).toEqual(expectedKashgar);
   });
 
   // 中央经线附近（北京 ~116.41°E）经度修正 + 均时差合计约 −18 分（2000-01-01），

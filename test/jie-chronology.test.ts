@@ -2,20 +2,18 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import {
   jieIntervals,
   locateJie,
-  locateTrueSolarJie,
   type JieInterval,
   type JieLocation,
   type JieOccurrence,
 } from "@/domain/time/jie-chronology";
 import type { Jie } from "@/domain/time/astronomy";
 import {
-  beijingDateTime,
   trueSolarDateTime,
-  type BeijingDateTime,
+  type TrueSolarDateTime,
 } from "@/domain/time/date-time";
 
 describe("Jie chronology - 完整立春周期", () => {
-  it("固定返回从立春到小寒的十二个连续区间，并结束于下一次立春", () => {
+  it("固定返回从立春到小寒的十二个连续真太阳时区间", () => {
     const intervals = jieIntervals(2024);
 
     expect(intervals).toHaveLength(12);
@@ -30,19 +28,25 @@ describe("Jie chronology - 完整立春周期", () => {
     expect(intervals[11]).toMatchObject({
       start: {
         jie: "小寒",
-        moment: { year: 2025, month: 1, day: 5, hour: 10, minute: 32, second: 47 },
+        moment: {
+          year: 2025, month: 1, day: 5, hour: 10, minute: 32, second: 46,
+          millisecond: 573,
+        },
       },
       end: {
         jie: "立春",
-        moment: { year: 2025, month: 2, day: 3, hour: 22, minute: 10, second: 28 },
+        moment: {
+          year: 2025, month: 2, day: 3, hour: 22, minute: 10, second: 28,
+          millisecond: 427,
+        },
       },
     });
   });
 
-  it("occurrence、interval、location 与周期结果均为 readonly 数据", () => {
+  it("occurrence、interval、location 与周期结果均为 readonly 真太阳时数据", () => {
     expectTypeOf<JieOccurrence>().toEqualTypeOf<Readonly<{
       jie: Jie;
-      moment: BeijingDateTime;
+      moment: TrueSolarDateTime;
     }>>();
     expectTypeOf<JieInterval>().toEqualTypeOf<Readonly<{
       lichunYear: number;
@@ -79,18 +83,18 @@ describe("Jie chronology - 完整立春周期", () => {
   });
 });
 
-describe("Jie chronology - 时刻定位", () => {
-  it("真太阳时交节前一毫秒、当毫秒与后一毫秒遵守半开区间", () => {
+describe("Jie chronology - 真太阳时时刻定位", () => {
+  it("交节前一毫秒、当毫秒与后一毫秒遵守半开区间", () => {
     const fields = {
       year: 2024, month: 2, day: 4, hour: 16, minute: 27, second: 6,
     };
-    const before = locateTrueSolarJie(
+    const before = locateJie(
       trueSolarDateTime({ ...fields, millisecond: 833 }),
     );
-    const at = locateTrueSolarJie(
+    const at = locateJie(
       trueSolarDateTime({ ...fields, millisecond: 834 }),
     );
-    const after = locateTrueSolarJie(
+    const after = locateJie(
       trueSolarDateTime({ ...fields, millisecond: 835 }),
     );
 
@@ -101,8 +105,8 @@ describe("Jie chronology - 时刻定位", () => {
     expect(at.strictLater.jie).toBe("惊蛰");
   });
 
-  it("真太阳时 chronology 使用同一出生地的交节边界", () => {
-    const location = locateTrueSolarJie(trueSolarDateTime({
+  it("使用同一出生地的交节边界", () => {
+    const location = locateJie(trueSolarDateTime({
       year: 2024, month: 2, day: 4, hour: 15, minute: 9, second: 34,
       millisecond: 253,
     }), 104.0668);
@@ -116,41 +120,10 @@ describe("Jie chronology - 时刻定位", () => {
     });
   });
 
-  it("交节前一秒、当秒与后一秒遵守半开区间及严格相邻语义", () => {
-    const before = locateJie(beijingDateTime({
-      year: 2024, month: 3, day: 5, hour: 10, minute: 22, second: 44,
-    }));
-    const at = locateJie(beijingDateTime({
-      year: 2024, month: 3, day: 5, hour: 10, minute: 22, second: 45,
-    }));
-    const after = locateJie(beijingDateTime({
-      year: 2024, month: 3, day: 5, hour: 10, minute: 22, second: 46,
-    }));
-    const intervals = jieIntervals(2024);
-
-    expect(before.interval).toEqual(intervals[0]);
-    expect(at.interval).toEqual(intervals[1]);
-    expect(after.interval).toEqual(intervals[1]);
-    expect({
-      current: before.interval.start.jie,
-      earlier: before.strictEarlier.jie,
-      later: before.strictLater.jie,
-    }).toEqual({ current: "立春", earlier: "立春", later: "惊蛰" });
-    expect({
-      current: at.interval.start.jie,
-      earlier: at.strictEarlier.jie,
-      later: at.strictLater.jie,
-    }).toEqual({ current: "惊蛰", earlier: "立春", later: "清明" });
-    expect({
-      current: after.interval.start.jie,
-      earlier: after.strictEarlier.jie,
-      later: after.strictLater.jie,
-    }).toEqual({ current: "惊蛰", earlier: "惊蛰", later: "清明" });
-  });
-
-  it("1801 年初定位到上一立春周期，并能取得跨正式端点的相邻 Jie", () => {
-    const location = locateJie(beijingDateTime({
+  it("1801 年初定位到上一立春周期并取得跨正式端点的相邻 Jie", () => {
+    const location = locateJie(trueSolarDateTime({
       year: 1801, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+      millisecond: 0,
     }));
 
     expect(location).toMatchObject({
@@ -164,9 +137,10 @@ describe("Jie chronology - 时刻定位", () => {
     });
   });
 
-  it("立春当秒的 strict earlier 跨周期指向小寒，strict later 指向惊蛰", () => {
-    const location = locateJie(beijingDateTime({
-      year: 2024, month: 2, day: 4, hour: 16, minute: 27, second: 7,
+  it("立春当毫秒的严格前后相邻分别指向小寒与惊蛰", () => {
+    const location = locateJie(trueSolarDateTime({
+      year: 2024, month: 2, day: 4, hour: 16, minute: 27, second: 6,
+      millisecond: 834,
     }));
 
     expect(location).toMatchObject({

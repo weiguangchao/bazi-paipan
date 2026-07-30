@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { jieMoment } from "@/domain/time/astronomy";
+import { trueSolarJieMoment } from "@/domain/time/astronomy";
 import {
   dateTimeTimestamp,
 } from "@/domain/time/date-time";
@@ -21,7 +21,7 @@ describe("独立天文 oracle", () => {
     let maximumErrorSeconds = 0;
     for (const fixture of jplJieFixtures) {
       const actualUtc =
-        dateTimeTimestamp(jieMoment(fixture.year, fixture.jie))
+        dateTimeTimestamp(trueSolarJieMoment(fixture.year, fixture.jie))
         - BEIJING_OFFSET_MILLISECONDS;
       const expectedUtc = Date.parse(fixture.utcIso);
       maximumErrorSeconds = Math.max(
@@ -50,7 +50,7 @@ describe("独立天文 oracle", () => {
   it("HKO 官方 2014 分钟表的十二个 Jie 误差不超过 60 秒", () => {
     let maximumErrorSeconds = 0;
     for (const fixture of hkoJieFixtures) {
-      const actual = jieMoment(2014, fixture.jie);
+      const actual = trueSolarJieMoment(2014, fixture.jie);
       const expectedTimestamp = Date.UTC(
         2014,
         fixture.month - 1,

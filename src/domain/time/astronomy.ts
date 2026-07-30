@@ -1,9 +1,7 @@
 import {
   dateTimeTimestamp,
-  derivedBeijingDateTime,
   trueSolarDateTime,
   type BeijingDateTime,
-  type DateTimeFields,
   type TrueSolarDateTime,
 } from "@/domain/time/date-time";
 import {
@@ -20,9 +18,7 @@ export const JIE_NAMES = [
 export type Jie = typeof JIE_NAMES[number];
 
 const J2000 = 2451545;
-const JULIAN_UNIX_EPOCH = 2440587.5;
 const SECONDS_PER_DAY = 86_400;
-const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
 const BEIJING_OFFSET_DAYS = 1 / 3;
 const TWO_PI = Math.PI * 2;
 
@@ -62,28 +58,55 @@ function continuousSolarLongitude(year: number, jie: Jie): number {
   return target + cycle * TWO_PI;
 }
 
-function fieldsFromLocalJulianDay(localJulianDay: number): DateTimeFields {
-  const roundedUnixSeconds = Math.round(
-    (localJulianDay - JULIAN_UNIX_EPOCH) * SECONDS_PER_DAY,
-  );
-  const date = new Date(roundedUnixSeconds * 1000);
-  return {
-    year: date.getUTCFullYear(),
-    month: date.getUTCMonth() + 1,
-    day: date.getUTCDate(),
-    hour: date.getUTCHours(),
-    minute: date.getUTCMinutes(),
-    second: date.getUTCSeconds(),
-  };
+function calendarFieldsFromJulianDay(julianDay: number): {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  fractionalSecond: number;
+} {
+  let dayInteger = Math.floor(julianDay + 0.5);
+  let fraction = julianDay + 0.5 - dayInteger;
+  if (dayInteger >= 2299161) {
+    const century = Math.floor((dayInteger - 1867216.25) / 36524.25);
+    dayInteger += 1 + century - Math.floor(century / 4);
+  }
+  dayInteger += 1524;
+  let year = Math.floor((dayInteger - 122.1) / 365.25);
+  dayInteger -= Math.floor(365.25 * year);
+  let month = Math.floor(dayInteger / 30.601);
+  dayInteger -= Math.floor(30.601 * month);
+  const day = dayInteger;
+  if (month > 13) {
+    month -= 13;
+    year -= 4715;
+  } else {
+    month -= 1;
+    year -= 4716;
+  }
+  fraction *= 24;
+  const hour = Math.floor(fraction);
+  fraction = (fraction - hour) * 60;
+  const minute = Math.floor(fraction);
+  const fractionalSecond = (fraction - minute) * 60;
+  return { year, month, day, hour, minute, fractionalSecond };
 }
 
 function trueSolarDateTimeFromLocalJulianDay(
   localJulianDay: number,
   correctionSeconds = 0,
 ): TrueSolarDateTime {
-  const roundedTimestamp = Math.round(
-    (localJulianDay - JULIAN_UNIX_EPOCH) * MILLISECONDS_PER_DAY
-      + correctionSeconds * 1000,
+  const fields = calendarFieldsFromJulianDay(localJulianDay);
+  const roundedTimestamp = Date.UTC(
+    fields.year,
+    fields.month - 1,
+    fields.day,
+    fields.hour,
+    fields.minute,
+    0,
+  ) + Math.round(
+    (fields.fractionalSecond + correctionSeconds) * 1000,
   );
   const result = new Date(roundedTimestamp);
   return trueSolarDateTime({
@@ -95,16 +118,6 @@ function trueSolarDateTimeFromLocalJulianDay(
     second: result.getUTCSeconds(),
     millisecond: result.getUTCMilliseconds(),
   });
-}
-
-export function jieMoment(year: number, jie: Jie): BeijingDateTime {
-  if (!Number.isInteger(year)) {
-    throw new RangeError(`year 必须是整数：${String(year)}`);
-  }
-  const localJ2000Days = solarLongitudeMomentBeijingDays(
-    continuousSolarLongitude(year, jie),
-  );
-  return derivedBeijingDateTime(fieldsFromLocalJulianDay(localJ2000Days + J2000));
 }
 
 export function trueSolarJieMoment(

@@ -104,12 +104,6 @@ export function beijingDateTime(fields: DateTimeFields): BeijingDateTime {
   return { ...fields } as BeijingDateTime;
 }
 
-/** 仅供天文 facade 构造派生交节时刻；出生资料范围仍由 beijingDateTime 守住。 */
-export function derivedBeijingDateTime(fields: DateTimeFields): BeijingDateTime {
-  assertValidFields(fields);
-  return { ...fields } as BeijingDateTime;
-}
-
 export function trueSolarDateTime(
   fields: MillisecondDateTimeFields,
 ): TrueSolarDateTime {

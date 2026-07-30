@@ -7,10 +7,14 @@ export interface ReferenceDateTime {
   second: number;
 }
 
+export interface ReferenceJieDateTime extends ReferenceDateTime {
+  millisecond: number;
+}
+
 export function referenceJieMoment(
   year: number,
   jie: string,
-): ReferenceDateTime;
+): ReferenceJieDateTime;
 
 export function referenceEquationOfTimeSeconds(
   fields: ReferenceDateTime,

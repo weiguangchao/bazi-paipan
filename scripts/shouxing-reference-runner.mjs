@@ -49,8 +49,8 @@ export function referenceJieMoment(year, jie) {
     fields.D,
     fields.h,
     fields.m,
-    Math.round(fields.s),
-  ));
+    0,
+  ) + Math.round(fields.s * 1000));
   return {
     year: rounded.getUTCFullYear(),
     month: rounded.getUTCMonth() + 1,
@@ -58,6 +58,7 @@ export function referenceJieMoment(year, jie) {
     hour: rounded.getUTCHours(),
     minute: rounded.getUTCMinutes(),
     second: rounded.getUTCSeconds(),
+    millisecond: rounded.getUTCMilliseconds(),
   };
 }
 

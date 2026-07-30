@@ -18,8 +18,8 @@ import {
 } from "@/domain/time/date-time";
 import { toTrueSolarDateTime } from "@/domain/time/astronomy";
 import {
-  locateTrueSolarJie,
-  type TrueSolarJieOccurrence,
+  locateJie,
+  type JieOccurrence,
 } from "@/domain/time/jie-chronology";
 
 /** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
@@ -66,7 +66,7 @@ const RIZHU_ANCHOR_DAY = 1;
 const RIZHU_ANCHOR_INDEX = 54;
 
 // 月地支序号（子=0、丑=1、寅=2…亥=11）：立春->寅(2)…小寒->丑(1)。
-const JIE_MONTH_DIZHI_INDEX: Readonly<Record<TrueSolarJieOccurrence["jie"], number>> = {
+const JIE_MONTH_DIZHI_INDEX: Readonly<Record<JieOccurrence["jie"], number>> = {
   "立春": 2,
   "惊蛰": 3,
   "清明": 4,
@@ -152,7 +152,7 @@ function computeNianzhu(lichunYear: number): [Ganzhi, number] {
  * 上一年的年干推算，与年柱归属保持一致。
  */
 function computeYuezhu(
-  jie: TrueSolarJieOccurrence["jie"],
+  jie: JieOccurrence["jie"],
   yearTianganIndex: number,
 ): Ganzhi {
   const monthDizhiIndex = JIE_MONTH_DIZHI_INDEX[jie];
@@ -218,7 +218,7 @@ function isNearZizheng(hour: number, minute: number): boolean {
  */
 export function paipan(input: PaipanInput): PaipanResult {
   const { trueSolarTime, longitude } = resolveTimes(input);
-  const jieLocation = locateTrueSolarJie(trueSolarTime, longitude);
+  const jieLocation = locateJie(trueSolarTime, longitude);
   const offset = daysSinceAnchor(
     trueSolarTime.year,
     trueSolarTime.month,

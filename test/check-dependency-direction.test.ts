@@ -81,6 +81,20 @@ describe("依赖方向守卫", () => {
     ]);
   });
 
+  it("拒绝天文 facade 重新暴露旧北京时间 Jie seam", () => {
+    const source = `
+      import type { BeijingDateTime } from "@/domain/time/date-time";
+      export function jieMoment(): BeijingDateTime {
+        throw new Error("legacy");
+      }
+    `;
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "legacy-beijing-jie-facade" }),
+    ]);
+  });
+
   it("允许 utils -> domain（展示适配消费纯核）", () => {
     const source = 'import { characterWuxing } from "@/domain/ganzhi/wuxing";';
     expect(findDependencyViolations(source, "src/utils/wuxing.ts")).toEqual([]);

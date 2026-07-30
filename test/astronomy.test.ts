@@ -8,7 +8,6 @@ import {
   trueSolarDateTime,
 } from "@/domain/time/date-time";
 import {
-  jieMoment,
   trueSolarJieMoment,
   toTrueSolarDateTime,
 } from "@/domain/time/astronomy";
@@ -83,15 +82,6 @@ describe("BeijingDateTime", () => {
 });
 
 describe("寿星太阳 facade", () => {
-  it("十二个 Jie 使用强类型名称并在出口四舍五入至整秒", () => {
-    expect(jieMoment(2024, "立春")).toMatchObject({
-      year: 2024, month: 2, day: 4, hour: 16, minute: 27, second: 7,
-    });
-    expect(jieMoment(2025, "小寒")).toMatchObject({
-      year: 2025, month: 1, day: 5, hour: 10, minute: 32, second: 47,
-    });
-  });
-
   it("未提供出生地时复制钟表时字段并补零毫秒", () => {
     const clockTime = beijingDateTime({
       year: 1997, month: 11, day: 19, hour: 9, minute: 0, second: 0,

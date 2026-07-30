@@ -123,11 +123,61 @@ function collectImportSpecifiers(source, fileName) {
   return specifiers;
 }
 
+function exportedLegacyJieFacadePosition(source, fileName) {
+  const normalizedFile = String(fileName).replace(/\\/g, "/");
+  if (!normalizedFile.endsWith("src/domain/time/astronomy.ts")) return null;
+  const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  let position = null;
+  const isExported = (node) =>
+    node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
+
+  function record(node) {
+    if (position !== null) return;
+    const start = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+    position = { line: start.line + 1, column: start.character + 1 };
+  }
+
+  function visit(node) {
+    if (
+      ts.isFunctionDeclaration(node)
+      && isExported(node)
+      && node.name?.text === "jieMoment"
+    ) {
+      record(node.name);
+    } else if (ts.isVariableStatement(node) && isExported(node)) {
+      for (const declaration of node.declarationList.declarations) {
+        if (ts.isIdentifier(declaration.name) && declaration.name.text === "jieMoment") {
+          record(declaration.name);
+        }
+      }
+    } else if (ts.isExportDeclaration(node) && node.exportClause
+      && ts.isNamedExports(node.exportClause)) {
+      for (const element of node.exportClause.elements) {
+        if (element.name.text === "jieMoment") record(element.name);
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return position;
+}
+
 export function findDependencyViolations(source, fileName = "fixture.ts") {
   const fromLayer = fromLayerOfPath(fileName);
   if (!fromLayer) return [];
   const allowed = ALLOWED_DEPENDENCIES[fromLayer];
   const violations = [];
+  const legacyJieFacade = exportedLegacyJieFacadePosition(source, fileName);
+  if (legacyJieFacade) {
+    violations.push({
+      specifier: "jieMoment",
+      fromLayer,
+      toLayer: "legacy-beijing-jie-facade",
+      allowed: ["trueSolarJieMoment facade"],
+      ...legacyJieFacade,
+    });
+  }
   for (const { specifier, line, column } of collectImportSpecifiers(source, fileName)) {
     const normalizedFile = String(fileName).replace(/\\/g, "/");
     const importsPrivateShouxingCore =

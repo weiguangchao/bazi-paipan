@@ -14,14 +14,14 @@ import {
   type TrueSolarDateTime,
 } from "@/domain/time/date-time";
 import {
-  locateTrueSolarJie,
-  trueSolarJieIntervals,
-  type TrueSolarJieOccurrence,
+  jieIntervals,
+  locateJie,
+  type JieOccurrence,
 } from "@/domain/time/jie-chronology";
 
 export interface Liuyuezhu {
   ganzhi: Ganzhi;
-  startJie: TrueSolarJieOccurrence["jie"];
+  startJie: JieOccurrence["jie"];
   startTime: TrueSolarDateTime;
   endTime: TrueSolarDateTime;
   startMonth: number;
@@ -41,8 +41,8 @@ export function liuyue(
   currentTime: TrueSolarDateTime,
   longitude?: number,
 ): Liuyuezhu[] {
-  const intervals = trueSolarJieIntervals(year, longitude);
-  const currentInterval = locateTrueSolarJie(currentTime, longitude).interval;
+  const intervals = jieIntervals(year, longitude);
+  const currentInterval = locateJie(currentTime, longitude).interval;
   const startTianganIndex = liuyueStartTianganIndex(year);
 
   return intervals.map((interval, index) => {

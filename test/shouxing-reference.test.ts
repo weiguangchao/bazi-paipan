@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { JIE_NAMES, jieMoment } from "@/domain/time/astronomy";
+import { JIE_NAMES, trueSolarJieMoment } from "@/domain/time/astronomy";
 import {
   equationOfTimeDays,
   julianDayFromFields,
@@ -13,11 +13,12 @@ const J2000 = 2451545;
 const BEIJING_OFFSET_DAYS = 8 / 24;
 
 describe("固定寿星 JavaScript reference 全量差分", () => {
-  it("1801–2099 × 12 个 Jie 的整秒出口 3588/3588 完全相等", () => {
+  it("1801–2099 × 12 个 Jie 的毫秒出口 3588/3588 完全相等", () => {
     let checked = 0;
     for (let year = 1801; year <= 2099; year += 1) {
       for (const jie of JIE_NAMES) {
-        expect(jieMoment(year, jie)).toMatchObject(referenceJieMoment(year, jie));
+        expect(trueSolarJieMoment(year, jie))
+          .toEqual(referenceJieMoment(year, jie));
         checked += 1;
       }
     }
