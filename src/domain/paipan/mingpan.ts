@@ -16,7 +16,12 @@ import {
 } from "@/domain/ganzhi/ganzhi-relations";
 import { personalInfo, type PersonalInfo } from "@/domain/birth/personal-info";
 import type { BirthProfile } from "@/domain/birth/birth-profile";
-import type { BeijingDateTime } from "@/domain/time/date-time";
+import { findLongitude } from "@/domain/birth/birthplace";
+import { toTrueSolarDateTime } from "@/domain/time/astronomy";
+import type {
+  BeijingDateTime,
+  TrueSolarDateTime,
+} from "@/domain/time/date-time";
 
 /** 藏干及其相对日主的十神。 */
 export interface CangganOut {
@@ -128,7 +133,7 @@ function liunianZhu(
   };
 }
 
-/** 大运柱：十神由命盘统一附加，当前大运按当前年月判定，关联流年与流月由命盘统一产出。 */
+/** 大运柱：十神由命盘统一附加，当前大运按当前真太阳时年月判定，关联流年与流月由命盘统一产出。 */
 function dayunZhu(
   p: {
     ganzhi: Ganzhi;
@@ -136,7 +141,8 @@ function dayunZhu(
     startYearMonth: { year: number; month: number };
   },
   dayMaster: Tiangan,
-  currentTime: BeijingDateTime,
+  currentTime: TrueSolarDateTime,
+  currentClockTime: BeijingDateTime,
 ): DayunzhuOut {
   const startMonthIndex = p.startYearMonth.year * 12 + p.startYearMonth.month - 1;
   const currentMonthIndex = currentTime.year * 12 + currentTime.month - 1;
@@ -149,9 +155,18 @@ function dayunZhu(
     isCurrent:
       currentMonthIndex >= startMonthIndex && currentMonthIndex < startMonthIndex + 120,
     liunian: liunian(p.startYearMonth.year).map((item) =>
-      liunianZhu(item, dayMaster, currentTime),
+      liunianZhu(item, dayMaster, currentClockTime),
     ),
   };
+}
+
+function birthplaceLongitude(input: BirthProfile): number | undefined {
+  if (!input.birthplace) return undefined;
+  const result = findLongitude(input.birthplace);
+  if (!result.found) {
+    throw new RangeError("出生资料包含未知出生地，无法计算当前真太阳时");
+  }
+  return result.longitude;
 }
 
 /**
@@ -164,6 +179,10 @@ export function mingpan(
   currentTime: BeijingDateTime,
 ): Mingpan {
   const result = paipan(input);
+  const currentTrueSolarTime = toTrueSolarDateTime(
+    currentTime,
+    birthplaceLongitude(input),
+  );
   const dayMaster = ganzhiTiangan(result.rizhu);
 
   const personal = personalInfo({ year: input.year, month: input.month, day: input.day });
@@ -187,7 +206,7 @@ export function mingpan(
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
     zhu: dayun.zhu.map((p) =>
-      dayunZhu(p, dayMaster, currentTime),
+      dayunZhu(p, dayMaster, currentTrueSolarTime, currentTime),
     ),
   };
 

@@ -77,6 +77,52 @@ describe("命盘 - 完整流月嵌套", () => {
     });
   });
 
+  it("当前北京时间与喀什真太阳时跨月时按真太阳时年月切换当前大运", () => {
+    const input: BirthProfile = {
+      year: 2000, month: 3, day: 10, hour: 12, minute: 0,
+      gender: "男",
+      birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
+    };
+    const before = mingpan(input, beijingDateTime({
+      year: 2018, month: 8, day: 1, hour: 0, minute: 30, second: 0,
+    }));
+    const after = mingpan(input, beijingDateTime({
+      year: 2018, month: 8, day: 1, hour: 4, minute: 0, second: 0,
+    }));
+    const currentDayunStart = (result: ReturnType<typeof mingpan>) =>
+      result.dayun.zhu.find((item) => item.isCurrent)?.startYear;
+    const currentYear = (result: ReturnType<typeof mingpan>) =>
+      result.dayun.zhu.flatMap((item) => item.liunian)
+        .find((item) => item.isCurrentYear)?.year;
+
+    expect(currentDayunStart(before)).toBe(2008);
+    expect(currentDayunStart(after)).toBe(2018);
+    expect(currentYear(before)).toBe(2018);
+    expect(currentYear(after)).toBe(2018);
+  });
+
+  it("当前真太阳时跨年时今年仍使用注入的北京时间公历年", () => {
+    const result = mingpan({
+      year: 2000, month: 3, day: 10, hour: 12, minute: 0,
+      gender: "男",
+      birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
+    }, beijingDateTime({
+      year: 2018, month: 1, day: 1, hour: 0, minute: 30, second: 0,
+    }));
+    const liunian = result.dayun.zhu.flatMap((item) => item.liunian);
+
+    expect(result.dayun.zhu.find((item) => item.isCurrent)?.startYear).toBe(2008);
+    expect(liunian.find((item) => item.isCurrentYear)?.year).toBe(2018);
+  });
+
+  it("当前真太阳时不在所列大运范围时不标记当前大运", () => {
+    const result = mingpan(birthProfile(), beijingDateTime({
+      year: 1900, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+    }));
+
+    expect(result.dayun.zhu.some((item) => item.isCurrent)).toBe(false);
+  });
+
   it("跨调用的流年与流月不共享可变对象", () => {
     const first = mingpan(birthProfile(), NOW);
     const second = mingpan(birthProfile(), NOW);
