@@ -107,7 +107,7 @@ describe("依赖方向守卫", () => {
     ]);
   });
 
-  it("拒绝天文 facade 重新暴露旧北京时间 Jie seam", () => {
+  it("拒绝天文 facade 重新暴露旧钟表时 Jie seam", () => {
     const source = `
       import type { BeijingDateTime } from "@/domain/time/date-time";
       export function jieMoment(): BeijingDateTime {
@@ -124,7 +124,7 @@ describe("依赖方向守卫", () => {
     ]);
   });
 
-  it("拒绝天文 facade 改名重新暴露北京时间 Jie seam", () => {
+  it("拒绝天文 facade 改名重新暴露钟表时 Jie seam", () => {
     const source = `
       import type { BeijingDateTime } from "@/domain/time/date-time";
       export function beijingJieMoment(): BeijingDateTime {
