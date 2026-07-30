@@ -115,6 +115,32 @@ describe("命盘 - 完整流月嵌套", () => {
     expect(liunian.find((item) => item.isCurrentYear)?.year).toBe(2018);
   });
 
+  it("喀什当前真太阳时在惊蛰前后切换本月且今年保持公历年", () => {
+    const input: BirthProfile = {
+      year: 2000, month: 3, day: 10, hour: 12, minute: 0,
+      gender: "男",
+      birthplace: { province: "新疆维吾尔自治区", city: "喀什地区" },
+    };
+    const before = mingpan(input, beijingDateTime({
+      year: 2025, month: 3, day: 5, hour: 16, minute: 7, second: 17,
+    }));
+    const after = mingpan(input, beijingDateTime({
+      year: 2025, month: 3, day: 5, hour: 16, minute: 7, second: 18,
+    }));
+    const currentLiuyue = (result: ReturnType<typeof mingpan>) =>
+      result.dayun.zhu.flatMap((item) => item.liunian)
+        .flatMap((item) => item.liuyue)
+        .find((item) => item.isCurrent)?.ganzhi;
+    const currentYear = (result: ReturnType<typeof mingpan>) =>
+      result.dayun.zhu.flatMap((item) => item.liunian)
+        .find((item) => item.isCurrentYear)?.year;
+
+    expect(currentLiuyue(before)).toBe("戊寅");
+    expect(currentLiuyue(after)).toBe("己卯");
+    expect(currentYear(before)).toBe(2025);
+    expect(currentYear(after)).toBe(2025);
+  });
+
   it("当前真太阳时不在所列大运范围时不标记当前大运", () => {
     const result = mingpan(birthProfile(), beijingDateTime({
       year: 1900, month: 1, day: 1, hour: 0, minute: 0, second: 0,

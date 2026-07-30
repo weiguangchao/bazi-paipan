@@ -116,14 +116,16 @@ function zhuShishen(
 function liunianZhu(
   item: { year: number; ganzhi: Ganzhi },
   dayMaster: Tiangan,
-  currentTime: BeijingDateTime,
+  currentClockTime: BeijingDateTime,
+  currentTrueSolarTime: TrueSolarDateTime,
+  longitude: number | undefined,
 ): LiunianItemOut {
   return {
     year: item.year,
     ganzhi: item.ganzhi,
     ...zhuShishen(item.ganzhi, dayMaster),
-    isCurrentYear: item.year === currentTime.year,
-    liuyue: liuyue(item.year, currentTime).map((liuyuezhu) => {
+    isCurrentYear: item.year === currentClockTime.year,
+    liuyue: liuyue(item.year, currentTrueSolarTime, longitude).map((liuyuezhu) => {
       const { startTime: _startTime, endTime: _endTime, ...visible } = liuyuezhu;
       return {
         ...visible,
@@ -143,6 +145,7 @@ function dayunZhu(
   dayMaster: Tiangan,
   currentTime: TrueSolarDateTime,
   currentClockTime: BeijingDateTime,
+  longitude: number | undefined,
 ): DayunzhuOut {
   const startMonthIndex = p.startYearMonth.year * 12 + p.startYearMonth.month - 1;
   const currentMonthIndex = currentTime.year * 12 + currentTime.month - 1;
@@ -155,7 +158,13 @@ function dayunZhu(
     isCurrent:
       currentMonthIndex >= startMonthIndex && currentMonthIndex < startMonthIndex + 120,
     liunian: liunian(p.startYearMonth.year).map((item) =>
-      liunianZhu(item, dayMaster, currentClockTime),
+      liunianZhu(
+        item,
+        dayMaster,
+        currentClockTime,
+        currentTime,
+        longitude,
+      ),
     ),
   };
 }
@@ -179,9 +188,10 @@ export function mingpan(
   currentTime: BeijingDateTime,
 ): Mingpan {
   const result = paipan(input);
+  const longitude = birthplaceLongitude(input);
   const currentTrueSolarTime = toTrueSolarDateTime(
     currentTime,
-    birthplaceLongitude(input),
+    longitude,
   );
   const dayMaster = ganzhiTiangan(result.rizhu);
 
@@ -206,7 +216,7 @@ export function mingpan(
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
     zhu: dayun.zhu.map((p) =>
-      dayunZhu(p, dayMaster, currentTrueSolarTime, currentTime),
+      dayunZhu(p, dayMaster, currentTrueSolarTime, currentTime, longitude),
     ),
   };
 

@@ -75,6 +75,18 @@ function trueSolarCalendarMonthOccurrence(
   };
 }
 
+function trueSolarLichunCycleOccurrence(
+  lichunYear: number,
+  jie: Jie,
+  longitude: number | undefined,
+): TrueSolarJieOccurrence {
+  const calendarYear = jie === "小寒" ? lichunYear + 1 : lichunYear;
+  return {
+    jie,
+    moment: trueSolarJieMoment(calendarYear, jie, longitude),
+  };
+}
+
 export function jieIntervals(lichunYear: number): readonly JieInterval[] {
   if (!Number.isInteger(lichunYear)) {
     throw new RangeError(`lichunYear 必须是整数：${String(lichunYear)}`);
@@ -84,6 +96,30 @@ export function jieIntervals(lichunYear: number): readonly JieInterval[] {
     lichunCycleOccurrence(lichunYear, jie),
   );
   const nextLichun = lichunCycleOccurrence(lichunYear + 1, "立春");
+
+  return occurrences.map((start, index) => ({
+    lichunYear,
+    start,
+    end: occurrences[index + 1] ?? nextLichun,
+  }));
+}
+
+export function trueSolarJieIntervals(
+  lichunYear: number,
+  longitude?: number,
+): readonly TrueSolarJieInterval[] {
+  if (!Number.isInteger(lichunYear)) {
+    throw new RangeError(`lichunYear 必须是整数：${String(lichunYear)}`);
+  }
+
+  const occurrences = JIE_NAMES.map((jie) =>
+    trueSolarLichunCycleOccurrence(lichunYear, jie, longitude),
+  );
+  const nextLichun = trueSolarLichunCycleOccurrence(
+    lichunYear + 1,
+    "立春",
+    longitude,
+  );
 
   return occurrences.map((start, index) => ({
     lichunYear,
