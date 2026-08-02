@@ -1,7 +1,6 @@
-// 排盘纯函数
-// 单一测试 seam：输入钟表时出生时刻（可选出生地），返回年柱 + 月柱 + 日柱 + 时柱
+// 命盘内部排盘纯计算：输入出生真太阳时、出生 Jie 位置与性别，返回四柱和大运。
 // 遵循 ADR-0001（年柱按立春切换、月柱按节切换）、ADR-0002（日界线在子正、早晚子时）
-// 四柱、早晚子时、近子正与起运使用同一个出生真太阳时。
+// 四柱、早晚子时与起运使用同一个出生真太阳时。
 
 import {
   liushijiazi,
@@ -10,52 +9,20 @@ import {
   ganzhiFromCharacters,
   type Ganzhi,
 } from "@/domain/ganzhi/ganzhi";
-import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
 import { dayun, type Gender, type DayunResult } from "@/domain/paipan/dayun";
-import {
-  beijingDateTime,
-  type TrueSolarDateTime,
-} from "@/domain/time/date-time";
-import { toTrueSolarDateTime } from "@/domain/time/astronomy";
-import {
-  locateJie,
-  type JieOccurrence,
+import type { TrueSolarDateTime } from "@/domain/time/date-time";
+import type {
+  JieOccurrence,
+  JieLocation,
 } from "@/domain/time/jie-chronology";
 
-/** 排盘输入：公历年月日 + 时分（钟表时，北京时间 UTC+8），可选出生地与性别。 */
-export interface PaipanInput {
-  year: number;
-  month: number;
-  day: number;
-  hour: number;
-  minute: number;
-  second?: number;
-  /**
-   * 可选出生地。给出时按经度修正为真太阳时再排盘；未给出时走钟表时。
-   * 查不到省/市时抛 RangeError（CLI 应捕获并提示用户）。
-   */
-  birthplace?: Birthplace;
-  /**
-   * 可选性别。给出时计算大运（10 柱）并附在返回结果中；未给出时不计算大运。
-   * 大运方向按阳男阴女顺、阴男阳女逆，起运岁与每柱干支依赖性别。
-   */
-  gender?: Gender;
-}
-
-/** 排盘输出 - T5 阶段含年柱 + 月柱 + 日柱 + 时柱 + 经度修正标志。
- *  T6 阶段增附大运（仅当输入带 gender 时）。 */
+/** 命盘内部排盘输出：四柱与必需的大运。 */
 export interface PaipanResult {
   nianzhu: Ganzhi;
   yuezhu: Ganzhi;
   rizhu: Ganzhi;
   shizhu: Ganzhi;
-  /** 出生时刻近子正（00:00）时为 true，CLI 据此打印跨界提示 */
-  nearZizheng: boolean;
-  /**
-   * 大运（10 柱）。仅当输入带 gender 时给出，否则为 undefined。
-   * CLI 据此打印 10 柱大运。
-   */
-  dayun?: DayunResult;
+  dayun: DayunResult;
 }
 
 // 锚点：2000-01-01 日柱为戊午，六十甲子序号 54（甲子=0）
@@ -101,37 +68,6 @@ function daysSinceAnchor(year: number, month: number, day: number): number {
     RIZHU_ANCHOR_DAY,
   );
   return Math.round((target - anchor) / 86_400_000);
-}
-
-function resolveTimes(input: PaipanInput): {
-  trueSolarTime: TrueSolarDateTime;
-  longitude: number | undefined;
-} {
-  const clockTime = beijingDateTime({
-    year: input.year,
-    month: input.month,
-    day: input.day,
-    hour: input.hour,
-    minute: input.minute,
-    second: input.second ?? 0,
-  });
-  if (!input.birthplace) {
-    return {
-      trueSolarTime: toTrueSolarDateTime(clockTime, undefined),
-      longitude: undefined,
-    };
-  }
-  const r = findLongitude(input.birthplace);
-  if (!r.found) {
-    const where = r.reason === "未知省份"
-      ? `省份"${input.birthplace.province}"`
-      : `省份"${input.birthplace.province}"下的城市"${input.birthplace.city}"`;
-    throw new RangeError(`未知出生地：${where}，无法做经度修正`);
-  }
-  return {
-    trueSolarTime: toTrueSolarDateTime(clockTime, r.longitude),
-    longitude: r.longitude,
-  };
 }
 
 /**
@@ -192,37 +128,25 @@ function computeShizhu(hour: number, dayTianganIndex: number): Ganzhi {
   return ganzhiFromCharacters(tiangan[tianganIndex]!, dizhi[dizhiIndex]!);
 }
 
-/** 子正跨界提示阈值（分钟）：出生时刻距最近子正（00:00）在此范围内时判定为近子正 */
-const ZIZHENG_WARN_MINUTES = 15;
-
-/** 出生时刻是否近子正（00:00）。子正为早晚子时分界，近子正时刻几分出入即影响日柱/时柱。 */
-function isNearZizheng(hour: number, minute: number): boolean {
-  const minutesOfDay = hour * 60 + minute;
-  const distToMidnight = Math.min(minutesOfDay, 1440 - minutesOfDay);
-  return distToMidnight <= ZIZHENG_WARN_MINUTES;
-}
-
 /**
- * 排盘纯函数。
- * T5：返回年柱 + 月柱 + 日柱 + 时柱。
- * T6：输入带 gender 时附大运（10 柱）。
- * - 真太阳时作为输入预处理：给出出生地时按经度修正 + 均时差合成为真太阳时
- *   （视太阳时）；未给出生地时复制北京时间。
+ * 命盘内部排盘纯函数。
  * - 年柱按真太阳时立春切换、月柱按真太阳时 Jie 切换（ADR-0007）
  * - 起运按严格相邻真太阳时 Jie 求差，起运年月从出生真太阳时年月起算
  * - 日柱按公历日，日界线在子正（00:00）；23:59 仍属当日，次日 00:00 切为新日柱
  * - 时柱地支按时辰取，天干由日干按五鼠遁推出；子时依早晚子时（ADR-0002）
- * - 日柱、时柱与近子正判定使用真太阳时
+ * - 日柱、时柱使用真太阳时
  * - 大运从月柱出发排 10 柱，方向按阳男阴女顺/阴男阳女逆；起运岁按出生时刻到
  *   最近一节的天数 3 天折 1 年折算（精确到年+月）
  */
-export function paipan(input: PaipanInput): PaipanResult {
-  const { trueSolarTime, longitude } = resolveTimes(input);
-  const jieLocation = locateJie(trueSolarTime, longitude);
+export function paipan(
+  birthTime: TrueSolarDateTime,
+  jieLocation: JieLocation,
+  gender: Gender,
+): PaipanResult {
   const offset = daysSinceAnchor(
-    trueSolarTime.year,
-    trueSolarTime.month,
-    trueSolarTime.day,
+    birthTime.year,
+    birthTime.month,
+    birthTime.day,
   );
   const [nianzhu, yearTianganIndex] = computeNianzhu(jieLocation.interval.lichunYear);
   // 六十甲子序号需归一化到 [0,60)：锚点前的日期 offset 为负，% 在 JS 保留符号，
@@ -230,21 +154,17 @@ export function paipan(input: PaipanInput): PaipanResult {
   const dayIndex = (((RIZHU_ANCHOR_INDEX + offset) % 60) + 60) % 60;
   const dayTianganIndex = dayIndex % 10;
   const yuezhu = computeYuezhu(jieLocation.interval.start.jie, yearTianganIndex);
-  const result: PaipanResult = {
+  return {
     nianzhu,
     yuezhu,
     rizhu: liushijiazi(dayIndex),
-    shizhu: computeShizhu(trueSolarTime.hour, dayTianganIndex),
-    nearZizheng: isNearZizheng(trueSolarTime.hour, trueSolarTime.minute),
-  };
-  if (input.gender !== undefined) {
-    result.dayun = dayun({
+    shizhu: computeShizhu(birthTime.hour, dayTianganIndex),
+    dayun: dayun({
       yuezhu,
       yearTianganIndex,
-      gender: input.gender,
-      birthTime: trueSolarTime,
+      gender,
+      birthTime,
       jieLocation,
-    });
-  }
-  return result;
+    }),
+  };
 }

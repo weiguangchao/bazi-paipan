@@ -91,15 +91,52 @@ describe("依赖方向守卫", () => {
     ]);
   });
 
-  it("只允许 paipan 与 mingpan 入口定位真太阳时 Jie", () => {
+  it("只允许 mingpan 入口定位真太阳时 Jie", () => {
     const source =
       'import { locateJie } from "@/domain/time/jie-chronology";';
     expect(
       findDependencyViolations(source, "src/domain/paipan/paipan.ts"),
-    ).toEqual([]);
+    ).toEqual([
+      expect.objectContaining({ toLayer: "true-solar-conversion-boundary" }),
+    ]);
     expect(
       findDependencyViolations(source, "src/domain/paipan/mingpan.ts"),
     ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/dayun.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "true-solar-conversion-boundary" }),
+    ]);
+  });
+
+  it("只允许 mingpan import 内部 paipan seam", () => {
+    const source = 'import { paipan } from "@/domain/paipan/paipan";';
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/mingpan.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/adapter.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "internal-paipan-seam" }),
+    ]);
+  });
+
+  it.each([
+    '@/domain/paipan/paipan.ts',
+    '@/domain/paipan/paipan.js',
+    './paipan.ts',
+  ])("带扩展名时仍拒绝其他生产模块 import 内部 paipan seam：%s", (specifier) => {
+    const source = `import { paipan } from "${specifier}";`;
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/adapter.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "internal-paipan-seam" }),
+    ]);
+  });
+
+  it("带扩展名时仍只允许 mingpan 定位真太阳时 Jie", () => {
+    const source =
+      'import { locateJie } from "@/domain/time/jie-chronology.ts";';
     expect(
       findDependencyViolations(source, "src/domain/paipan/dayun.ts"),
     ).toEqual([

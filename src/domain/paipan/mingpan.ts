@@ -18,9 +18,10 @@ import { personalInfo, type PersonalInfo } from "@/domain/birth/personal-info";
 import type { BirthProfile } from "@/domain/birth/birth-profile";
 import { findLongitude } from "@/domain/birth/birthplace";
 import { toTrueSolarDateTime } from "@/domain/time/astronomy";
-import type {
-  BeijingDateTime,
-  TrueSolarDateTime,
+import {
+  beijingDateTime,
+  type BeijingDateTime,
+  type TrueSolarDateTime,
 } from "@/domain/time/date-time";
 import {
   jieIntervals,
@@ -190,35 +191,55 @@ function birthplaceLongitude(input: BirthProfile): number | undefined {
  * 干支关系、生肖星座。日主推导与十神附加在此统一完成。
  */
 export function mingpan(
-  input: BirthProfile,
+  profile: BirthProfile,
   currentTime: BeijingDateTime,
 ): Mingpan {
-  const result = paipan(input);
-  const longitude = birthplaceLongitude(input);
+  const longitude = birthplaceLongitude(profile);
+  const birthTrueSolarTime = toTrueSolarDateTime(
+    beijingDateTime({
+      year: profile.year,
+      month: profile.month,
+      day: profile.day,
+      hour: profile.hour,
+      minute: profile.minute,
+      second: 0,
+    }),
+    longitude,
+  );
+  const birthJieLocation = locateJie(birthTrueSolarTime, longitude);
   const currentTrueSolarTime = toTrueSolarDateTime(
     currentTime,
     longitude,
   );
-  const currentInterval = locateJie(currentTrueSolarTime, longitude).interval;
-  const dayMaster = ganzhiTiangan(result.rizhu);
+  const currentJieInterval = locateJie(currentTrueSolarTime, longitude).interval;
+  const paipanResult = paipan(
+    birthTrueSolarTime,
+    birthJieLocation,
+    profile.gender,
+  );
+  const dayMaster = ganzhiTiangan(paipanResult.rizhu);
 
-  const personal = personalInfo({ year: input.year, month: input.month, day: input.day });
+  const personal = personalInfo({
+    year: profile.year,
+    month: profile.month,
+    day: profile.day,
+  });
 
   const sizhu: SizhuOut = {
-    year: sizhuZhu(result.nianzhu, dayMaster, false),
-    month: sizhuZhu(result.yuezhu, dayMaster, false),
-    day: sizhuZhu(result.rizhu, dayMaster, true),
-    hour: sizhuZhu(result.shizhu, dayMaster, false),
+    year: sizhuZhu(paipanResult.nianzhu, dayMaster, false),
+    month: sizhuZhu(paipanResult.yuezhu, dayMaster, false),
+    day: sizhuZhu(paipanResult.rizhu, dayMaster, true),
+    hour: sizhuZhu(paipanResult.shizhu, dayMaster, false),
   };
 
   const ganzhiRelationsResult = ganzhiRelations({
-    nianzhu: result.nianzhu,
-    yuezhu: result.yuezhu,
-    rizhu: result.rizhu,
-    shizhu: result.shizhu,
+    nianzhu: paipanResult.nianzhu,
+    yuezhu: paipanResult.yuezhu,
+    rizhu: paipanResult.rizhu,
+    shizhu: paipanResult.shizhu,
   });
 
-  const dayun = result.dayun!;
+  const dayun = paipanResult.dayun;
   const liunianYears = new Set(
     dayun.zhu.flatMap((p) =>
       liunian(p.startYearMonth.year).map((item) => item.year),
@@ -237,7 +258,7 @@ export function mingpan(
         currentTrueSolarTime,
         currentTime,
         intervalsByYear,
-        currentInterval,
+        currentJieInterval,
       ),
     ),
   };

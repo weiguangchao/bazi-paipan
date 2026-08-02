@@ -213,24 +213,38 @@ export function findDependencyViolations(source, fileName = "fixture.ts") {
     column,
   } of collectImportSpecifiers(source, fileName)) {
     const normalizedFile = String(fileName).replace(/\\/g, "/");
+    const extension = path.extname(specifier);
+    const seamSpecifier = SOURCE_EXTENSIONS.has(extension)
+      ? specifier.slice(0, -extension.length)
+      : specifier;
     const importsJieChronology =
-      specifier.endsWith("/domain/time/jie-chronology")
-      || specifier.endsWith("../time/jie-chronology")
-      || specifier.endsWith("./jie-chronology");
-    const isTrueSolarConversionBoundary =
-      normalizedFile.endsWith("/src/domain/paipan/paipan.ts")
-      || normalizedFile === "src/domain/paipan/paipan.ts"
-      || normalizedFile.endsWith("/src/domain/paipan/mingpan.ts")
+      seamSpecifier.endsWith("/domain/time/jie-chronology")
+      || seamSpecifier.endsWith("../time/jie-chronology")
+      || seamSpecifier.endsWith("./jie-chronology");
+    const isMingpanModule =
+      normalizedFile.endsWith("/src/domain/paipan/mingpan.ts")
       || normalizedFile === "src/domain/paipan/mingpan.ts";
-    if (importsJieChronology && !typeOnly && !isTrueSolarConversionBoundary) {
+    if (importsJieChronology && !typeOnly && !isMingpanModule) {
       violations.push({
         specifier,
         fromLayer,
         toLayer: "true-solar-conversion-boundary",
-        allowed: [
-          "src/domain/paipan/paipan.ts",
-          "src/domain/paipan/mingpan.ts",
-        ],
+        allowed: ["src/domain/paipan/mingpan.ts"],
+        line,
+        column,
+      });
+      continue;
+    }
+    const importsInternalPaipan =
+      seamSpecifier.endsWith("/domain/paipan/paipan")
+      || seamSpecifier.endsWith("../paipan/paipan")
+      || seamSpecifier.endsWith("./paipan");
+    if (importsInternalPaipan && !isMingpanModule) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "internal-paipan-seam",
+        allowed: ["src/domain/paipan/mingpan.ts"],
         line,
         column,
       });
