@@ -7,6 +7,7 @@ import {
 } from "react";
 import { ArrowLeft, ArrowRight, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatBookAttribution } from "./book-attribution";
 import type {
   BookCatalog,
   BookRuntime,
@@ -225,7 +226,7 @@ export default function ChapterReader({
             <header className="chapter-heading">
               <p>{volume.title} · 第 {chapter.order} 篇</p>
               <h1>{chapter.title}</h1>
-              <span>{catalog.book.author} 编</span>
+              <span>{formatBookAttribution(catalog.book.attribution)}</span>
             </header>
             <div className="chapter-prose">
               {loading && <p className="reader-status" aria-live="polite">正在载入本卷正文…</p>}

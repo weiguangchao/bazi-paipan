@@ -1,16 +1,11 @@
 // 出生资料统一模块：单个 typed 出生资料值对象 + 字符串校验。
 // 词汇遵循 CONTEXT.md（出生资料、性别、出生地）。
 //
-// 校验逻辑（性别、日期、时间、省市同时性、出生地查找、出生日期上限）集中在此处的 parse，
-// adapter 与表单共用一处。模块不读时钟，当前年月由调用方注入。
+// 校验逻辑（性别、正式日期范围、时间、省市同时性、出生地查找）集中在此处的 parse，
+// adapter 与表单共用一处。模块不读时钟。
 // 时间解析（parseTime）在 birth-time，URL 序列化在 pages/paipan/url-params。
 
-import {
-  parseBirthDate,
-  isAfterBirthDateLimit,
-  getBirthDateLimit,
-  type CurrentYearMonth,
-} from "@/domain/birth/birth-date";
+import { parseBirthDate } from "@/domain/birth/birth-date";
 import { findLongitude, type Birthplace } from "@/domain/birth/birthplace";
 import { parseTime } from "@/domain/birth/birth-time";
 import type { Gender } from "@/domain/paipan/dayun";
@@ -42,9 +37,9 @@ export type ParseResult =
 
 /**
  * 校验出生资料字符串并转为 typed 值。失败返回字段级错误（字段名 → 中文消息）。
- * 校验项：性别、日期、时间、省市同时性、出生地查找、出生日期上限。
+ * 校验项：性别、1801–2099 日期范围、时间、省市同时性、出生地查找。
  */
-export function parse(input: BirthDataInput, now: CurrentYearMonth): ParseResult {
+export function parse(input: BirthDataInput): ParseResult {
   const fields: Record<string, string> = {};
 
   if (input.gender !== "男" && input.gender !== "女") {
@@ -71,13 +66,6 @@ export function parse(input: BirthDataInput, now: CurrentYearMonth): ParseResult
   }
   if (!parsedTime) {
     fields.time = "出生时间须为有效 HH:mm";
-  }
-
-  if (dateValid && parsedTime) {
-    const limit = getBirthDateLimit(now);
-    if (isAfterBirthDateLimit(parsedDate, now)) {
-      fields.date = "出生日期不得晚于服务当前北京日期后 100 个日历年（" + limit.year + "-" + String(limit.month).padStart(2, "0") + "-" + String(limit.day).padStart(2, "0") + "）";
-    }
   }
 
   const hasProv = input.province !== undefined && input.province !== "";

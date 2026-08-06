@@ -16,7 +16,12 @@ export default defineConfig({
   projects: [
     {
       name: "chromium-desktop",
-      testMatch: ["**/books.e2e.ts", "**/dayun-panel.e2e.ts"],
+      testMatch: [
+        "**/books.e2e.ts",
+        "**/birth-data-form.e2e.ts",
+        "**/dayun-panel.e2e.ts",
+        "**/astronomy-range.e2e.ts",
+      ],
       use: { browserName: "chromium", viewport: { width: 1280, height: 900 } },
     },
     {

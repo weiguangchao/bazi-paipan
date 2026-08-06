@@ -45,7 +45,7 @@ test("三级卡片保留本层点击态并在切换上层时重置下层", async
 
   await expect(dayunCards).toHaveCount(10);
   await expect(liunianCards).toHaveCount(10);
-  await expect(page.getByTestId("dayun-card").filter({ hasText: "2017" })).toHaveAttribute("data-state", "on");
+  await expect(page.getByTestId("dayun-card").filter({ hasText: "2018" })).toHaveAttribute("data-state", "on");
   await expect(page.getByTestId("liunian-card").filter({ hasText: "2025" })).toHaveAttribute("data-state", "on");
   await expect(liuyueCards).toHaveCount(12);
   await expect(page.locator('[data-testid="liuyue-card"][data-state="on"]')).toHaveCount(0);
@@ -57,7 +57,7 @@ test("三级卡片保留本层点击态并在切换上层时重置下层", async
   const xiaohan = liuyueCards.filter({ hasText: "小寒" });
   await xiaohan.click();
   await expect(xiaohan).toHaveAttribute("data-state", "on");
-  await expect(page.getByTestId("dayun-card").filter({ hasText: "2017" })).toHaveAttribute("data-state", "on");
+  await expect(page.getByTestId("dayun-card").filter({ hasText: "2018" })).toHaveAttribute("data-state", "on");
   await expect(page.getByTestId("liunian-card").filter({ hasText: "2024" })).toHaveAttribute("data-state", "on");
   await expect(page.getByRole("main").getByRole("radiogroup")).toHaveCount(3);
   await expect(liunianCards).toHaveCount(10);
@@ -68,8 +68,8 @@ test("三级卡片保留本层点击态并在切换上层时重置下层", async
   await selectLiunian(page, 2025);
   await expect(page.locator('[data-testid="liuyue-card"][data-state="on"]')).toHaveCount(0);
 
-  await selectDayunStartingIn(page, 2027);
-  await expect(page.locator('[data-testid="liunian-card"][data-state="on"]')).toContainText("2027");
+  await selectDayunStartingIn(page, 2028);
+  await expect(page.locator('[data-testid="liunian-card"][data-state="on"]')).toContainText("2028");
   await expect(liuyueCards).toHaveCount(12);
   await expect(page.locator('[data-testid="liuyue-card"][data-state="on"]')).toHaveCount(0);
 });
@@ -114,18 +114,18 @@ test("普通月份今年与当前流月同属同一流年", async ({ page }) => 
 for (const scenario of [
   {
     name: "交节前一毫秒仍标记寅月",
-    now: new Date("2024-03-05T02:22:44.981Z"),
+    now: new Date("2024-03-05T02:22:44.999Z"),
     currentJie: "立春",
   },
   {
     name: "交节瞬间切换标记卯月",
-    now: new Date("2024-03-05T02:22:44.982Z"),
+    now: new Date("2024-03-05T02:22:45.000Z"),
     currentJie: "惊蛰",
   },
 ]) {
   test(scenario.name, async ({ page }) => {
     await openMingpan(page, scenario.now);
-    await selectDayunStartingIn(page, 2017);
+    await selectDayunStartingIn(page, 2018);
     await selectLiunian(page, 2024);
 
     const currentLiuyue = currentCard(page, "liuyue-card");
@@ -189,7 +189,7 @@ test("自动携带不抢焦点，选择不写入 URL，页面跨年不自动改�
   await expect(submit).toBeFocused();
   await expect(page.locator('[data-testid="liunian-card"][data-state="on"]')).toContainText("2025");
 
-  await selectDayunStartingIn(page, 2007);
+  await selectDayunStartingIn(page, 2008);
   await selectLiunian(page, 2010);
   await page.getByTestId("liuyue-card").first().click();
   const params = new URL(page.url()).searchParams;

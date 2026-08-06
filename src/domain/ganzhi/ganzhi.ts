@@ -84,12 +84,3 @@ export function ganzhiDizhi(value: Ganzhi): Dizhi {
   }
   return dizhiCharacter;
 }
-
-/**
- * 节（非中气）的节气序号，顺序与 SOLAR_TERM_NAMES 一致：
- * 立春、惊蛰、清明、立夏、芒种、小暑、立秋、白露、寒露、立冬、大雪、小寒。
- * 月柱与大运起运岁都以"节"为切换点，两处共用。
- */
-export const JIE_TERM_INDEXES = [
-  3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 1,
-] as const;

@@ -1,0 +1,608 @@
+{
+  "schemaVersion": 1,
+  "sourceSnapshot": {
+    "path": "content/books/jingangjing/source.md",
+    "sha256": "9f4ea469eacb17536dd4948f3aeaa70e65e67da8c0b7bd307495f988aab8762a",
+    "bytes": 20541,
+    "lines": 148,
+    "codePoints": 7017
+  },
+  "inventory": {
+    "headingCount": 34,
+    "headingLevels": {
+      "h1": 1,
+      "h2": 33
+    },
+    "chapterCount": 33,
+    "structuralSegmentCount": 2,
+    "volumeCount": 1,
+    "volumes": [
+      {
+        "id": "v1",
+        "order": 1,
+        "chapterCount": 33
+      }
+    ]
+  },
+  "volumeMapping": {
+    "volumeId": "v1",
+    "title": "全卷",
+    "sourceTitle": "",
+    "resolution": "原稿无显式卷次，以一个代表全书的阅读单元承载正文"
+  },
+  "chapters": [
+    {
+      "chapterId": "v1-c001",
+      "title": "开经偈",
+      "order": 1,
+      "source": {
+        "startLine": 3,
+        "endLine": 7,
+        "startByte": 29,
+        "endByte": 135
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c001.md",
+      "rawBytes": 107,
+      "bodyBytes": 94,
+      "sha256": "49fa712bd88bad7f644284f1e1530d87633586262936ecc1a735bcb09b900eba"
+    },
+    {
+      "chapterId": "v1-c002",
+      "title": "法会因由分第一",
+      "order": 2,
+      "source": {
+        "startLine": 14,
+        "endLine": 17,
+        "startByte": 181,
+        "endByte": 466
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c002.md",
+      "rawBytes": 286,
+      "bodyBytes": 261,
+      "sha256": "fc0972ba5ef33d2b74be805a5cce2feecc9af45206087c09cb908bc79833f502"
+    },
+    {
+      "chapterId": "v1-c003",
+      "title": "善现启请分第二",
+      "order": 3,
+      "source": {
+        "startLine": 18,
+        "endLine": 23,
+        "startByte": 467,
+        "endByte": 1051
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c003.md",
+      "rawBytes": 585,
+      "bodyBytes": 560,
+      "sha256": "6c1664885ab6a9711b1f5ac2d786ea58744668a492e672163a9343ac372d10d8"
+    },
+    {
+      "chapterId": "v1-c004",
+      "title": "大乘正宗分第三",
+      "order": 4,
+      "source": {
+        "startLine": 24,
+        "endLine": 27,
+        "startByte": 1052,
+        "endByte": 1490
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c004.md",
+      "rawBytes": 439,
+      "bodyBytes": 414,
+      "sha256": "9f6818062846804aa1855502a240acfff8bdb3c0bd816f40b2474c7fc2d1b053"
+    },
+    {
+      "chapterId": "v1-c005",
+      "title": "妙行无住分第四",
+      "order": 5,
+      "source": {
+        "startLine": 28,
+        "endLine": 31,
+        "startByte": 1491,
+        "endByte": 2037
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c005.md",
+      "rawBytes": 547,
+      "bodyBytes": 522,
+      "sha256": "d961dd38eb7e1f49064503c6ccab4e59b4275614fde2161893abd7310bf04794"
+    },
+    {
+      "chapterId": "v1-c006",
+      "title": "如理实见分第五",
+      "order": 6,
+      "source": {
+        "startLine": 32,
+        "endLine": 35,
+        "startByte": 2038,
+        "endByte": 2317
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c006.md",
+      "rawBytes": 280,
+      "bodyBytes": 255,
+      "sha256": "136ea828ef0b54762cdc150fd42996a40fe9126f19690ada33fbb75691c9e09d"
+    },
+    {
+      "chapterId": "v1-c007",
+      "title": "正信希有分第六",
+      "order": 7,
+      "source": {
+        "startLine": 36,
+        "endLine": 39,
+        "startByte": 2318,
+        "endByte": 3224
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c007.md",
+      "rawBytes": 907,
+      "bodyBytes": 882,
+      "sha256": "65110828ccf5bf20ad681016faf988720af3e47ef71cbab96ae01a9392755d89"
+    },
+    {
+      "chapterId": "v1-c008",
+      "title": "无得无说分第七",
+      "order": 8,
+      "source": {
+        "startLine": 40,
+        "endLine": 43,
+        "startByte": 3225,
+        "endByte": 3612
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c008.md",
+      "rawBytes": 388,
+      "bodyBytes": 363,
+      "sha256": "916860f5b97089a3ab31251437af51c0d7fb3ded055ffd7ad8865ef7fd128263"
+    },
+    {
+      "chapterId": "v1-c009",
+      "title": "依法出生分第八",
+      "order": 9,
+      "source": {
+        "startLine": 44,
+        "endLine": 47,
+        "startByte": 3613,
+        "endByte": 4099
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c009.md",
+      "rawBytes": 487,
+      "bodyBytes": 462,
+      "sha256": "2b4f4400e2e047dc62835195a768d393434b6052eec12e8503ecf736e8c8e27f"
+    },
+    {
+      "chapterId": "v1-c010",
+      "title": "一相无相分第九",
+      "order": 10,
+      "source": {
+        "startLine": 48,
+        "endLine": 51,
+        "startByte": 4100,
+        "endByte": 5318
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c010.md",
+      "rawBytes": 1219,
+      "bodyBytes": 1194,
+      "sha256": "0d5ee8a829f555e4b1ef9aed3004d726ddcb7a9ecaf41f460e97ddb5ac786405"
+    },
+    {
+      "chapterId": "v1-c011",
+      "title": "庄严净土分第十",
+      "order": 11,
+      "source": {
+        "startLine": 52,
+        "endLine": 55,
+        "startByte": 5319,
+        "endByte": 5973
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c011.md",
+      "rawBytes": 655,
+      "bodyBytes": 630,
+      "sha256": "bb73501a604f9c965bdefcf429be148b8e517830ef63d213a1db6906fc03ff2c"
+    },
+    {
+      "chapterId": "v1-c012",
+      "title": "无为福胜分第十一",
+      "order": 12,
+      "source": {
+        "startLine": 56,
+        "endLine": 59,
+        "startByte": 5974,
+        "endByte": 6529
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c012.md",
+      "rawBytes": 556,
+      "bodyBytes": 528,
+      "sha256": "44ac37209b26ff3c7b793bbebaf138e1b954e327dce449a8913a731997e7fd29"
+    },
+    {
+      "chapterId": "v1-c013",
+      "title": "尊重正教分第十二",
+      "order": 13,
+      "source": {
+        "startLine": 60,
+        "endLine": 63,
+        "startByte": 6530,
+        "endByte": 6857
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c013.md",
+      "rawBytes": 328,
+      "bodyBytes": 300,
+      "sha256": "8d73c49a65961bf0245ca23ae393f1a69f22d3dfa7dd54203f67cb7848c866a8"
+    },
+    {
+      "chapterId": "v1-c014",
+      "title": "如法受持分第十三",
+      "order": 14,
+      "source": {
+        "startLine": 64,
+        "endLine": 67,
+        "startByte": 6858,
+        "endByte": 7830
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c014.md",
+      "rawBytes": 973,
+      "bodyBytes": 945,
+      "sha256": "bdcb451d45e4af8c037eb16f72f05673729258a0bc3c19751ee4561b5ac2a33f"
+    },
+    {
+      "chapterId": "v1-c015",
+      "title": "离相寂灭分第十四",
+      "order": 15,
+      "source": {
+        "startLine": 68,
+        "endLine": 71,
+        "startByte": 7831,
+        "endByte": 10054
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c015.md",
+      "rawBytes": 2224,
+      "bodyBytes": 2196,
+      "sha256": "5dea5ee9c95c55f7fc448085e82271f2075e05391e8827fff1c6ac90f3b492ad"
+    },
+    {
+      "chapterId": "v1-c016",
+      "title": "持经功德分第十五",
+      "order": 16,
+      "source": {
+        "startLine": 72,
+        "endLine": 75,
+        "startByte": 10055,
+        "endByte": 11060
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c016.md",
+      "rawBytes": 1006,
+      "bodyBytes": 978,
+      "sha256": "48b7d0cbab4fe4ec5c7bdc3ab34cca5a36f321f616d0d8d3730960ad8cd435c9"
+    },
+    {
+      "chapterId": "v1-c017",
+      "title": "能净业障分第十六",
+      "order": 17,
+      "source": {
+        "startLine": 76,
+        "endLine": 79,
+        "startByte": 11061,
+        "endByte": 11832
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c017.md",
+      "rawBytes": 772,
+      "bodyBytes": 744,
+      "sha256": "1cbe49d5e34f373b687c063ae954e45fb1ab6cf35e4fac03cc793b1487bc4b99"
+    },
+    {
+      "chapterId": "v1-c018",
+      "title": "究竟无我分第十七",
+      "order": 18,
+      "source": {
+        "startLine": 80,
+        "endLine": 83,
+        "startByte": 11833,
+        "endByte": 13873
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c018.md",
+      "rawBytes": 2041,
+      "bodyBytes": 2013,
+      "sha256": "02dc7c160df6919b34c231f28ffce2f3719cc294d354b3e2548501bafa0c1e12"
+    },
+    {
+      "chapterId": "v1-c019",
+      "title": "一体同观分第十八",
+      "order": 19,
+      "source": {
+        "startLine": 84,
+        "endLine": 87,
+        "startByte": 13874,
+        "endByte": 14903
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c019.md",
+      "rawBytes": 1030,
+      "bodyBytes": 1002,
+      "sha256": "22c82961b2184bf8ae4921d89fc151b3392c5488cc9d0106ad6a35a692e2c854"
+    },
+    {
+      "chapterId": "v1-c020",
+      "title": "法界通化分第十九",
+      "order": 20,
+      "source": {
+        "startLine": 88,
+        "endLine": 91,
+        "startByte": 14904,
+        "endByte": 15222
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c020.md",
+      "rawBytes": 319,
+      "bodyBytes": 291,
+      "sha256": "4a637c9f7f9e35cae4cdbe542de0a9ddfa8804f1df0382965aeb19fbe19c3b22"
+    },
+    {
+      "chapterId": "v1-c021",
+      "title": "离色离相分第二十",
+      "order": 21,
+      "source": {
+        "startLine": 92,
+        "endLine": 95,
+        "startByte": 15223,
+        "endByte": 15646
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c021.md",
+      "rawBytes": 424,
+      "bodyBytes": 396,
+      "sha256": "677f79feb9590de16c9fbac3042718a5203f65856c1a96ea441c942690d8d820"
+    },
+    {
+      "chapterId": "v1-c022",
+      "title": "非说所说分第二十一",
+      "order": 22,
+      "source": {
+        "startLine": 96,
+        "endLine": 99,
+        "startByte": 15647,
+        "endByte": 16151
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c022.md",
+      "rawBytes": 505,
+      "bodyBytes": 474,
+      "sha256": "d9a91e116babfc10531b38c2644d9132c2c4151808dc5aea0821624e11129bb9"
+    },
+    {
+      "chapterId": "v1-c023",
+      "title": "无法可得分第二十二",
+      "order": 23,
+      "source": {
+        "startLine": 100,
+        "endLine": 103,
+        "startByte": 16152,
+        "endByte": 16419
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c023.md",
+      "rawBytes": 268,
+      "bodyBytes": 237,
+      "sha256": "0edb8f66d1006d730e60decae83c51723b33dc44112b2376dbcd4618a170210d"
+    },
+    {
+      "chapterId": "v1-c024",
+      "title": "净心行善分第二十三",
+      "order": 24,
+      "source": {
+        "startLine": 104,
+        "endLine": 107,
+        "startByte": 16420,
+        "endByte": 16711
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c024.md",
+      "rawBytes": 292,
+      "bodyBytes": 261,
+      "sha256": "2afd2e8692906846c7102972b4657b0a0b97250bcfeb5f0e0243217443f9b10d"
+    },
+    {
+      "chapterId": "v1-c025",
+      "title": "福智无比分第二十四",
+      "order": 25,
+      "source": {
+        "startLine": 108,
+        "endLine": 111,
+        "startByte": 16712,
+        "endByte": 17018
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c025.md",
+      "rawBytes": 307,
+      "bodyBytes": 276,
+      "sha256": "eff6c07b18864f4dce90fede851b2458763a3a7e0c6efb23af683e77e93c38de"
+    },
+    {
+      "chapterId": "v1-c026",
+      "title": "化无所化分第二十五",
+      "order": 26,
+      "source": {
+        "startLine": 112,
+        "endLine": 115,
+        "startByte": 17019,
+        "endByte": 17427
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c026.md",
+      "rawBytes": 409,
+      "bodyBytes": 378,
+      "sha256": "4a29a3bb6d380bd6fbc385f10fd17044e7073efedddb4f816ceeb76c2da2141a"
+    },
+    {
+      "chapterId": "v1-c027",
+      "title": "法身非相分第二十六",
+      "order": 27,
+      "source": {
+        "startLine": 116,
+        "endLine": 121,
+        "startByte": 17428,
+        "endByte": 17883
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c027.md",
+      "rawBytes": 456,
+      "bodyBytes": 425,
+      "sha256": "e0a7e30d7346eb96362449d364ff1270e78783aae0fd8348f618f0ce3c66f571"
+    },
+    {
+      "chapterId": "v1-c028",
+      "title": "无断无灭分第二十七",
+      "order": 28,
+      "source": {
+        "startLine": 122,
+        "endLine": 125,
+        "startByte": 17884,
+        "endByte": 18283
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c028.md",
+      "rawBytes": 400,
+      "bodyBytes": 369,
+      "sha256": "373de507426651e43573f55822a3112567018a9b9b00de6f45d8438ed996c43e"
+    },
+    {
+      "chapterId": "v1-c029",
+      "title": "不受不贪分第二十八",
+      "order": 29,
+      "source": {
+        "startLine": 126,
+        "endLine": 129,
+        "startByte": 18284,
+        "endByte": 18653
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c029.md",
+      "rawBytes": 370,
+      "bodyBytes": 339,
+      "sha256": "45a6c15261d94eceda6c7e366700b10f208205c675322d8708b2c2a9038735d1"
+    },
+    {
+      "chapterId": "v1-c030",
+      "title": "威仪寂静分第二十九",
+      "order": 30,
+      "source": {
+        "startLine": 130,
+        "endLine": 133,
+        "startByte": 18654,
+        "endByte": 18852
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c030.md",
+      "rawBytes": 199,
+      "bodyBytes": 168,
+      "sha256": "d3aa21d548ca323f9fb2d8cc39431e97c5eb0c2fbb0eeb35f19e685530483ea9"
+    },
+    {
+      "chapterId": "v1-c031",
+      "title": "一合理相分第三十",
+      "order": 31,
+      "source": {
+        "startLine": 134,
+        "endLine": 137,
+        "startByte": 18853,
+        "endByte": 19438
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c031.md",
+      "rawBytes": 586,
+      "bodyBytes": 558,
+      "sha256": "e25b17c520556627efd49e7e566841a2479ea1eba9d7d85409816cbdc8e68733"
+    },
+    {
+      "chapterId": "v1-c032",
+      "title": "知见不生分第三十一",
+      "order": 32,
+      "source": {
+        "startLine": 138,
+        "endLine": 141,
+        "startByte": 19439,
+        "endByte": 19991
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c032.md",
+      "rawBytes": 553,
+      "bodyBytes": 522,
+      "sha256": "aa596155f0df80a1ecf5548f1d0917161eb2081bf3b0657f3a866d91a6232b67"
+    },
+    {
+      "chapterId": "v1-c033",
+      "title": "应化非真分第三十二",
+      "order": 33,
+      "source": {
+        "startLine": 142,
+        "endLine": 148,
+        "startByte": 19992,
+        "endByte": 20541
+      },
+      "outputPath": "content/books/jingangjing/chapters/v1/v1-c033.md",
+      "rawBytes": 550,
+      "bodyBytes": 519,
+      "sha256": "9018ecd6e9f5d5a3af669c766b1b845c201b0ee3b8edb7f40db85971503a4042"
+    }
+  ],
+  "structuralSegments": [
+    {
+      "kind": "source-front-matter",
+      "purpose": "title",
+      "source": {
+        "startLine": 1,
+        "endLine": 2,
+        "startByte": 1,
+        "endByte": 28
+      },
+      "sha256": "53da8afaa4acf99253e1070d0f552ae4818577922d3b0c205d70fd8ddd474613",
+      "catalogMapping": {
+        "title": "金刚般若波罗蜜经"
+      },
+      "resolution": "H1 完整书名及相邻空行映射为 catalog 书名，不进入篇章正文",
+      "rawBytes": 28
+    },
+    {
+      "kind": "source-front-matter",
+      "purpose": "attribution",
+      "source": {
+        "startLine": 8,
+        "endLine": 13,
+        "startByte": 136,
+        "endByte": 180
+      },
+      "sha256": "b08a443a1d280c44174c95f59bd0af1298573f4b52f89b0b5e98f1a3ec349e58",
+      "catalogMapping": {
+        "attribution": [
+          {
+            "name": "姚秦三藏法师鸠摩罗什",
+            "role": "译"
+          }
+        ]
+      },
+      "resolution": "分隔线、译者行及相邻空行映射为 catalog 署名，不进入篇章正文",
+      "rawBytes": 45
+    }
+  ],
+  "ownershipClosure": {
+    "chapterBytes": 20468,
+    "structuralBytes": 73,
+    "totalBytes": 20541,
+    "unownedBytes": 0,
+    "uniquelyOwnedBytes": 20541,
+    "duplicatedBytes": 0,
+    "reconstructionSha256": "9f4ea469eacb17536dd4948f3aeaa70e65e67da8c0b7bd307495f988aab8762a"
+  },
+  "sourceAnomalies": {
+    "bom": 0,
+    "carriageReturns": 0,
+    "tabs": 0,
+    "trailingWhitespaceLines": 0,
+    "nul": 0,
+    "replacementCharacters": 0,
+    "u3000Lines": [
+      5,
+      6
+    ]
+  },
+  "warnings": [],
+  "knownExceptions": [],
+  "review": {
+    "status": "passed",
+    "verificationCommit": "985332d632243df1587c584092c5c1450077060b",
+    "reviewedAt": "2026-07-30",
+    "independentReviewer": "Codex independent content audit agent",
+    "conclusion": "从永久原稿独立推导并全量复核 33 个篇章、2 个结构段、catalog—文件对应、U+3000 保留、byte 唯一所有权与反向拼接，未发现遗漏、重复、乱序、静默改写或未知异常。",
+    "checks": {
+      "chaptersReviewed": 33,
+      "structuralSegmentsReviewed": 2,
+      "omissions": 0,
+      "duplications": 0,
+      "orderingErrors": 0,
+      "silentRewrites": 0,
+      "unknownAnomalies": 0
+    }
+  }
+}

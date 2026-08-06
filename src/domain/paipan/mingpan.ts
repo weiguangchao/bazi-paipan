@@ -3,7 +3,7 @@
 //
 // 日主推导与十神附加在此统一完成：四柱、大运柱、流年柱共用 shishen() 一处规则，
 // 调用方（adapter）不再自行取日主、不再重复附加十神。命盘不读时钟，当前时刻由调用方注入。
-// 遵循 ADR-0001/0002/0003/0004，领域规则全部委托既有纯函数（paipan/shishen/ganzhiRelations/...）。
+// 遵循 ADR-0001/0002/0003/0006/0007，领域规则全部委托既有纯函数（paipan/shishen/ganzhiRelations/...）。
 
 import { paipan } from "@/domain/paipan/paipan";
 import { liunian } from "@/domain/paipan/liunian";
@@ -16,6 +16,18 @@ import {
 } from "@/domain/ganzhi/ganzhi-relations";
 import { personalInfo, type PersonalInfo } from "@/domain/birth/personal-info";
 import type { BirthProfile } from "@/domain/birth/birth-profile";
+import { findLongitude } from "@/domain/birth/birthplace";
+import { toTrueSolarDateTime } from "@/domain/time/astronomy";
+import {
+  beijingDateTime,
+  type BeijingDateTime,
+  type TrueSolarDateTime,
+} from "@/domain/time/date-time";
+import {
+  jieIntervals,
+  locateJie,
+  type JieInterval,
+} from "@/domain/time/jie-chronology";
 
 /** 藏干及其相对日主的十神。 */
 export interface CangganOut {
@@ -49,8 +61,6 @@ export interface LiunianItemOut {
 export interface LiuyuezhuOut {
   ganzhi: string;
   startJie: string;
-  startUtcMs: number;
-  endUtcMs: number;
   startMonth: number;
   startDay: number;
   tianganShishen: string;
@@ -83,13 +93,6 @@ export interface Mingpan {
   dayun: DayunOut;
 }
 
-/** 当前北京时间语义：公历年月用于大运/今年，完整 UTC 时刻用于准确交节区间。 */
-export interface CurrentMoment {
-  year: number;
-  month: number;
-  utcMs: number;
-}
-
 /** 统一十神附加：干支天干十神 + 地支藏干十神（按藏干顺序）。命盘各柱共用此处。 */
 function shishenOf(ganzhi: Ganzhi, dayMaster: Tiangan) {
   return shishen(dayMaster, ganzhi);
@@ -119,21 +122,26 @@ function zhuShishen(
 function liunianZhu(
   item: { year: number; ganzhi: Ganzhi },
   dayMaster: Tiangan,
-  now: CurrentMoment,
+  currentClockTime: BeijingDateTime,
+  intervals: readonly JieInterval[],
+  currentInterval: JieInterval,
 ): LiunianItemOut {
   return {
     year: item.year,
     ganzhi: item.ganzhi,
     ...zhuShishen(item.ganzhi, dayMaster),
-    isCurrentYear: item.year === now.year,
-    liuyue: liuyue(item.year, now.utcMs).map((liuyuezhu) => ({
-      ...liuyuezhu,
-      ...zhuShishen(liuyuezhu.ganzhi, dayMaster),
-    })),
+    isCurrentYear: item.year === currentClockTime.year,
+    liuyue: liuyue(item.year, intervals, currentInterval).map((liuyuezhu) => {
+      const { startTime: _startTime, endTime: _endTime, ...visible } = liuyuezhu;
+      return {
+        ...visible,
+        ...zhuShishen(liuyuezhu.ganzhi, dayMaster),
+      };
+    }),
   };
 }
 
-/** 大运柱：十神由命盘统一附加，当前大运按当前年月判定，关联流年与流月由命盘统一产出。 */
+/** 大运柱：十神由命盘统一附加，当前大运按当前真太阳时年月判定，关联流年与流月由命盘统一产出。 */
 function dayunZhu(
   p: {
     ganzhi: Ganzhi;
@@ -141,10 +149,13 @@ function dayunZhu(
     startYearMonth: { year: number; month: number };
   },
   dayMaster: Tiangan,
-  now: CurrentMoment,
+  currentTime: TrueSolarDateTime,
+  currentClockTime: BeijingDateTime,
+  intervalsByYear: ReadonlyMap<number, readonly JieInterval[]>,
+  currentInterval: JieInterval,
 ): DayunzhuOut {
   const startMonthIndex = p.startYearMonth.year * 12 + p.startYearMonth.month - 1;
-  const currentMonthIndex = now.year * 12 + now.month - 1;
+  const currentMonthIndex = currentTime.year * 12 + currentTime.month - 1;
   return {
     ganzhi: p.ganzhi,
     ...zhuShishen(p.ganzhi, dayMaster),
@@ -154,9 +165,24 @@ function dayunZhu(
     isCurrent:
       currentMonthIndex >= startMonthIndex && currentMonthIndex < startMonthIndex + 120,
     liunian: liunian(p.startYearMonth.year).map((item) =>
-      liunianZhu(item, dayMaster, now),
+      liunianZhu(
+        item,
+        dayMaster,
+        currentClockTime,
+        intervalsByYear.get(item.year)!,
+        currentInterval,
+      ),
     ),
   };
+}
+
+function birthplaceLongitude(input: BirthProfile): number | undefined {
+  if (!input.birthplace) return undefined;
+  const result = findLongitude(input.birthplace);
+  if (!result.found) {
+    throw new RangeError("出生资料包含未知出生地，无法计算当前真太阳时");
+  }
+  return result.longitude;
 }
 
 /**
@@ -165,34 +191,75 @@ function dayunZhu(
  * 干支关系、生肖星座。日主推导与十神附加在此统一完成。
  */
 export function mingpan(
-  input: BirthProfile,
-  now: CurrentMoment,
+  profile: BirthProfile,
+  currentTime: BeijingDateTime,
 ): Mingpan {
-  const result = paipan(input);
-  const dayMaster = ganzhiTiangan(result.rizhu);
+  const longitude = birthplaceLongitude(profile);
+  const birthTrueSolarTime = toTrueSolarDateTime(
+    beijingDateTime({
+      year: profile.year,
+      month: profile.month,
+      day: profile.day,
+      hour: profile.hour,
+      minute: profile.minute,
+      second: 0,
+    }),
+    longitude,
+  );
+  const birthJieLocation = locateJie(birthTrueSolarTime, longitude);
+  const currentTrueSolarTime = toTrueSolarDateTime(
+    currentTime,
+    longitude,
+  );
+  const currentJieInterval = locateJie(currentTrueSolarTime, longitude).interval;
+  const paipanResult = paipan(
+    birthTrueSolarTime,
+    birthJieLocation,
+    profile.gender,
+  );
+  const dayMaster = ganzhiTiangan(paipanResult.rizhu);
 
-  const personal = personalInfo({ year: input.year, month: input.month, day: input.day });
+  const personal = personalInfo({
+    year: profile.year,
+    month: profile.month,
+    day: profile.day,
+  });
 
   const sizhu: SizhuOut = {
-    year: sizhuZhu(result.nianzhu, dayMaster, false),
-    month: sizhuZhu(result.yuezhu, dayMaster, false),
-    day: sizhuZhu(result.rizhu, dayMaster, true),
-    hour: sizhuZhu(result.shizhu, dayMaster, false),
+    year: sizhuZhu(paipanResult.nianzhu, dayMaster, false),
+    month: sizhuZhu(paipanResult.yuezhu, dayMaster, false),
+    day: sizhuZhu(paipanResult.rizhu, dayMaster, true),
+    hour: sizhuZhu(paipanResult.shizhu, dayMaster, false),
   };
 
   const ganzhiRelationsResult = ganzhiRelations({
-    nianzhu: result.nianzhu,
-    yuezhu: result.yuezhu,
-    rizhu: result.rizhu,
-    shizhu: result.shizhu,
+    nianzhu: paipanResult.nianzhu,
+    yuezhu: paipanResult.yuezhu,
+    rizhu: paipanResult.rizhu,
+    shizhu: paipanResult.shizhu,
   });
 
-  const dayun = result.dayun!;
+  const dayun = paipanResult.dayun;
+  const liunianYears = new Set(
+    dayun.zhu.flatMap((p) =>
+      liunian(p.startYearMonth.year).map((item) => item.year),
+    ),
+  );
+  const intervalsByYear = new Map(
+    [...liunianYears].map((year) => [year, jieIntervals(year, longitude)]),
+  );
   const dayunOut: DayunOut = {
     direction: dayun.direction,
     qiyun: { ageYears: dayun.qiyun.ageYears, ageMonths: dayun.qiyun.ageMonths },
     zhu: dayun.zhu.map((p) =>
-      dayunZhu(p, dayMaster, now),
+      dayunZhu(
+        p,
+        dayMaster,
+        currentTrueSolarTime,
+        currentTime,
+        intervalsByYear,
+        currentJieInterval,
+      ),
     ),
   };
 

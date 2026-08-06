@@ -1,0 +1,4508 @@
+{
+  "schemaVersion": 1,
+  "sourceSnapshot": {
+    "path": "content/books/qiongtongbaojian/source.md",
+    "sha256": "148c4cb70072d465162a0668864c623f08896065b9b1c1ec1f7aec78b30a5483",
+    "bytes": 125795,
+    "lines": 1889
+  },
+  "inventory": {
+    "headingCount": 112,
+    "candidateCount": 111,
+    "chapterCount": 108,
+    "headingLevels": {
+      "h1": 1,
+      "h2": 13,
+      "h3": 22,
+      "h4": 76
+    },
+    "volumeCount": 1,
+    "volumes": [
+      {
+        "id": "v1",
+        "order": 1,
+        "chapterCount": 108
+      }
+    ]
+  },
+  "volumeMapping": {
+    "volumeId": "v1",
+    "title": "全卷",
+    "sourceTitle": "",
+    "resolution": "原稿无显式卷次，以一个代表全书的阅读单元承载正文"
+  },
+  "frontMatter": {
+    "kind": "source-front-matter",
+    "source": {
+      "startLine": 1,
+      "endLine": 9,
+      "startByte": 1,
+      "endByte": 72
+    },
+    "sha256": "758b2042d28fc751e6fb5afeaad869e6e43c15b24bb4110bf82e4e45f15a8f8c",
+    "catalogMapping": {
+      "title": "穷通宝鉴",
+      "attributions": [
+        {
+          "name": "（清）余春台",
+          "role": "辑"
+        },
+        {
+          "name": "徐乐吾",
+          "role": "评注"
+        }
+      ],
+      "versionMarker": "徐乐吾评注版"
+    },
+    "resolution": "H1 书壳、署名、分隔线与版本标记映射为 catalog 元数据，不进入篇章正文"
+  },
+  "chapters": [
+    {
+      "chapterId": "v1-c001",
+      "title": "序言",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 10,
+        "endLine": 21,
+        "startByte": 73,
+        "endByte": 1506
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c001.md",
+      "bytes": 1434,
+      "sha256": "7c24dad1c119f86dd5982e7be53833c51ebdf703482917da5a90f517a13c481b"
+    },
+    {
+      "chapterId": "v1-c002",
+      "title": "五行总论",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 22,
+        "endLine": 34,
+        "startByte": 1507,
+        "endByte": 3321
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c002.md",
+      "bytes": 1815,
+      "sha256": "411dc003a9d435d74ec96af9c2c8470d6abd3ded7e5af06f52cb78be723174a1"
+    },
+    {
+      "chapterId": "v1-c003",
+      "title": "论木",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 35,
+        "endLine": 47,
+        "startByte": 3322,
+        "endByte": 5631
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c003.md",
+      "bytes": 2310,
+      "sha256": "feaa4d412b12fc57b881508b590044ab449c7ee38cd2603acfb026a90ffb381d"
+    },
+    {
+      "chapterId": "v1-c004",
+      "title": "三春甲木总论",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 48,
+        "endLine": 54,
+        "startByte": 5632,
+        "endByte": 6419
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c004.md",
+      "bytes": 788,
+      "sha256": "9bd519a0bb4681f72c16c307d4949b4844834029599d23c182b5e1790322ce28"
+    },
+    {
+      "chapterId": "v1-c005",
+      "title": "三春甲木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 55,
+        "endLine": 82,
+        "startByte": 6420,
+        "endByte": 9728
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c005.md",
+      "bytes": 3309,
+      "sha256": "3422d33c79ad5d4a2a5924a883037f30fda83ee92eae31fe6affdb58e15a6d0f"
+    },
+    {
+      "chapterId": "v1-c006",
+      "title": "三夏甲木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 83,
+        "endLine": 107,
+        "startByte": 9729,
+        "endByte": 12985
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c006.md",
+      "bytes": 3257,
+      "sha256": "81b64fac1369f2aeca4a6b86d6ac24b229f929975f3ce62aab18ce4099abf952"
+    },
+    {
+      "chapterId": "v1-c007",
+      "title": "三秋甲木总论",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 108,
+        "endLine": 120,
+        "startByte": 12986,
+        "endByte": 14660
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c007.md",
+      "bytes": 1675,
+      "sha256": "c83b9fd53bba48f1e5e3470f8a6e2b52f4f89fcd21ebebfac2070e81275384cc"
+    },
+    {
+      "chapterId": "v1-c008",
+      "title": "三秋甲木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 121,
+        "endLine": 168,
+        "startByte": 14661,
+        "endByte": 17982
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c008.md",
+      "bytes": 3322,
+      "sha256": "69f5a3bfccc642bc03e621a445117ba84a0d971a159d76301f9ade0841159e8e"
+    },
+    {
+      "chapterId": "v1-c009",
+      "title": "三冬甲木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 169,
+        "endLine": 189,
+        "startByte": 17983,
+        "endByte": 20221
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c009.md",
+      "bytes": 2239,
+      "sha256": "0ad03a4eee0d08843e5f0cd97bae767a58c5e574cdc5e8f224485ef45b1bde0f"
+    },
+    {
+      "chapterId": "v1-c010",
+      "title": "三春乙木总论",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 190,
+        "endLine": 193,
+        "startByte": 20222,
+        "endByte": 20541
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c010.md",
+      "bytes": 320,
+      "sha256": "fc0575745cfb88cc78c82af83aa9e2fa5823c1f4c82bef157eda3e8473149083"
+    },
+    {
+      "chapterId": "v1-c011",
+      "title": "三春乙木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 194,
+        "endLine": 217,
+        "startByte": 20542,
+        "endByte": 22999
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c011.md",
+      "bytes": 2458,
+      "sha256": "8cc2a01d4abe33f56dd19fc440daf3238c6c064d8e0509b95762e756cfffa4f6"
+    },
+    {
+      "chapterId": "v1-c012",
+      "title": "三夏乙木总论",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 218,
+        "endLine": 222,
+        "startByte": 23000,
+        "endByte": 23518
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c012.md",
+      "bytes": 519,
+      "sha256": "93a3228d0476fd95259f73a2265a6f5d6c4a4a18f401945d4b696d6bbab7882f"
+    },
+    {
+      "chapterId": "v1-c013",
+      "title": "三夏乙木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 223,
+        "endLine": 247,
+        "startByte": 23519,
+        "endByte": 26166
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c013.md",
+      "bytes": 2648,
+      "sha256": "dddbe9fbe9d13a5c025752f52d6a0f9578c7862e11d9bb9c607579802ffda398"
+    },
+    {
+      "chapterId": "v1-c014",
+      "title": "三秋乙木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 248,
+        "endLine": 272,
+        "startByte": 26167,
+        "endByte": 29282
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c014.md",
+      "bytes": 3116,
+      "sha256": "379c27fa3319c503e2faeb42788cb2c2473cde654f68fbb14a9cf7b76e1327ac"
+    },
+    {
+      "chapterId": "v1-c015",
+      "title": "三冬乙木",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 273,
+        "endLine": 292,
+        "startByte": 29283,
+        "endByte": 32120
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c015.md",
+      "bytes": 2838,
+      "sha256": "093c1773765b6e1142aa865853f690588dde2f94592a5c25f8ea55a123643ecd"
+    },
+    {
+      "chapterId": "v1-c016",
+      "title": "论丙火",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 293,
+        "endLine": 298,
+        "startByte": 32121,
+        "endByte": 32578
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c016.md",
+      "bytes": 458,
+      "sha256": "158f8a58931e2b032ab4ada3e5e9c159db809e1b07612c94f5d180d0c2013ef9"
+    },
+    {
+      "chapterId": "v1-c017",
+      "title": "三春丙火",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 299,
+        "endLine": 335,
+        "startByte": 32579,
+        "endByte": 34623
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c017.md",
+      "bytes": 2045,
+      "sha256": "3959cbf295f228cb91a18b25c3a8a228f43bfe7c6af3c673cd96115a95ad45dc"
+    },
+    {
+      "chapterId": "v1-c018",
+      "title": "二月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 336,
+        "endLine": 352,
+        "startByte": 34624,
+        "endByte": 35812
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c018.md",
+      "bytes": 1189,
+      "sha256": "9986dff4e713c09d86ac98f9c03e6c1298a66dcf19f6beeb8eab132a14ca6f67"
+    },
+    {
+      "chapterId": "v1-c019",
+      "title": "三月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 353,
+        "endLine": 364,
+        "startByte": 35813,
+        "endByte": 36713
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c019.md",
+      "bytes": 901,
+      "sha256": "14f136285705274cb11e15a8ee70f2973a8d3cb6e2ec630b2a350bcf1eecdd1e"
+    },
+    {
+      "chapterId": "v1-c020",
+      "title": "三夏丙火",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 365,
+        "endLine": 370,
+        "startByte": 36714,
+        "endByte": 37167
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c020.md",
+      "bytes": 454,
+      "sha256": "69999f2fd91d62f82c6c214bb359790d9a83403f98c2645f1e11b84c10cc76d3"
+    },
+    {
+      "chapterId": "v1-c021",
+      "title": "四月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 371,
+        "endLine": 393,
+        "startByte": 37168,
+        "endByte": 38292
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c021.md",
+      "bytes": 1125,
+      "sha256": "edc5d0a4bdfdf709fb6f993f74c1f68d81664ef252e6a91d2ae3f1a6f33541d9"
+    },
+    {
+      "chapterId": "v1-c022",
+      "title": "五月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 394,
+        "endLine": 412,
+        "startByte": 38293,
+        "endByte": 39402
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c022.md",
+      "bytes": 1110,
+      "sha256": "c706758e382d0d33eb2a731dc05c1fc1017e4e4f7ce43171620dea3ae6dcbba5"
+    },
+    {
+      "chapterId": "v1-c023",
+      "title": "六月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 413,
+        "endLine": 431,
+        "startByte": 39403,
+        "endByte": 40224
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c023.md",
+      "bytes": 822,
+      "sha256": "0aec0cdbffad951313c3c4f8ba2668a9c2bb28fcfdca2cd77a67f450baf04739"
+    },
+    {
+      "chapterId": "v1-c024",
+      "title": "七月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 432,
+        "endLine": 445,
+        "startByte": 40225,
+        "endByte": 40987
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c024.md",
+      "bytes": 763,
+      "sha256": "6756b20390a93ab209a073df2b68653097a38cf91c3a50515b738afc0397e259"
+    },
+    {
+      "chapterId": "v1-c025",
+      "title": "八月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 446,
+        "endLine": 464,
+        "startByte": 40988,
+        "endByte": 41920
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c025.md",
+      "bytes": 933,
+      "sha256": "c863611c41d0d8fb551eff893622c6f961cd596e0ed23437609793307c4ca2e3"
+    },
+    {
+      "chapterId": "v1-c026",
+      "title": "九月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 465,
+        "endLine": 484,
+        "startByte": 41921,
+        "endByte": 42824
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c026.md",
+      "bytes": 904,
+      "sha256": "a5feefa0fe9ec1c8fb9dcaab01685cad0ff68e17a6d4533fdb72ad622698a05d"
+    },
+    {
+      "chapterId": "v1-c027",
+      "title": "十月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 485,
+        "endLine": 504,
+        "startByte": 42825,
+        "endByte": 43530
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c027.md",
+      "bytes": 706,
+      "sha256": "5edd257e36f86833dc9e61f3b6676ac34b08fd60ee2189ab8b347beabeb40147"
+    },
+    {
+      "chapterId": "v1-c028",
+      "title": "十一月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 505,
+        "endLine": 525,
+        "startByte": 43531,
+        "endByte": 44438
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c028.md",
+      "bytes": 908,
+      "sha256": "715440346c8f58eea635d87415f78caf0690d2daff2c11134245824b787da9cd"
+    },
+    {
+      "chapterId": "v1-c029",
+      "title": "十二月丙火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 526,
+        "endLine": 558,
+        "startByte": 44439,
+        "endByte": 46069
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c029.md",
+      "bytes": 1631,
+      "sha256": "3a3ecd7c0c39ab68da5aaa5c1b72d9045a9ca4d51ada1a97f4a9b8f1754a34a2"
+    },
+    {
+      "chapterId": "v1-c030",
+      "title": "论丁火",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 559,
+        "endLine": 564,
+        "startByte": 46070,
+        "endByte": 46677
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c030.md",
+      "bytes": 608,
+      "sha256": "4ff366c4ae3a4ce480794a5fc199dbef346bd69f92bfe4e45e9f4e32b2964a95"
+    },
+    {
+      "chapterId": "v1-c031",
+      "title": "三春丁火",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 565,
+        "endLine": 583,
+        "startByte": 46678,
+        "endByte": 47699
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c031.md",
+      "bytes": 1022,
+      "sha256": "4bffedabbccc7ec9aaf0715386ecb7e165ae7e1395a60df179b907c887c75de4"
+    },
+    {
+      "chapterId": "v1-c032",
+      "title": "二月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 584,
+        "endLine": 603,
+        "startByte": 47700,
+        "endByte": 48846
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c032.md",
+      "bytes": 1147,
+      "sha256": "0984298cc685fc4f0581b9052440e2a2372f39294a2301d111d62c5b9f2ddd18"
+    },
+    {
+      "chapterId": "v1-c033",
+      "title": "三月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 604,
+        "endLine": 617,
+        "startByte": 48847,
+        "endByte": 49792
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c033.md",
+      "bytes": 946,
+      "sha256": "56c1c0900e44aa63266c5abf1328ba4650c755557eaab56e171a5936bf347532"
+    },
+    {
+      "chapterId": "v1-c034",
+      "title": "四月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 618,
+        "endLine": 635,
+        "startByte": 49793,
+        "endByte": 50827
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c034.md",
+      "bytes": 1035,
+      "sha256": "ecb7c841922546b6c31021b1e62d173f3a1d032ec99851f8d5e2c56610d44ec6"
+    },
+    {
+      "chapterId": "v1-c035",
+      "title": "五月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 636,
+        "endLine": 664,
+        "startByte": 50828,
+        "endByte": 52355
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c035.md",
+      "bytes": 1528,
+      "sha256": "e4048d51b0728a570c5ed1d0bda4ce2414bc927e633328711d852fa4e59b7b86"
+    },
+    {
+      "chapterId": "v1-c036",
+      "title": "六月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 665,
+        "endLine": 687,
+        "startByte": 52356,
+        "endByte": 53712
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c036.md",
+      "bytes": 1357,
+      "sha256": "584f4093ea32d5972d4552d4f64ff0a884003277960747ba539076a603013174"
+    },
+    {
+      "chapterId": "v1-c037",
+      "title": "七月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 688,
+        "endLine": 712,
+        "startByte": 53713,
+        "endByte": 55033
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c037.md",
+      "bytes": 1321,
+      "sha256": "e4b7d9ab9ef6f331f27d5327d10da094265e2fead4431b8e49088c3de847acad"
+    },
+    {
+      "chapterId": "v1-c038",
+      "title": "八九月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 713,
+        "endLine": 738,
+        "startByte": 55034,
+        "endByte": 56281
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c038.md",
+      "bytes": 1248,
+      "sha256": "7453cd574563239a9625221c49452c23b97aa4f382560e6d8e8837ae37e930bd"
+    },
+    {
+      "chapterId": "v1-c039",
+      "title": "十月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 739,
+        "endLine": 763,
+        "startByte": 56282,
+        "endByte": 57398
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c039.md",
+      "bytes": 1117,
+      "sha256": "6995759eabfd4ce3997ffef7ccbee146aceb6859be42358b735feafff1f7fbda"
+    },
+    {
+      "chapterId": "v1-c040",
+      "title": "十一月丁火",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 764,
+        "endLine": 790,
+        "startByte": 57399,
+        "endByte": 58674
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c040.md",
+      "bytes": 1276,
+      "sha256": "ea8dd2948203ee4863660c3263a2399ecf0a8c722ce2ccac700e82700bf299d4"
+    },
+    {
+      "chapterId": "v1-c041",
+      "title": "论土",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 791,
+        "endLine": 809,
+        "startByte": 58675,
+        "endByte": 61221
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c041.md",
+      "bytes": 2547,
+      "sha256": "312eac027265c30f91d5beabfa3c5f6ae6fe701accae009fea8d0ccbcbb0fbc5"
+    },
+    {
+      "chapterId": "v1-c042",
+      "title": "论戊土",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 810,
+        "endLine": 819,
+        "startByte": 61222,
+        "endByte": 62003
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c042.md",
+      "bytes": 782,
+      "sha256": "7d403de0ee9afe6165d6af5170aa34ea1d4cb8f4c83186f919b5aa0fb2bd4fd6"
+    },
+    {
+      "chapterId": "v1-c043",
+      "title": "三春戊土",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 820,
+        "endLine": 823,
+        "startByte": 62004,
+        "endByte": 62347
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c043.md",
+      "bytes": 344,
+      "sha256": "11d29eb471282cfc75d6bfbf12b5f0da682f505530cff8292d0d12cc0368e304"
+    },
+    {
+      "chapterId": "v1-c044",
+      "title": "正二月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 824,
+        "endLine": 830,
+        "startByte": 62348,
+        "endByte": 63163
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c044.md",
+      "bytes": 816,
+      "sha256": "fa014e6fce36e9db1c34a82735c6c56ac76184210ac64b3bd642be38822e52f2"
+    },
+    {
+      "chapterId": "v1-c045",
+      "title": "三月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 831,
+        "endLine": 868,
+        "startByte": 63164,
+        "endByte": 64839
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c045.md",
+      "bytes": 1676,
+      "sha256": "aab29543b2627bcb932e77fd873930b44904fce30d43188de86e9e229d475c54"
+    },
+    {
+      "chapterId": "v1-c046",
+      "title": "四月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 869,
+        "endLine": 885,
+        "startByte": 64840,
+        "endByte": 65641
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c046.md",
+      "bytes": 802,
+      "sha256": "9ea760f8ab904c17879470e8e39a6ec5f94d338f304a954b3c4f776251e04312"
+    },
+    {
+      "chapterId": "v1-c047",
+      "title": "五月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 886,
+        "endLine": 899,
+        "startByte": 65642,
+        "endByte": 66289
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c047.md",
+      "bytes": 648,
+      "sha256": "9af9c8bb36bbc97005c4f2f36eb35bd66c6379e06d7f9c26fb6d2d37637e0c85"
+    },
+    {
+      "chapterId": "v1-c048",
+      "title": "六月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 900,
+        "endLine": 914,
+        "startByte": 66290,
+        "endByte": 67020
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c048.md",
+      "bytes": 731,
+      "sha256": "5e5086c3bc22633e1d1e6cca96eb2800cafbc412bc2d94ce6d556e9160019bb6"
+    },
+    {
+      "chapterId": "v1-c049",
+      "title": "七月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 915,
+        "endLine": 932,
+        "startByte": 67021,
+        "endByte": 67793
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c049.md",
+      "bytes": 773,
+      "sha256": "ea69f268ec9466275d96c266412f75ba67872b1b8b89067f57d113f5b6c70184"
+    },
+    {
+      "chapterId": "v1-c050",
+      "title": "八月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 933,
+        "endLine": 940,
+        "startByte": 67794,
+        "endByte": 68391
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c050.md",
+      "bytes": 598,
+      "sha256": "05126381f439c15ae2877863c2c40201cd0966e1e329043dd62906fd6f28c60f"
+    },
+    {
+      "chapterId": "v1-c051",
+      "title": "九月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 941,
+        "endLine": 968,
+        "startByte": 68392,
+        "endByte": 69447
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c051.md",
+      "bytes": 1056,
+      "sha256": "4d4f1153050971fba405571c96934de12d50bf9786bbf2c0f61a764737dfd662"
+    },
+    {
+      "chapterId": "v1-c052",
+      "title": "十月戊土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 969,
+        "endLine": 984,
+        "startByte": 69448,
+        "endByte": 70191
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c052.md",
+      "bytes": 744,
+      "sha256": "69ebb7f2a07fb8915f7c60df0df92ed9376f0073249acd588dc85b3327be4d25"
+    },
+    {
+      "chapterId": "v1-c053",
+      "title": "十一二月",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 985,
+        "endLine": 1005,
+        "startByte": 70192,
+        "endByte": 71336
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c053.md",
+      "bytes": 1145,
+      "sha256": "b0b3487874a62a31130365bf5caccb9103a3d0fce7434960a487fc8d0c21bc86"
+    },
+    {
+      "chapterId": "v1-c054",
+      "title": "论己土",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 1006,
+        "endLine": 1016,
+        "startByte": 71337,
+        "endByte": 72205
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c054.md",
+      "bytes": 869,
+      "sha256": "d6b77bdc308031e9daea4ddd1dc1549e136d76084ebbb524102f1d223ae45c04"
+    },
+    {
+      "chapterId": "v1-c055",
+      "title": "二月己土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1017,
+        "endLine": 1032,
+        "startByte": 72206,
+        "endByte": 73072
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c055.md",
+      "bytes": 867,
+      "sha256": "3bbdd9380f675637a1103d6cbbb25a689c9e6457e7ce07dd91fd5caa9aede523"
+    },
+    {
+      "chapterId": "v1-c056",
+      "title": "三月己土",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1033,
+        "endLine": 1059,
+        "startByte": 73073,
+        "endByte": 74542
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c056.md",
+      "bytes": 1470,
+      "sha256": "cf19c052569dd5ab27fbed34edab7b3d9da74240103041b86ae930eee9ea8323"
+    },
+    {
+      "chapterId": "v1-c057",
+      "title": "三夏己土",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 1060,
+        "endLine": 1084,
+        "startByte": 74543,
+        "endByte": 75774
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c057.md",
+      "bytes": 1232,
+      "sha256": "0fe43618696962123be0b3f7d1c1b222b48aa619e84825062b4b314fe3b8512c"
+    },
+    {
+      "chapterId": "v1-c058",
+      "title": "三秋己土",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 1085,
+        "endLine": 1104,
+        "startByte": 75775,
+        "endByte": 77223
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c058.md",
+      "bytes": 1449,
+      "sha256": "515b468ec92ee78bfcde430d94391f4e7bd4950651ea6c09ee33f7c61cdc96cd"
+    },
+    {
+      "chapterId": "v1-c059",
+      "title": "三冬己土",
+      "headingLevel": 3,
+      "source": {
+        "startLine": 1105,
+        "endLine": 1121,
+        "startByte": 77224,
+        "endByte": 78234
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c059.md",
+      "bytes": 1011,
+      "sha256": "7f617319164dea0bde1d9f9a241e02fd6e698805620a80160a64d54acbd866e3"
+    },
+    {
+      "chapterId": "v1-c060",
+      "title": "论金",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 1122,
+        "endLine": 1148,
+        "startByte": 78235,
+        "endByte": 81063
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c060.md",
+      "bytes": 2829,
+      "sha256": "9eb54aae0a8ec11c417d26227d604491a59072380dcd36a4a30833ab1dceac47"
+    },
+    {
+      "chapterId": "v1-c061",
+      "title": "二月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1149,
+        "endLine": 1172,
+        "startByte": 81064,
+        "endByte": 82403
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c061.md",
+      "bytes": 1340,
+      "sha256": "247d9e4ab489ca72b2b79030ebe425007e9fba543d40f3833a5ec3a3468c6b0a"
+    },
+    {
+      "chapterId": "v1-c062",
+      "title": "三月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1173,
+        "endLine": 1185,
+        "startByte": 82404,
+        "endByte": 83414
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c062.md",
+      "bytes": 1011,
+      "sha256": "f4563bbcf5f990205e581b440ab07ce14567fe8a8181d3eac901973033c722fe"
+    },
+    {
+      "chapterId": "v1-c063",
+      "title": "四月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1186,
+        "endLine": 1193,
+        "startByte": 83415,
+        "endByte": 84249
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c063.md",
+      "bytes": 835,
+      "sha256": "aaa97f7254dacf8efc554e18cecde445782ca98fe72e2c4e01ff78d30ed9f598"
+    },
+    {
+      "chapterId": "v1-c064",
+      "title": "五月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1194,
+        "endLine": 1201,
+        "startByte": 84250,
+        "endByte": 84862
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c064.md",
+      "bytes": 613,
+      "sha256": "12bb5dfff17c711574570683691e80b0e4914940dec37cdba94b1ad1a86e9620"
+    },
+    {
+      "chapterId": "v1-c065",
+      "title": "六月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1202,
+        "endLine": 1224,
+        "startByte": 84863,
+        "endByte": 85709
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c065.md",
+      "bytes": 847,
+      "sha256": "320012b29d71b2ba2889331cf04dc8e727fa63d706b81669e761fc531cbf9138"
+    },
+    {
+      "chapterId": "v1-c066",
+      "title": "七月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1225,
+        "endLine": 1231,
+        "startByte": 85710,
+        "endByte": 86435
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c066.md",
+      "bytes": 726,
+      "sha256": "6e1931d6212628bc4b480549b9eafa093eff24235c7b4f0fddbf28ee4c2c10a9"
+    },
+    {
+      "chapterId": "v1-c067",
+      "title": "八月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1232,
+        "endLine": 1251,
+        "startByte": 86436,
+        "endByte": 87339
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c067.md",
+      "bytes": 904,
+      "sha256": "9e02e1eae0fcfe1f18471a63976e68da26256ae341f3e1ba7a2837b3f88a107c"
+    },
+    {
+      "chapterId": "v1-c068",
+      "title": "九月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1252,
+        "endLine": 1270,
+        "startByte": 87340,
+        "endByte": 88191
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c068.md",
+      "bytes": 852,
+      "sha256": "c4223e970ad605e0d85395fca88697871444febe665e560b387553d362c6384a"
+    },
+    {
+      "chapterId": "v1-c069",
+      "title": "十月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1271,
+        "endLine": 1285,
+        "startByte": 88192,
+        "endByte": 88817
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c069.md",
+      "bytes": 626,
+      "sha256": "11b2f24eef4997aebe6986b6b6f5ccfaedaef96ed73542f8471be2f525330ad3"
+    },
+    {
+      "chapterId": "v1-c070",
+      "title": "十一月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1286,
+        "endLine": 1304,
+        "startByte": 88818,
+        "endByte": 89906
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c070.md",
+      "bytes": 1089,
+      "sha256": "d42e19dd1e61da5e4c123fb96d14954fe2ec9ca32468e1ede154127f32ca9484"
+    },
+    {
+      "chapterId": "v1-c071",
+      "title": "十二月庚金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1305,
+        "endLine": 1324,
+        "startByte": 89907,
+        "endByte": 91054
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c071.md",
+      "bytes": 1148,
+      "sha256": "4100c37010cb6a3504ff9d7e31199a66c94264d1b8b01bf70bbb145062111d4a"
+    },
+    {
+      "chapterId": "v1-c072",
+      "title": "论辛金",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 1325,
+        "endLine": 1337,
+        "startByte": 91055,
+        "endByte": 92093
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c072.md",
+      "bytes": 1039,
+      "sha256": "debc184c364628e8a5c4151a5b2b254537cd8283742d571ba0d68fc6c7ce890f"
+    },
+    {
+      "chapterId": "v1-c073",
+      "title": "二月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1338,
+        "endLine": 1366,
+        "startByte": 92094,
+        "endByte": 93540
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c073.md",
+      "bytes": 1447,
+      "sha256": "f037caabeb4e742b218567b090cd091e37dcf13eff08e2cb067ed524c965c7ea"
+    },
+    {
+      "chapterId": "v1-c074",
+      "title": "三月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1367,
+        "endLine": 1374,
+        "startByte": 93541,
+        "endByte": 94246
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c074.md",
+      "bytes": 706,
+      "sha256": "3bf03b24fe6a6f7155cf9dbd6e13f2389031e6ddeebc6c2b9c11ccd243e7f0ec"
+    },
+    {
+      "chapterId": "v1-c075",
+      "title": "四月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1375,
+        "endLine": 1385,
+        "startByte": 94247,
+        "endByte": 94946
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c075.md",
+      "bytes": 700,
+      "sha256": "186b04e776e09dc9794cb87feef50aa72e0556361fa0b73554d83bad94d81e76"
+    },
+    {
+      "chapterId": "v1-c076",
+      "title": "五月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1386,
+        "endLine": 1396,
+        "startByte": 94947,
+        "endByte": 95868
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c076.md",
+      "bytes": 922,
+      "sha256": "8db928e0e70f4c3789dba3755ce1b6175fdc95b9ec5067d1cf47f598e750e4bb"
+    },
+    {
+      "chapterId": "v1-c077",
+      "title": "六月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1397,
+        "endLine": 1409,
+        "startByte": 95869,
+        "endByte": 96699
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c077.md",
+      "bytes": 831,
+      "sha256": "30e9eee0208719e51c19c7e3bc9f68b712291fdf118304f80af7084904b432f2"
+    },
+    {
+      "chapterId": "v1-c078",
+      "title": "七月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1410,
+        "endLine": 1421,
+        "startByte": 96700,
+        "endByte": 97367
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c078.md",
+      "bytes": 668,
+      "sha256": "840e517e2a693a197c9edd852747f02e1949d82ec868894f5cc37facc75024b2"
+    },
+    {
+      "chapterId": "v1-c079",
+      "title": "八月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1422,
+        "endLine": 1447,
+        "startByte": 97368,
+        "endByte": 99195
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c079.md",
+      "bytes": 1828,
+      "sha256": "b1c2207bcb20e58a49ff3206421b7c632303771781ca7ab5fb51f1d96dcc72a6"
+    },
+    {
+      "chapterId": "v1-c080",
+      "title": "九月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1448,
+        "endLine": 1469,
+        "startByte": 99196,
+        "endByte": 100311
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c080.md",
+      "bytes": 1116,
+      "sha256": "52bb0b1b7c769b1dd91816a31b89e197b262b546b7d1ffbf51b291c13a9170ac"
+    },
+    {
+      "chapterId": "v1-c081",
+      "title": "十月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1470,
+        "endLine": 1477,
+        "startByte": 100312,
+        "endByte": 100921
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c081.md",
+      "bytes": 610,
+      "sha256": "5116feb4744db050d5c292044d541c4376f6f395842a97c051ef96e8e80e25ed"
+    },
+    {
+      "chapterId": "v1-c082",
+      "title": "十一月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1478,
+        "endLine": 1485,
+        "startByte": 100922,
+        "endByte": 101606
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c082.md",
+      "bytes": 685,
+      "sha256": "92153e4339cd2ecba47a667a9becad5fb4c99c2cd98fab564c536c4fcce8183f"
+    },
+    {
+      "chapterId": "v1-c083",
+      "title": "十二月辛金",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1486,
+        "endLine": 1515,
+        "startByte": 101607,
+        "endByte": 103364
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c083.md",
+      "bytes": 1758,
+      "sha256": "3d94755fe5d4a94edc866ba82c348bb4756bb3c7fd69b342719a0b2343e912ed"
+    },
+    {
+      "chapterId": "v1-c084",
+      "title": "论水",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 1516,
+        "endLine": 1533,
+        "startByte": 103365,
+        "endByte": 105448
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c084.md",
+      "bytes": 2084,
+      "sha256": "3a8da1f0c9a8a77b229566c5e3b2ff9fddc9a581df3c97eb067bbae75fd5a0dc"
+    },
+    {
+      "chapterId": "v1-c085",
+      "title": "论壬水",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 1534,
+        "endLine": 1547,
+        "startByte": 105449,
+        "endByte": 106290
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c085.md",
+      "bytes": 842,
+      "sha256": "54fde06af8638ad7e54f2c272bd0fae8bfe2e9e46a3874da67c03fd22032288f"
+    },
+    {
+      "chapterId": "v1-c086",
+      "title": "二月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1548,
+        "endLine": 1556,
+        "startByte": 106291,
+        "endByte": 106964
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c086.md",
+      "bytes": 674,
+      "sha256": "a900b360195e8c4868f140bd7af06e388f3bdc44a9e29e8397a056e3c3784c31"
+    },
+    {
+      "chapterId": "v1-c087",
+      "title": "三月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1557,
+        "endLine": 1568,
+        "startByte": 106965,
+        "endByte": 107605
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c087.md",
+      "bytes": 641,
+      "sha256": "c44baf9f5c4df5745eff2c031386ecfb1a61d3ce34cd2bd1bbeaaab56945db38"
+    },
+    {
+      "chapterId": "v1-c088",
+      "title": "四月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1569,
+        "endLine": 1589,
+        "startByte": 107606,
+        "endByte": 108534
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c088.md",
+      "bytes": 929,
+      "sha256": "870ddbf399a125323d331b9bec3c3dbace9a0ce25195889adef46c35446bdcfd"
+    },
+    {
+      "chapterId": "v1-c089",
+      "title": "五月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1590,
+        "endLine": 1603,
+        "startByte": 108535,
+        "endByte": 109117
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c089.md",
+      "bytes": 583,
+      "sha256": "9c4ac181900a53650d62519102761b75a431c1d8b7252556b639932c54bb5517"
+    },
+    {
+      "chapterId": "v1-c090",
+      "title": "六月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1604,
+        "endLine": 1610,
+        "startByte": 109118,
+        "endByte": 109696
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c090.md",
+      "bytes": 579,
+      "sha256": "f1f4385291ddb7520eb728f1f59dda9aba5542c9a52302de4e698c09fb62dab0"
+    },
+    {
+      "chapterId": "v1-c091",
+      "title": "七月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1611,
+        "endLine": 1629,
+        "startByte": 109697,
+        "endByte": 110737
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c091.md",
+      "bytes": 1041,
+      "sha256": "ffad159715cfda448b55cde94f9b840c0cfa4216ce083c767b9114c4429d32ae"
+    },
+    {
+      "chapterId": "v1-c092",
+      "title": "八月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1630,
+        "endLine": 1653,
+        "startByte": 110738,
+        "endByte": 111759
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c092.md",
+      "bytes": 1022,
+      "sha256": "55688feec1edfdea84ee66c08d5664e1884e34207724c92ed2852457c5cf9cb6"
+    },
+    {
+      "chapterId": "v1-c093",
+      "title": "九月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1654,
+        "endLine": 1665,
+        "startByte": 111760,
+        "endByte": 112406
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c093.md",
+      "bytes": 647,
+      "sha256": "73f9c7d72f8771fcc4a42a7e2669c593010102ff417d3e24970a886ca60e5860"
+    },
+    {
+      "chapterId": "v1-c094",
+      "title": "十月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1666,
+        "endLine": 1680,
+        "startByte": 112407,
+        "endByte": 113275
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c094.md",
+      "bytes": 869,
+      "sha256": "d271fb78ae585a31f91194f0d8f8155f1e5c90e1c50d2851b4d9b57290d0809b"
+    },
+    {
+      "chapterId": "v1-c095",
+      "title": "十一月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1681,
+        "endLine": 1697,
+        "startByte": 113276,
+        "endByte": 114137
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c095.md",
+      "bytes": 862,
+      "sha256": "4557f5e03d6fb9a5df4d06318978d7307b911fe1cf66174d68043210dc7ce67c"
+    },
+    {
+      "chapterId": "v1-c096",
+      "title": "十二月壬水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1698,
+        "endLine": 1716,
+        "startByte": 114138,
+        "endByte": 115704
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c096.md",
+      "bytes": 1567,
+      "sha256": "074d31c86a244598edeadde9ab7ffefcc08dee73e59ba43ccc4633438077015f"
+    },
+    {
+      "chapterId": "v1-c097",
+      "title": "论癸水",
+      "headingLevel": 2,
+      "source": {
+        "startLine": 1717,
+        "endLine": 1726,
+        "startByte": 115705,
+        "endByte": 116518
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c097.md",
+      "bytes": 814,
+      "sha256": "d49c39cddcb9a702a9a4c7ea4bb0885d0c327ff4000d93bdb1867faab8f9facf"
+    },
+    {
+      "chapterId": "v1-c098",
+      "title": "二月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1727,
+        "endLine": 1744,
+        "startByte": 116519,
+        "endByte": 117282
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c098.md",
+      "bytes": 764,
+      "sha256": "8e68d57a2b6b1b1ad0c308828b6a72643ea34a0808f57a0a5a0f0c3e41411794"
+    },
+    {
+      "chapterId": "v1-c099",
+      "title": "三月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1745,
+        "endLine": 1775,
+        "startByte": 117283,
+        "endByte": 118464
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c099.md",
+      "bytes": 1182,
+      "sha256": "d4875baa66af3b3f5c995f29f514109afe210749d0512d4f25ff9a05af5b0b36"
+    },
+    {
+      "chapterId": "v1-c100",
+      "title": "四月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1776,
+        "endLine": 1780,
+        "startByte": 118465,
+        "endByte": 119023
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c100.md",
+      "bytes": 559,
+      "sha256": "da02a83b4c4300d31f341f1e331ccd81a70b3217cf7aa67747a36ec47e5cdd0f"
+    },
+    {
+      "chapterId": "v1-c101",
+      "title": "五月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1781,
+        "endLine": 1787,
+        "startByte": 119024,
+        "endByte": 119731
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c101.md",
+      "bytes": 708,
+      "sha256": "c8bd53093dc3e043c2b318bad710f6bd256aa4a696748d6bc2bb4246c5a0ffd9"
+    },
+    {
+      "chapterId": "v1-c102",
+      "title": "六月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1788,
+        "endLine": 1799,
+        "startByte": 119732,
+        "endByte": 120402
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c102.md",
+      "bytes": 671,
+      "sha256": "28f28e440fa8befb4f00c90353a581e5b4d67e76b6654e41e20ddfec45f867f8"
+    },
+    {
+      "chapterId": "v1-c103",
+      "title": "七月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1800,
+        "endLine": 1816,
+        "startByte": 120403,
+        "endByte": 121297
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c103.md",
+      "bytes": 895,
+      "sha256": "e53c855ef6e250a28c89cb88ef7fcbcd4cfcb78d5e321bad8c303bb86c8dca9f"
+    },
+    {
+      "chapterId": "v1-c104",
+      "title": "八月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1817,
+        "endLine": 1828,
+        "startByte": 121298,
+        "endByte": 121785
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c104.md",
+      "bytes": 488,
+      "sha256": "4e9aed52d98304787f8a718575fb1c1380335e5779480d4aebaa6a281c5e95b1"
+    },
+    {
+      "chapterId": "v1-c105",
+      "title": "九月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1829,
+        "endLine": 1843,
+        "startByte": 121786,
+        "endByte": 122423
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c105.md",
+      "bytes": 638,
+      "sha256": "93f8e51a2bcfbb988eec8e5cd57e61c9e51efb591e33255bbd60fc3bc18de5c2"
+    },
+    {
+      "chapterId": "v1-c106",
+      "title": "十月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1844,
+        "endLine": 1859,
+        "startByte": 122424,
+        "endByte": 123158
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c106.md",
+      "bytes": 735,
+      "sha256": "d0dafa541e98b2c06e5e6a272ee59f62b009f7d64ea32b7844fadd38475cde77"
+    },
+    {
+      "chapterId": "v1-c107",
+      "title": "十一月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1860,
+        "endLine": 1868,
+        "startByte": 123159,
+        "endByte": 123880
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c107.md",
+      "bytes": 722,
+      "sha256": "70a8a7bb5ffbe56d5ada758839dd3cc9b06addb6142b89a6d179c4040338cc34"
+    },
+    {
+      "chapterId": "v1-c108",
+      "title": "十二月癸水",
+      "headingLevel": 4,
+      "source": {
+        "startLine": 1869,
+        "endLine": 1889,
+        "startByte": 123881,
+        "endByte": 125795
+      },
+      "outputPath": "content/books/qiongtongbaojian/chapters/v1/v1-c108.md",
+      "bytes": 1915,
+      "sha256": "0a45dc319b8eba4456be4b2c91c2f671e203f26b8d0a5bd191ec414db3886d3c"
+    }
+  ],
+  "structuralSegments": [
+    {
+      "kind": "structural-prefix",
+      "title": "三夏丁火",
+      "source": {
+        "startLine": 618,
+        "endLine": 619,
+        "startByte": 49793,
+        "endByte": 49810
+      },
+      "attachedChapterId": "v1-c034",
+      "resolution": "空直系正文 heading 原样附于后继篇章，不形成独立篇章或第二份内容所有权"
+    },
+    {
+      "kind": "structural-prefix",
+      "title": "三秋丁火",
+      "source": {
+        "startLine": 688,
+        "endLine": 689,
+        "startByte": 53713,
+        "endByte": 53730
+      },
+      "attachedChapterId": "v1-c037",
+      "resolution": "空直系正文 heading 原样附于后继篇章，不形成独立篇章或第二份内容所有权"
+    },
+    {
+      "kind": "structural-prefix",
+      "title": "三冬丁火",
+      "source": {
+        "startLine": 739,
+        "endLine": 740,
+        "startByte": 56282,
+        "endByte": 56299
+      },
+      "attachedChapterId": "v1-c039",
+      "resolution": "空直系正文 heading 原样附于后继篇章，不形成独立篇章或第二份内容所有权"
+    }
+  ],
+  "headingLevelJumps": [
+    {
+      "fromLine": 1006,
+      "toLine": 1017,
+      "fromLevel": 2,
+      "toLevel": 4
+    },
+    {
+      "fromLine": 1122,
+      "toLine": 1149,
+      "fromLevel": 2,
+      "toLevel": 4
+    },
+    {
+      "fromLine": 1325,
+      "toLine": 1338,
+      "fromLevel": 2,
+      "toLevel": 4
+    },
+    {
+      "fromLine": 1534,
+      "toLine": 1548,
+      "fromLevel": 2,
+      "toLevel": 4
+    },
+    {
+      "fromLine": 1717,
+      "toLine": 1727,
+      "fromLevel": 2,
+      "toLevel": 4
+    }
+  ],
+  "plainTextLabels": [
+    {
+      "kind": "season",
+      "text": "春月之土",
+      "sourceLine": 795,
+      "chapterId": "v1-c041"
+    },
+    {
+      "kind": "season",
+      "text": "夏月之土",
+      "sourceLine": 797,
+      "chapterId": "v1-c041"
+    },
+    {
+      "kind": "season",
+      "text": "秋月之土",
+      "sourceLine": 799,
+      "chapterId": "v1-c041"
+    },
+    {
+      "kind": "season",
+      "text": "冬月之土",
+      "sourceLine": 801,
+      "chapterId": "v1-c041"
+    },
+    {
+      "kind": "month",
+      "text": "正月丙火：",
+      "sourceLine": 303,
+      "chapterId": "v1-c017"
+    },
+    {
+      "kind": "month",
+      "text": "正月丁火：",
+      "sourceLine": 567,
+      "chapterId": "v1-c031"
+    },
+    {
+      "kind": "month",
+      "text": "正月己土：",
+      "sourceLine": 1008,
+      "chapterId": "v1-c054"
+    },
+    {
+      "kind": "month",
+      "text": "正月庚金：",
+      "sourceLine": 1133,
+      "chapterId": "v1-c060"
+    },
+    {
+      "kind": "month",
+      "text": "正月辛金：",
+      "sourceLine": 1327,
+      "chapterId": "v1-c072"
+    },
+    {
+      "kind": "month",
+      "text": "正月壬水：",
+      "sourceLine": 1536,
+      "chapterId": "v1-c085"
+    },
+    {
+      "kind": "month",
+      "text": "正月癸水：",
+      "sourceLine": 1719,
+      "chapterId": "v1-c097"
+    }
+  ],
+  "mergedMonthHeadings": [
+    {
+      "title": "正二月戊土",
+      "months": [
+        "正月",
+        "二月"
+      ],
+      "chapterId": "v1-c044"
+    },
+    {
+      "title": "八九月丁火",
+      "months": [
+        "八月",
+        "九月"
+      ],
+      "chapterId": "v1-c038"
+    },
+    {
+      "title": "十一二月",
+      "months": [
+        "十一月",
+        "十二月"
+      ],
+      "chapterId": "v1-c053"
+    }
+  ],
+  "missingStandaloneHeadings": [
+    {
+      "title": "十二月丁火",
+      "chapterId": "v1-c040",
+      "resolution": "原稿无独立标题，丑月命例与三冬总结保持归属十一月丁火篇章"
+    }
+  ],
+  "monthCoverage": [
+    {
+      "tiangan": "甲",
+      "month": 1,
+      "chapterId": "v1-c005",
+      "source": {
+        "startLine": 55,
+        "endLine": 82,
+        "startByte": 6420,
+        "endByte": 9728
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 2,
+      "chapterId": "v1-c005",
+      "source": {
+        "startLine": 55,
+        "endLine": 82,
+        "startByte": 6420,
+        "endByte": 9728
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 3,
+      "chapterId": "v1-c005",
+      "source": {
+        "startLine": 55,
+        "endLine": 82,
+        "startByte": 6420,
+        "endByte": 9728
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 4,
+      "chapterId": "v1-c006",
+      "source": {
+        "startLine": 83,
+        "endLine": 107,
+        "startByte": 9729,
+        "endByte": 12985
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 5,
+      "chapterId": "v1-c006",
+      "source": {
+        "startLine": 83,
+        "endLine": 107,
+        "startByte": 9729,
+        "endByte": 12985
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 6,
+      "chapterId": "v1-c006",
+      "source": {
+        "startLine": 83,
+        "endLine": 107,
+        "startByte": 9729,
+        "endByte": 12985
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 7,
+      "chapterId": "v1-c008",
+      "source": {
+        "startLine": 121,
+        "endLine": 168,
+        "startByte": 14661,
+        "endByte": 17982
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 8,
+      "chapterId": "v1-c008",
+      "source": {
+        "startLine": 121,
+        "endLine": 168,
+        "startByte": 14661,
+        "endByte": 17982
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 9,
+      "chapterId": "v1-c008",
+      "source": {
+        "startLine": 121,
+        "endLine": 168,
+        "startByte": 14661,
+        "endByte": 17982
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 10,
+      "chapterId": "v1-c009",
+      "source": {
+        "startLine": 169,
+        "endLine": 189,
+        "startByte": 17983,
+        "endByte": 20221
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 11,
+      "chapterId": "v1-c009",
+      "source": {
+        "startLine": 169,
+        "endLine": 189,
+        "startByte": 17983,
+        "endByte": 20221
+      }
+    },
+    {
+      "tiangan": "甲",
+      "month": 12,
+      "chapterId": "v1-c009",
+      "source": {
+        "startLine": 169,
+        "endLine": 189,
+        "startByte": 17983,
+        "endByte": 20221
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 1,
+      "chapterId": "v1-c011",
+      "source": {
+        "startLine": 194,
+        "endLine": 217,
+        "startByte": 20542,
+        "endByte": 22999
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 2,
+      "chapterId": "v1-c011",
+      "source": {
+        "startLine": 194,
+        "endLine": 217,
+        "startByte": 20542,
+        "endByte": 22999
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 3,
+      "chapterId": "v1-c011",
+      "source": {
+        "startLine": 194,
+        "endLine": 217,
+        "startByte": 20542,
+        "endByte": 22999
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 4,
+      "chapterId": "v1-c013",
+      "source": {
+        "startLine": 223,
+        "endLine": 247,
+        "startByte": 23519,
+        "endByte": 26166
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 5,
+      "chapterId": "v1-c013",
+      "source": {
+        "startLine": 223,
+        "endLine": 247,
+        "startByte": 23519,
+        "endByte": 26166
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 6,
+      "chapterId": "v1-c013",
+      "source": {
+        "startLine": 223,
+        "endLine": 247,
+        "startByte": 23519,
+        "endByte": 26166
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 7,
+      "chapterId": "v1-c014",
+      "source": {
+        "startLine": 248,
+        "endLine": 272,
+        "startByte": 26167,
+        "endByte": 29282
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 8,
+      "chapterId": "v1-c014",
+      "source": {
+        "startLine": 248,
+        "endLine": 272,
+        "startByte": 26167,
+        "endByte": 29282
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 9,
+      "chapterId": "v1-c014",
+      "source": {
+        "startLine": 248,
+        "endLine": 272,
+        "startByte": 26167,
+        "endByte": 29282
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 10,
+      "chapterId": "v1-c015",
+      "source": {
+        "startLine": 273,
+        "endLine": 292,
+        "startByte": 29283,
+        "endByte": 32120
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 11,
+      "chapterId": "v1-c015",
+      "source": {
+        "startLine": 273,
+        "endLine": 292,
+        "startByte": 29283,
+        "endByte": 32120
+      }
+    },
+    {
+      "tiangan": "乙",
+      "month": 12,
+      "chapterId": "v1-c015",
+      "source": {
+        "startLine": 273,
+        "endLine": 292,
+        "startByte": 29283,
+        "endByte": 32120
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 1,
+      "chapterId": "v1-c017",
+      "source": {
+        "startLine": 299,
+        "endLine": 335,
+        "startByte": 32579,
+        "endByte": 34623
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 2,
+      "chapterId": "v1-c018",
+      "source": {
+        "startLine": 336,
+        "endLine": 352,
+        "startByte": 34624,
+        "endByte": 35812
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 3,
+      "chapterId": "v1-c019",
+      "source": {
+        "startLine": 353,
+        "endLine": 364,
+        "startByte": 35813,
+        "endByte": 36713
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 4,
+      "chapterId": "v1-c021",
+      "source": {
+        "startLine": 371,
+        "endLine": 393,
+        "startByte": 37168,
+        "endByte": 38292
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 5,
+      "chapterId": "v1-c022",
+      "source": {
+        "startLine": 394,
+        "endLine": 412,
+        "startByte": 38293,
+        "endByte": 39402
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 6,
+      "chapterId": "v1-c023",
+      "source": {
+        "startLine": 413,
+        "endLine": 431,
+        "startByte": 39403,
+        "endByte": 40224
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 7,
+      "chapterId": "v1-c024",
+      "source": {
+        "startLine": 432,
+        "endLine": 445,
+        "startByte": 40225,
+        "endByte": 40987
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 8,
+      "chapterId": "v1-c025",
+      "source": {
+        "startLine": 446,
+        "endLine": 464,
+        "startByte": 40988,
+        "endByte": 41920
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 9,
+      "chapterId": "v1-c026",
+      "source": {
+        "startLine": 465,
+        "endLine": 484,
+        "startByte": 41921,
+        "endByte": 42824
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 10,
+      "chapterId": "v1-c027",
+      "source": {
+        "startLine": 485,
+        "endLine": 504,
+        "startByte": 42825,
+        "endByte": 43530
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 11,
+      "chapterId": "v1-c028",
+      "source": {
+        "startLine": 505,
+        "endLine": 525,
+        "startByte": 43531,
+        "endByte": 44438
+      }
+    },
+    {
+      "tiangan": "丙",
+      "month": 12,
+      "chapterId": "v1-c029",
+      "source": {
+        "startLine": 526,
+        "endLine": 558,
+        "startByte": 44439,
+        "endByte": 46069
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 1,
+      "chapterId": "v1-c031",
+      "source": {
+        "startLine": 565,
+        "endLine": 583,
+        "startByte": 46678,
+        "endByte": 47699
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 2,
+      "chapterId": "v1-c032",
+      "source": {
+        "startLine": 584,
+        "endLine": 603,
+        "startByte": 47700,
+        "endByte": 48846
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 3,
+      "chapterId": "v1-c033",
+      "source": {
+        "startLine": 604,
+        "endLine": 617,
+        "startByte": 48847,
+        "endByte": 49792
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 4,
+      "chapterId": "v1-c034",
+      "source": {
+        "startLine": 618,
+        "endLine": 635,
+        "startByte": 49793,
+        "endByte": 50827
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 5,
+      "chapterId": "v1-c035",
+      "source": {
+        "startLine": 636,
+        "endLine": 664,
+        "startByte": 50828,
+        "endByte": 52355
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 6,
+      "chapterId": "v1-c036",
+      "source": {
+        "startLine": 665,
+        "endLine": 687,
+        "startByte": 52356,
+        "endByte": 53712
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 7,
+      "chapterId": "v1-c037",
+      "source": {
+        "startLine": 688,
+        "endLine": 712,
+        "startByte": 53713,
+        "endByte": 55033
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 8,
+      "chapterId": "v1-c038",
+      "source": {
+        "startLine": 713,
+        "endLine": 738,
+        "startByte": 55034,
+        "endByte": 56281
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 9,
+      "chapterId": "v1-c038",
+      "source": {
+        "startLine": 713,
+        "endLine": 738,
+        "startByte": 55034,
+        "endByte": 56281
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 10,
+      "chapterId": "v1-c039",
+      "source": {
+        "startLine": 739,
+        "endLine": 763,
+        "startByte": 56282,
+        "endByte": 57398
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 11,
+      "chapterId": "v1-c040",
+      "source": {
+        "startLine": 764,
+        "endLine": 790,
+        "startByte": 57399,
+        "endByte": 58674
+      }
+    },
+    {
+      "tiangan": "丁",
+      "month": 12,
+      "chapterId": "v1-c040",
+      "source": {
+        "startLine": 764,
+        "endLine": 790,
+        "startByte": 57399,
+        "endByte": 58674
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 1,
+      "chapterId": "v1-c044",
+      "source": {
+        "startLine": 824,
+        "endLine": 830,
+        "startByte": 62348,
+        "endByte": 63163
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 2,
+      "chapterId": "v1-c044",
+      "source": {
+        "startLine": 824,
+        "endLine": 830,
+        "startByte": 62348,
+        "endByte": 63163
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 3,
+      "chapterId": "v1-c045",
+      "source": {
+        "startLine": 831,
+        "endLine": 868,
+        "startByte": 63164,
+        "endByte": 64839
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 4,
+      "chapterId": "v1-c046",
+      "source": {
+        "startLine": 869,
+        "endLine": 885,
+        "startByte": 64840,
+        "endByte": 65641
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 5,
+      "chapterId": "v1-c047",
+      "source": {
+        "startLine": 886,
+        "endLine": 899,
+        "startByte": 65642,
+        "endByte": 66289
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 6,
+      "chapterId": "v1-c048",
+      "source": {
+        "startLine": 900,
+        "endLine": 914,
+        "startByte": 66290,
+        "endByte": 67020
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 7,
+      "chapterId": "v1-c049",
+      "source": {
+        "startLine": 915,
+        "endLine": 932,
+        "startByte": 67021,
+        "endByte": 67793
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 8,
+      "chapterId": "v1-c050",
+      "source": {
+        "startLine": 933,
+        "endLine": 940,
+        "startByte": 67794,
+        "endByte": 68391
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 9,
+      "chapterId": "v1-c051",
+      "source": {
+        "startLine": 941,
+        "endLine": 968,
+        "startByte": 68392,
+        "endByte": 69447
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 10,
+      "chapterId": "v1-c052",
+      "source": {
+        "startLine": 969,
+        "endLine": 984,
+        "startByte": 69448,
+        "endByte": 70191
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 11,
+      "chapterId": "v1-c053",
+      "source": {
+        "startLine": 985,
+        "endLine": 1005,
+        "startByte": 70192,
+        "endByte": 71336
+      }
+    },
+    {
+      "tiangan": "戊",
+      "month": 12,
+      "chapterId": "v1-c053",
+      "source": {
+        "startLine": 985,
+        "endLine": 1005,
+        "startByte": 70192,
+        "endByte": 71336
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 1,
+      "chapterId": "v1-c054",
+      "source": {
+        "startLine": 1006,
+        "endLine": 1016,
+        "startByte": 71337,
+        "endByte": 72205
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 2,
+      "chapterId": "v1-c055",
+      "source": {
+        "startLine": 1017,
+        "endLine": 1032,
+        "startByte": 72206,
+        "endByte": 73072
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 3,
+      "chapterId": "v1-c056",
+      "source": {
+        "startLine": 1033,
+        "endLine": 1059,
+        "startByte": 73073,
+        "endByte": 74542
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 4,
+      "chapterId": "v1-c057",
+      "source": {
+        "startLine": 1060,
+        "endLine": 1084,
+        "startByte": 74543,
+        "endByte": 75774
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 5,
+      "chapterId": "v1-c057",
+      "source": {
+        "startLine": 1060,
+        "endLine": 1084,
+        "startByte": 74543,
+        "endByte": 75774
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 6,
+      "chapterId": "v1-c057",
+      "source": {
+        "startLine": 1060,
+        "endLine": 1084,
+        "startByte": 74543,
+        "endByte": 75774
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 7,
+      "chapterId": "v1-c058",
+      "source": {
+        "startLine": 1085,
+        "endLine": 1104,
+        "startByte": 75775,
+        "endByte": 77223
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 8,
+      "chapterId": "v1-c058",
+      "source": {
+        "startLine": 1085,
+        "endLine": 1104,
+        "startByte": 75775,
+        "endByte": 77223
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 9,
+      "chapterId": "v1-c058",
+      "source": {
+        "startLine": 1085,
+        "endLine": 1104,
+        "startByte": 75775,
+        "endByte": 77223
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 10,
+      "chapterId": "v1-c059",
+      "source": {
+        "startLine": 1105,
+        "endLine": 1121,
+        "startByte": 77224,
+        "endByte": 78234
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 11,
+      "chapterId": "v1-c059",
+      "source": {
+        "startLine": 1105,
+        "endLine": 1121,
+        "startByte": 77224,
+        "endByte": 78234
+      }
+    },
+    {
+      "tiangan": "己",
+      "month": 12,
+      "chapterId": "v1-c059",
+      "source": {
+        "startLine": 1105,
+        "endLine": 1121,
+        "startByte": 77224,
+        "endByte": 78234
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 1,
+      "chapterId": "v1-c060",
+      "source": {
+        "startLine": 1122,
+        "endLine": 1148,
+        "startByte": 78235,
+        "endByte": 81063
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 2,
+      "chapterId": "v1-c061",
+      "source": {
+        "startLine": 1149,
+        "endLine": 1172,
+        "startByte": 81064,
+        "endByte": 82403
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 3,
+      "chapterId": "v1-c062",
+      "source": {
+        "startLine": 1173,
+        "endLine": 1185,
+        "startByte": 82404,
+        "endByte": 83414
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 4,
+      "chapterId": "v1-c063",
+      "source": {
+        "startLine": 1186,
+        "endLine": 1193,
+        "startByte": 83415,
+        "endByte": 84249
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 5,
+      "chapterId": "v1-c064",
+      "source": {
+        "startLine": 1194,
+        "endLine": 1201,
+        "startByte": 84250,
+        "endByte": 84862
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 6,
+      "chapterId": "v1-c065",
+      "source": {
+        "startLine": 1202,
+        "endLine": 1224,
+        "startByte": 84863,
+        "endByte": 85709
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 7,
+      "chapterId": "v1-c066",
+      "source": {
+        "startLine": 1225,
+        "endLine": 1231,
+        "startByte": 85710,
+        "endByte": 86435
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 8,
+      "chapterId": "v1-c067",
+      "source": {
+        "startLine": 1232,
+        "endLine": 1251,
+        "startByte": 86436,
+        "endByte": 87339
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 9,
+      "chapterId": "v1-c068",
+      "source": {
+        "startLine": 1252,
+        "endLine": 1270,
+        "startByte": 87340,
+        "endByte": 88191
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 10,
+      "chapterId": "v1-c069",
+      "source": {
+        "startLine": 1271,
+        "endLine": 1285,
+        "startByte": 88192,
+        "endByte": 88817
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 11,
+      "chapterId": "v1-c070",
+      "source": {
+        "startLine": 1286,
+        "endLine": 1304,
+        "startByte": 88818,
+        "endByte": 89906
+      }
+    },
+    {
+      "tiangan": "庚",
+      "month": 12,
+      "chapterId": "v1-c071",
+      "source": {
+        "startLine": 1305,
+        "endLine": 1324,
+        "startByte": 89907,
+        "endByte": 91054
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 1,
+      "chapterId": "v1-c072",
+      "source": {
+        "startLine": 1325,
+        "endLine": 1337,
+        "startByte": 91055,
+        "endByte": 92093
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 2,
+      "chapterId": "v1-c073",
+      "source": {
+        "startLine": 1338,
+        "endLine": 1366,
+        "startByte": 92094,
+        "endByte": 93540
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 3,
+      "chapterId": "v1-c074",
+      "source": {
+        "startLine": 1367,
+        "endLine": 1374,
+        "startByte": 93541,
+        "endByte": 94246
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 4,
+      "chapterId": "v1-c075",
+      "source": {
+        "startLine": 1375,
+        "endLine": 1385,
+        "startByte": 94247,
+        "endByte": 94946
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 5,
+      "chapterId": "v1-c076",
+      "source": {
+        "startLine": 1386,
+        "endLine": 1396,
+        "startByte": 94947,
+        "endByte": 95868
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 6,
+      "chapterId": "v1-c077",
+      "source": {
+        "startLine": 1397,
+        "endLine": 1409,
+        "startByte": 95869,
+        "endByte": 96699
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 7,
+      "chapterId": "v1-c078",
+      "source": {
+        "startLine": 1410,
+        "endLine": 1421,
+        "startByte": 96700,
+        "endByte": 97367
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 8,
+      "chapterId": "v1-c079",
+      "source": {
+        "startLine": 1422,
+        "endLine": 1447,
+        "startByte": 97368,
+        "endByte": 99195
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 9,
+      "chapterId": "v1-c080",
+      "source": {
+        "startLine": 1448,
+        "endLine": 1469,
+        "startByte": 99196,
+        "endByte": 100311
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 10,
+      "chapterId": "v1-c081",
+      "source": {
+        "startLine": 1470,
+        "endLine": 1477,
+        "startByte": 100312,
+        "endByte": 100921
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 11,
+      "chapterId": "v1-c082",
+      "source": {
+        "startLine": 1478,
+        "endLine": 1485,
+        "startByte": 100922,
+        "endByte": 101606
+      }
+    },
+    {
+      "tiangan": "辛",
+      "month": 12,
+      "chapterId": "v1-c083",
+      "source": {
+        "startLine": 1486,
+        "endLine": 1515,
+        "startByte": 101607,
+        "endByte": 103364
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 1,
+      "chapterId": "v1-c085",
+      "source": {
+        "startLine": 1534,
+        "endLine": 1547,
+        "startByte": 105449,
+        "endByte": 106290
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 2,
+      "chapterId": "v1-c086",
+      "source": {
+        "startLine": 1548,
+        "endLine": 1556,
+        "startByte": 106291,
+        "endByte": 106964
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 3,
+      "chapterId": "v1-c087",
+      "source": {
+        "startLine": 1557,
+        "endLine": 1568,
+        "startByte": 106965,
+        "endByte": 107605
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 4,
+      "chapterId": "v1-c088",
+      "source": {
+        "startLine": 1569,
+        "endLine": 1589,
+        "startByte": 107606,
+        "endByte": 108534
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 5,
+      "chapterId": "v1-c089",
+      "source": {
+        "startLine": 1590,
+        "endLine": 1603,
+        "startByte": 108535,
+        "endByte": 109117
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 6,
+      "chapterId": "v1-c090",
+      "source": {
+        "startLine": 1604,
+        "endLine": 1610,
+        "startByte": 109118,
+        "endByte": 109696
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 7,
+      "chapterId": "v1-c091",
+      "source": {
+        "startLine": 1611,
+        "endLine": 1629,
+        "startByte": 109697,
+        "endByte": 110737
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 8,
+      "chapterId": "v1-c092",
+      "source": {
+        "startLine": 1630,
+        "endLine": 1653,
+        "startByte": 110738,
+        "endByte": 111759
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 9,
+      "chapterId": "v1-c093",
+      "source": {
+        "startLine": 1654,
+        "endLine": 1665,
+        "startByte": 111760,
+        "endByte": 112406
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 10,
+      "chapterId": "v1-c094",
+      "source": {
+        "startLine": 1666,
+        "endLine": 1680,
+        "startByte": 112407,
+        "endByte": 113275
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 11,
+      "chapterId": "v1-c095",
+      "source": {
+        "startLine": 1681,
+        "endLine": 1697,
+        "startByte": 113276,
+        "endByte": 114137
+      }
+    },
+    {
+      "tiangan": "壬",
+      "month": 12,
+      "chapterId": "v1-c096",
+      "source": {
+        "startLine": 1698,
+        "endLine": 1716,
+        "startByte": 114138,
+        "endByte": 115704
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 1,
+      "chapterId": "v1-c097",
+      "source": {
+        "startLine": 1717,
+        "endLine": 1726,
+        "startByte": 115705,
+        "endByte": 116518
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 2,
+      "chapterId": "v1-c098",
+      "source": {
+        "startLine": 1727,
+        "endLine": 1744,
+        "startByte": 116519,
+        "endByte": 117282
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 3,
+      "chapterId": "v1-c099",
+      "source": {
+        "startLine": 1745,
+        "endLine": 1775,
+        "startByte": 117283,
+        "endByte": 118464
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 4,
+      "chapterId": "v1-c100",
+      "source": {
+        "startLine": 1776,
+        "endLine": 1780,
+        "startByte": 118465,
+        "endByte": 119023
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 5,
+      "chapterId": "v1-c101",
+      "source": {
+        "startLine": 1781,
+        "endLine": 1787,
+        "startByte": 119024,
+        "endByte": 119731
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 6,
+      "chapterId": "v1-c102",
+      "source": {
+        "startLine": 1788,
+        "endLine": 1799,
+        "startByte": 119732,
+        "endByte": 120402
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 7,
+      "chapterId": "v1-c103",
+      "source": {
+        "startLine": 1800,
+        "endLine": 1816,
+        "startByte": 120403,
+        "endByte": 121297
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 8,
+      "chapterId": "v1-c104",
+      "source": {
+        "startLine": 1817,
+        "endLine": 1828,
+        "startByte": 121298,
+        "endByte": 121785
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 9,
+      "chapterId": "v1-c105",
+      "source": {
+        "startLine": 1829,
+        "endLine": 1843,
+        "startByte": 121786,
+        "endByte": 122423
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 10,
+      "chapterId": "v1-c106",
+      "source": {
+        "startLine": 1844,
+        "endLine": 1859,
+        "startByte": 122424,
+        "endByte": 123158
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 11,
+      "chapterId": "v1-c107",
+      "source": {
+        "startLine": 1860,
+        "endLine": 1868,
+        "startByte": 123159,
+        "endByte": 123880
+      }
+    },
+    {
+      "tiangan": "癸",
+      "month": 12,
+      "chapterId": "v1-c108",
+      "source": {
+        "startLine": 1869,
+        "endLine": 1889,
+        "startByte": 123881,
+        "endByte": 125795
+      }
+    }
+  ],
+  "contentBlocks": {
+    "exampleTables": {
+      "count": 188,
+      "ranges": [
+        {
+          "startLine": 59,
+          "endLine": 61,
+          "startByte": 7208,
+          "endByte": 7309
+        },
+        {
+          "startLine": 134,
+          "endLine": 136,
+          "startByte": 15668,
+          "endByte": 15769
+        },
+        {
+          "startLine": 148,
+          "endLine": 150,
+          "startByte": 16860,
+          "endByte": 16961
+        },
+        {
+          "startLine": 157,
+          "endLine": 159,
+          "startByte": 17123,
+          "endByte": 17224
+        },
+        {
+          "startLine": 314,
+          "endLine": 316,
+          "startByte": 34152,
+          "endByte": 34253
+        },
+        {
+          "startLine": 320,
+          "endLine": 322,
+          "startByte": 34280,
+          "endByte": 34381
+        },
+        {
+          "startLine": 326,
+          "endLine": 328,
+          "startByte": 34408,
+          "endByte": 34509
+        },
+        {
+          "startLine": 332,
+          "endLine": 334,
+          "startByte": 34521,
+          "endByte": 34622
+        },
+        {
+          "startLine": 345,
+          "endLine": 347,
+          "startByte": 35607,
+          "endByte": 35708
+        },
+        {
+          "startLine": 349,
+          "endLine": 351,
+          "startByte": 35710,
+          "endByte": 35811
+        },
+        {
+          "startLine": 380,
+          "endLine": 382,
+          "startByte": 37968,
+          "endByte": 38069
+        },
+        {
+          "startLine": 386,
+          "endLine": 388,
+          "startByte": 38087,
+          "endByte": 38188
+        },
+        {
+          "startLine": 390,
+          "endLine": 392,
+          "startByte": 38190,
+          "endByte": 38291
+        },
+        {
+          "startLine": 401,
+          "endLine": 403,
+          "startByte": 39094,
+          "endByte": 39195
+        },
+        {
+          "startLine": 405,
+          "endLine": 407,
+          "startByte": 39197,
+          "endByte": 39298
+        },
+        {
+          "startLine": 409,
+          "endLine": 411,
+          "startByte": 39300,
+          "endByte": 39401
+        },
+        {
+          "startLine": 420,
+          "endLine": 422,
+          "startByte": 39916,
+          "endByte": 40017
+        },
+        {
+          "startLine": 424,
+          "endLine": 426,
+          "startByte": 40019,
+          "endByte": 40120
+        },
+        {
+          "startLine": 428,
+          "endLine": 430,
+          "startByte": 40122,
+          "endByte": 40223
+        },
+        {
+          "startLine": 438,
+          "endLine": 440,
+          "startByte": 40782,
+          "endByte": 40883
+        },
+        {
+          "startLine": 442,
+          "endLine": 444,
+          "startByte": 40885,
+          "endByte": 40986
+        },
+        {
+          "startLine": 453,
+          "endLine": 455,
+          "startByte": 41612,
+          "endByte": 41713
+        },
+        {
+          "startLine": 457,
+          "endLine": 459,
+          "startByte": 41715,
+          "endByte": 41816
+        },
+        {
+          "startLine": 461,
+          "endLine": 463,
+          "startByte": 41818,
+          "endByte": 41919
+        },
+        {
+          "startLine": 473,
+          "endLine": 475,
+          "startByte": 42516,
+          "endByte": 42617
+        },
+        {
+          "startLine": 477,
+          "endLine": 479,
+          "startByte": 42619,
+          "endByte": 42720
+        },
+        {
+          "startLine": 481,
+          "endLine": 483,
+          "startByte": 42722,
+          "endByte": 42823
+        },
+        {
+          "startLine": 493,
+          "endLine": 495,
+          "startByte": 43222,
+          "endByte": 43323
+        },
+        {
+          "startLine": 497,
+          "endLine": 499,
+          "startByte": 43325,
+          "endByte": 43426
+        },
+        {
+          "startLine": 501,
+          "endLine": 503,
+          "startByte": 43428,
+          "endByte": 43529
+        },
+        {
+          "startLine": 514,
+          "endLine": 516,
+          "startByte": 44130,
+          "endByte": 44231
+        },
+        {
+          "startLine": 518,
+          "endLine": 520,
+          "startByte": 44233,
+          "endByte": 44334
+        },
+        {
+          "startLine": 522,
+          "endLine": 524,
+          "startByte": 44336,
+          "endByte": 44437
+        },
+        {
+          "startLine": 532,
+          "endLine": 534,
+          "startByte": 44894,
+          "endByte": 44995
+        },
+        {
+          "startLine": 536,
+          "endLine": 538,
+          "startByte": 44997,
+          "endByte": 45098
+        },
+        {
+          "startLine": 540,
+          "endLine": 542,
+          "startByte": 45100,
+          "endByte": 45201
+        },
+        {
+          "startLine": 544,
+          "endLine": 546,
+          "startByte": 45203,
+          "endByte": 45304
+        },
+        {
+          "startLine": 548,
+          "endLine": 550,
+          "startByte": 45306,
+          "endByte": 45407
+        },
+        {
+          "startLine": 576,
+          "endLine": 578,
+          "startByte": 47494,
+          "endByte": 47595
+        },
+        {
+          "startLine": 580,
+          "endLine": 582,
+          "startByte": 47597,
+          "endByte": 47698
+        },
+        {
+          "startLine": 592,
+          "endLine": 594,
+          "startByte": 48538,
+          "endByte": 48639
+        },
+        {
+          "startLine": 596,
+          "endLine": 598,
+          "startByte": 48641,
+          "endByte": 48742
+        },
+        {
+          "startLine": 600,
+          "endLine": 602,
+          "startByte": 48744,
+          "endByte": 48845
+        },
+        {
+          "startLine": 628,
+          "endLine": 630,
+          "startByte": 50622,
+          "endByte": 50723
+        },
+        {
+          "startLine": 632,
+          "endLine": 634,
+          "startByte": 50725,
+          "endByte": 50826
+        },
+        {
+          "startLine": 645,
+          "endLine": 647,
+          "startByte": 51841,
+          "endByte": 51942
+        },
+        {
+          "startLine": 649,
+          "endLine": 651,
+          "startByte": 51944,
+          "endByte": 52045
+        },
+        {
+          "startLine": 653,
+          "endLine": 655,
+          "startByte": 52047,
+          "endByte": 52148
+        },
+        {
+          "startLine": 657,
+          "endLine": 659,
+          "startByte": 52150,
+          "endByte": 52251
+        },
+        {
+          "startLine": 661,
+          "endLine": 663,
+          "startByte": 52253,
+          "endByte": 52354
+        },
+        {
+          "startLine": 673,
+          "endLine": 675,
+          "startByte": 52921,
+          "endByte": 53022
+        },
+        {
+          "startLine": 677,
+          "endLine": 679,
+          "startByte": 53024,
+          "endByte": 53125
+        },
+        {
+          "startLine": 697,
+          "endLine": 699,
+          "startByte": 54622,
+          "endByte": 54723
+        },
+        {
+          "startLine": 701,
+          "endLine": 703,
+          "startByte": 54725,
+          "endByte": 54826
+        },
+        {
+          "startLine": 705,
+          "endLine": 707,
+          "startByte": 54828,
+          "endByte": 54929
+        },
+        {
+          "startLine": 709,
+          "endLine": 711,
+          "startByte": 54931,
+          "endByte": 55032
+        },
+        {
+          "startLine": 718,
+          "endLine": 720,
+          "startByte": 55425,
+          "endByte": 55526
+        },
+        {
+          "startLine": 722,
+          "endLine": 724,
+          "startByte": 55528,
+          "endByte": 55629
+        },
+        {
+          "startLine": 726,
+          "endLine": 728,
+          "startByte": 55631,
+          "endByte": 55732
+        },
+        {
+          "startLine": 730,
+          "endLine": 732,
+          "startByte": 55734,
+          "endByte": 55835
+        },
+        {
+          "startLine": 748,
+          "endLine": 750,
+          "startByte": 56987,
+          "endByte": 57088
+        },
+        {
+          "startLine": 752,
+          "endLine": 754,
+          "startByte": 57090,
+          "endByte": 57191
+        },
+        {
+          "startLine": 756,
+          "endLine": 758,
+          "startByte": 57193,
+          "endByte": 57294
+        },
+        {
+          "startLine": 760,
+          "endLine": 762,
+          "startByte": 57296,
+          "endByte": 57397
+        },
+        {
+          "startLine": 770,
+          "endLine": 772,
+          "startByte": 57809,
+          "endByte": 57910
+        },
+        {
+          "startLine": 774,
+          "endLine": 776,
+          "startByte": 57912,
+          "endByte": 58013
+        },
+        {
+          "startLine": 778,
+          "endLine": 780,
+          "startByte": 58015,
+          "endByte": 58116
+        },
+        {
+          "startLine": 782,
+          "endLine": 784,
+          "startByte": 58118,
+          "endByte": 58219
+        },
+        {
+          "startLine": 837,
+          "endLine": 839,
+          "startByte": 63877,
+          "endByte": 63978
+        },
+        {
+          "startLine": 847,
+          "endLine": 849,
+          "startByte": 64309,
+          "endByte": 64410
+        },
+        {
+          "startLine": 853,
+          "endLine": 855,
+          "startByte": 64428,
+          "endByte": 64529
+        },
+        {
+          "startLine": 857,
+          "endLine": 859,
+          "startByte": 64531,
+          "endByte": 64632
+        },
+        {
+          "startLine": 861,
+          "endLine": 863,
+          "startByte": 64634,
+          "endByte": 64735
+        },
+        {
+          "startLine": 865,
+          "endLine": 867,
+          "startByte": 64737,
+          "endByte": 64838
+        },
+        {
+          "startLine": 878,
+          "endLine": 880,
+          "startByte": 65436,
+          "endByte": 65537
+        },
+        {
+          "startLine": 882,
+          "endLine": 884,
+          "startByte": 65539,
+          "endByte": 65640
+        },
+        {
+          "startLine": 891,
+          "endLine": 893,
+          "startByte": 65859,
+          "endByte": 65960
+        },
+        {
+          "startLine": 907,
+          "endLine": 909,
+          "startByte": 66815,
+          "endByte": 66916
+        },
+        {
+          "startLine": 911,
+          "endLine": 913,
+          "startByte": 66918,
+          "endByte": 67019
+        },
+        {
+          "startLine": 921,
+          "endLine": 923,
+          "startByte": 67485,
+          "endByte": 67586
+        },
+        {
+          "startLine": 925,
+          "endLine": 927,
+          "startByte": 67588,
+          "endByte": 67689
+        },
+        {
+          "startLine": 929,
+          "endLine": 931,
+          "startByte": 67691,
+          "endByte": 67792
+        },
+        {
+          "startLine": 949,
+          "endLine": 951,
+          "startByte": 68933,
+          "endByte": 69034
+        },
+        {
+          "startLine": 953,
+          "endLine": 955,
+          "startByte": 69036,
+          "endByte": 69137
+        },
+        {
+          "startLine": 957,
+          "endLine": 959,
+          "startByte": 69139,
+          "endByte": 69240
+        },
+        {
+          "startLine": 961,
+          "endLine": 963,
+          "startByte": 69242,
+          "endByte": 69343
+        },
+        {
+          "startLine": 965,
+          "endLine": 967,
+          "startByte": 69345,
+          "endByte": 69446
+        },
+        {
+          "startLine": 977,
+          "endLine": 979,
+          "startByte": 69986,
+          "endByte": 70087
+        },
+        {
+          "startLine": 981,
+          "endLine": 983,
+          "startByte": 70089,
+          "endByte": 70190
+        },
+        {
+          "startLine": 994,
+          "endLine": 996,
+          "startByte": 71028,
+          "endByte": 71129
+        },
+        {
+          "startLine": 998,
+          "endLine": 1000,
+          "startByte": 71131,
+          "endByte": 71232
+        },
+        {
+          "startLine": 1002,
+          "endLine": 1004,
+          "startByte": 71234,
+          "endByte": 71335
+        },
+        {
+          "startLine": 1025,
+          "endLine": 1027,
+          "startByte": 72867,
+          "endByte": 72968
+        },
+        {
+          "startLine": 1029,
+          "endLine": 1031,
+          "startByte": 72970,
+          "endByte": 73071
+        },
+        {
+          "startLine": 1039,
+          "endLine": 1041,
+          "startByte": 73510,
+          "endByte": 73611
+        },
+        {
+          "startLine": 1043,
+          "endLine": 1045,
+          "startByte": 73613,
+          "endByte": 73714
+        },
+        {
+          "startLine": 1047,
+          "endLine": 1049,
+          "startByte": 73716,
+          "endByte": 73817
+        },
+        {
+          "startLine": 1069,
+          "endLine": 1071,
+          "startByte": 75363,
+          "endByte": 75464
+        },
+        {
+          "startLine": 1073,
+          "endLine": 1075,
+          "startByte": 75466,
+          "endByte": 75567
+        },
+        {
+          "startLine": 1077,
+          "endLine": 1079,
+          "startByte": 75569,
+          "endByte": 75670
+        },
+        {
+          "startLine": 1081,
+          "endLine": 1083,
+          "startByte": 75672,
+          "endByte": 75773
+        },
+        {
+          "startLine": 1095,
+          "endLine": 1097,
+          "startByte": 76776,
+          "endByte": 76877
+        },
+        {
+          "startLine": 1099,
+          "endLine": 1101,
+          "startByte": 76879,
+          "endByte": 76980
+        },
+        {
+          "startLine": 1114,
+          "endLine": 1116,
+          "startByte": 78029,
+          "endByte": 78130
+        },
+        {
+          "startLine": 1118,
+          "endLine": 1120,
+          "startByte": 78132,
+          "endByte": 78233
+        },
+        {
+          "startLine": 1141,
+          "endLine": 1143,
+          "startByte": 80858,
+          "endByte": 80959
+        },
+        {
+          "startLine": 1145,
+          "endLine": 1147,
+          "startByte": 80961,
+          "endByte": 81062
+        },
+        {
+          "startLine": 1157,
+          "endLine": 1159,
+          "startByte": 81992,
+          "endByte": 82093
+        },
+        {
+          "startLine": 1161,
+          "endLine": 1163,
+          "startByte": 82095,
+          "endByte": 82196
+        },
+        {
+          "startLine": 1165,
+          "endLine": 1167,
+          "startByte": 82198,
+          "endByte": 82299
+        },
+        {
+          "startLine": 1169,
+          "endLine": 1171,
+          "startByte": 82301,
+          "endByte": 82402
+        },
+        {
+          "startLine": 1182,
+          "endLine": 1184,
+          "startByte": 83312,
+          "endByte": 83413
+        },
+        {
+          "startLine": 1209,
+          "endLine": 1211,
+          "startByte": 85298,
+          "endByte": 85399
+        },
+        {
+          "startLine": 1213,
+          "endLine": 1215,
+          "startByte": 85401,
+          "endByte": 85502
+        },
+        {
+          "startLine": 1217,
+          "endLine": 1219,
+          "startByte": 85504,
+          "endByte": 85605
+        },
+        {
+          "startLine": 1221,
+          "endLine": 1223,
+          "startByte": 85607,
+          "endByte": 85708
+        },
+        {
+          "startLine": 1240,
+          "endLine": 1242,
+          "startByte": 87031,
+          "endByte": 87132
+        },
+        {
+          "startLine": 1244,
+          "endLine": 1246,
+          "startByte": 87134,
+          "endByte": 87235
+        },
+        {
+          "startLine": 1248,
+          "endLine": 1250,
+          "startByte": 87237,
+          "endByte": 87338
+        },
+        {
+          "startLine": 1259,
+          "endLine": 1261,
+          "startByte": 87883,
+          "endByte": 87984
+        },
+        {
+          "startLine": 1263,
+          "endLine": 1265,
+          "startByte": 87986,
+          "endByte": 88087
+        },
+        {
+          "startLine": 1267,
+          "endLine": 1269,
+          "startByte": 88089,
+          "endByte": 88190
+        },
+        {
+          "startLine": 1278,
+          "endLine": 1280,
+          "startByte": 88612,
+          "endByte": 88713
+        },
+        {
+          "startLine": 1282,
+          "endLine": 1284,
+          "startByte": 88715,
+          "endByte": 88816
+        },
+        {
+          "startLine": 1293,
+          "endLine": 1295,
+          "startByte": 89598,
+          "endByte": 89699
+        },
+        {
+          "startLine": 1297,
+          "endLine": 1299,
+          "startByte": 89701,
+          "endByte": 89802
+        },
+        {
+          "startLine": 1301,
+          "endLine": 1303,
+          "startByte": 89804,
+          "endByte": 89905
+        },
+        {
+          "startLine": 1310,
+          "endLine": 1312,
+          "startByte": 90280,
+          "endByte": 90381
+        },
+        {
+          "startLine": 1316,
+          "endLine": 1318,
+          "startByte": 90393,
+          "endByte": 90494
+        },
+        {
+          "startLine": 1334,
+          "endLine": 1336,
+          "startByte": 91991,
+          "endByte": 92092
+        },
+        {
+          "startLine": 1347,
+          "endLine": 1349,
+          "startByte": 93026,
+          "endByte": 93127
+        },
+        {
+          "startLine": 1351,
+          "endLine": 1353,
+          "startByte": 93129,
+          "endByte": 93230
+        },
+        {
+          "startLine": 1355,
+          "endLine": 1357,
+          "startByte": 93232,
+          "endByte": 93333
+        },
+        {
+          "startLine": 1359,
+          "endLine": 1361,
+          "startByte": 93335,
+          "endByte": 93436
+        },
+        {
+          "startLine": 1363,
+          "endLine": 1365,
+          "startByte": 93438,
+          "endByte": 93539
+        },
+        {
+          "startLine": 1382,
+          "endLine": 1384,
+          "startByte": 94844,
+          "endByte": 94945
+        },
+        {
+          "startLine": 1393,
+          "endLine": 1395,
+          "startByte": 95766,
+          "endByte": 95867
+        },
+        {
+          "startLine": 1402,
+          "endLine": 1404,
+          "startByte": 96494,
+          "endByte": 96595
+        },
+        {
+          "startLine": 1406,
+          "endLine": 1408,
+          "startByte": 96597,
+          "endByte": 96698
+        },
+        {
+          "startLine": 1418,
+          "endLine": 1420,
+          "startByte": 97265,
+          "endByte": 97366
+        },
+        {
+          "startLine": 1436,
+          "endLine": 1438,
+          "startByte": 98887,
+          "endByte": 98988
+        },
+        {
+          "startLine": 1440,
+          "endLine": 1442,
+          "startByte": 98990,
+          "endByte": 99091
+        },
+        {
+          "startLine": 1444,
+          "endLine": 1446,
+          "startByte": 99093,
+          "endByte": 99194
+        },
+        {
+          "startLine": 1458,
+          "endLine": 1460,
+          "startByte": 100003,
+          "endByte": 100104
+        },
+        {
+          "startLine": 1462,
+          "endLine": 1464,
+          "startByte": 100106,
+          "endByte": 100207
+        },
+        {
+          "startLine": 1466,
+          "endLine": 1468,
+          "startByte": 100209,
+          "endByte": 100310
+        },
+        {
+          "startLine": 1491,
+          "endLine": 1493,
+          "startByte": 102031,
+          "endByte": 102132
+        },
+        {
+          "startLine": 1495,
+          "endLine": 1497,
+          "startByte": 102134,
+          "endByte": 102235
+        },
+        {
+          "startLine": 1499,
+          "endLine": 1501,
+          "startByte": 102237,
+          "endByte": 102338
+        },
+        {
+          "startLine": 1503,
+          "endLine": 1505,
+          "startByte": 102340,
+          "endByte": 102441
+        },
+        {
+          "startLine": 1544,
+          "endLine": 1546,
+          "startByte": 106188,
+          "endByte": 106289
+        },
+        {
+          "startLine": 1565,
+          "endLine": 1567,
+          "startByte": 107503,
+          "endByte": 107604
+        },
+        {
+          "startLine": 1578,
+          "endLine": 1580,
+          "startByte": 108226,
+          "endByte": 108327
+        },
+        {
+          "startLine": 1582,
+          "endLine": 1584,
+          "startByte": 108329,
+          "endByte": 108430
+        },
+        {
+          "startLine": 1586,
+          "endLine": 1588,
+          "startByte": 108432,
+          "endByte": 108533
+        },
+        {
+          "startLine": 1596,
+          "endLine": 1598,
+          "startByte": 108912,
+          "endByte": 109013
+        },
+        {
+          "startLine": 1600,
+          "endLine": 1602,
+          "startByte": 109015,
+          "endByte": 109116
+        },
+        {
+          "startLine": 1618,
+          "endLine": 1620,
+          "startByte": 110429,
+          "endByte": 110530
+        },
+        {
+          "startLine": 1622,
+          "endLine": 1624,
+          "startByte": 110532,
+          "endByte": 110633
+        },
+        {
+          "startLine": 1626,
+          "endLine": 1628,
+          "startByte": 110635,
+          "endByte": 110736
+        },
+        {
+          "startLine": 1638,
+          "endLine": 1640,
+          "startByte": 111348,
+          "endByte": 111449
+        },
+        {
+          "startLine": 1642,
+          "endLine": 1644,
+          "startByte": 111451,
+          "endByte": 111552
+        },
+        {
+          "startLine": 1646,
+          "endLine": 1648,
+          "startByte": 111554,
+          "endByte": 111655
+        },
+        {
+          "startLine": 1650,
+          "endLine": 1652,
+          "startByte": 111657,
+          "endByte": 111758
+        },
+        {
+          "startLine": 1662,
+          "endLine": 1664,
+          "startByte": 112304,
+          "endByte": 112405
+        },
+        {
+          "startLine": 1673,
+          "endLine": 1675,
+          "startByte": 113070,
+          "endByte": 113171
+        },
+        {
+          "startLine": 1677,
+          "endLine": 1679,
+          "startByte": 113173,
+          "endByte": 113274
+        },
+        {
+          "startLine": 1690,
+          "endLine": 1692,
+          "startByte": 113932,
+          "endByte": 114033
+        },
+        {
+          "startLine": 1694,
+          "endLine": 1696,
+          "startByte": 114035,
+          "endByte": 114136
+        },
+        {
+          "startLine": 1733,
+          "endLine": 1735,
+          "startByte": 116974,
+          "endByte": 117075
+        },
+        {
+          "startLine": 1737,
+          "endLine": 1739,
+          "startByte": 117077,
+          "endByte": 117178
+        },
+        {
+          "startLine": 1741,
+          "endLine": 1743,
+          "startByte": 117180,
+          "endByte": 117281
+        },
+        {
+          "startLine": 1749,
+          "endLine": 1751,
+          "startByte": 117448,
+          "endByte": 117549
+        },
+        {
+          "startLine": 1760,
+          "endLine": 1762,
+          "startByte": 118053,
+          "endByte": 118154
+        },
+        {
+          "startLine": 1764,
+          "endLine": 1766,
+          "startByte": 118156,
+          "endByte": 118257
+        },
+        {
+          "startLine": 1768,
+          "endLine": 1770,
+          "startByte": 118259,
+          "endByte": 118360
+        },
+        {
+          "startLine": 1772,
+          "endLine": 1774,
+          "startByte": 118362,
+          "endByte": 118463
+        },
+        {
+          "startLine": 1792,
+          "endLine": 1794,
+          "startByte": 120197,
+          "endByte": 120298
+        },
+        {
+          "startLine": 1796,
+          "endLine": 1798,
+          "startByte": 120300,
+          "endByte": 120401
+        },
+        {
+          "startLine": 1805,
+          "endLine": 1807,
+          "startByte": 120989,
+          "endByte": 121090
+        },
+        {
+          "startLine": 1809,
+          "endLine": 1811,
+          "startByte": 121092,
+          "endByte": 121193
+        },
+        {
+          "startLine": 1813,
+          "endLine": 1815,
+          "startByte": 121195,
+          "endByte": 121296
+        },
+        {
+          "startLine": 1821,
+          "endLine": 1823,
+          "startByte": 121580,
+          "endByte": 121681
+        },
+        {
+          "startLine": 1825,
+          "endLine": 1827,
+          "startByte": 121683,
+          "endByte": 121784
+        },
+        {
+          "startLine": 1836,
+          "endLine": 1838,
+          "startByte": 122218,
+          "endByte": 122319
+        },
+        {
+          "startLine": 1840,
+          "endLine": 1842,
+          "startByte": 122321,
+          "endByte": 122422
+        },
+        {
+          "startLine": 1852,
+          "endLine": 1854,
+          "startByte": 122953,
+          "endByte": 123054
+        },
+        {
+          "startLine": 1856,
+          "endLine": 1858,
+          "startByte": 123056,
+          "endByte": 123157
+        }
+      ]
+    },
+    "commentary": {
+      "count": 28,
+      "ranges": [
+        {
+          "startLine": 32,
+          "endLine": 32,
+          "startByte": 3036,
+          "endByte": 3319
+        },
+        {
+          "startLine": 43,
+          "endLine": 45,
+          "startByte": 5166,
+          "endByte": 5629
+        },
+        {
+          "startLine": 52,
+          "endLine": 52,
+          "startByte": 6105,
+          "endByte": 6417
+        },
+        {
+          "startLine": 78,
+          "endLine": 80,
+          "startByte": 9185,
+          "endByte": 9726
+        },
+        {
+          "startLine": 101,
+          "endLine": 105,
+          "startByte": 12238,
+          "endByte": 12983
+        },
+        {
+          "startLine": 116,
+          "endLine": 118,
+          "startByte": 14105,
+          "endByte": 14658
+        },
+        {
+          "startLine": 164,
+          "endLine": 166,
+          "startByte": 17493,
+          "endByte": 17980
+        },
+        {
+          "startLine": 183,
+          "endLine": 187,
+          "startByte": 19639,
+          "endByte": 20219
+        },
+        {
+          "startLine": 211,
+          "endLine": 215,
+          "startByte": 22372,
+          "endByte": 22997
+        },
+        {
+          "startLine": 241,
+          "endLine": 245,
+          "startByte": 25641,
+          "endByte": 26164
+        },
+        {
+          "startLine": 266,
+          "endLine": 270,
+          "startByte": 28592,
+          "endByte": 29280
+        },
+        {
+          "startLine": 286,
+          "endLine": 290,
+          "startByte": 31451,
+          "endByte": 32118
+        },
+        {
+          "startLine": 295,
+          "endLine": 297,
+          "startByte": 32135,
+          "endByte": 32577
+        },
+        {
+          "startLine": 360,
+          "endLine": 362,
+          "startByte": 36239,
+          "endByte": 36711
+        },
+        {
+          "startLine": 552,
+          "endLine": 556,
+          "startByte": 45409,
+          "endByte": 46067
+        },
+        {
+          "startLine": 561,
+          "endLine": 563,
+          "startByte": 46084,
+          "endByte": 46676
+        },
+        {
+          "startLine": 611,
+          "endLine": 615,
+          "startByte": 49306,
+          "endByte": 49790
+        },
+        {
+          "startLine": 681,
+          "endLine": 685,
+          "startByte": 53127,
+          "endByte": 53710
+        },
+        {
+          "startLine": 734,
+          "endLine": 736,
+          "startByte": 55837,
+          "endByte": 56279
+        },
+        {
+          "startLine": 786,
+          "endLine": 788,
+          "startByte": 58221,
+          "endByte": 58672
+        },
+        {
+          "startLine": 805,
+          "endLine": 807,
+          "startByte": 60750,
+          "endByte": 61219
+        },
+        {
+          "startLine": 812,
+          "endLine": 818,
+          "startByte": 61236,
+          "endByte": 62002
+        },
+        {
+          "startLine": 1051,
+          "endLine": 1057,
+          "startByte": 73819,
+          "endByte": 74540
+        },
+        {
+          "startLine": 1320,
+          "endLine": 1322,
+          "startByte": 90496,
+          "endByte": 91052
+        },
+        {
+          "startLine": 1507,
+          "endLine": 1513,
+          "startByte": 102443,
+          "endByte": 103362
+        },
+        {
+          "startLine": 1529,
+          "endLine": 1531,
+          "startByte": 104908,
+          "endByte": 105446
+        },
+        {
+          "startLine": 1708,
+          "endLine": 1714,
+          "startByte": 114942,
+          "endByte": 115702
+        },
+        {
+          "startLine": 1880,
+          "endLine": 1888,
+          "startByte": 124908,
+          "endByte": 125794
+        }
+      ]
+    },
+    "crossScopeCommentary": [
+      {
+        "source": {
+          "startLine": 360,
+          "endLine": 362,
+          "startByte": 36239,
+          "endByte": 36711
+        },
+        "chapterId": "v1-c019",
+        "resolution": "评注位于三月丙火篇章但跨述三春、正月与二月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 552,
+          "endLine": 556,
+          "startByte": 45409,
+          "endByte": 46067
+        },
+        "chapterId": "v1-c029",
+        "resolution": "评注位于十二月丙火篇章但语义回顾三夏丙火，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 611,
+          "endLine": 615,
+          "startByte": 49306,
+          "endByte": 49790
+        },
+        "chapterId": "v1-c033",
+        "resolution": "评注位于三月丁火篇章但跨述正月与二月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 681,
+          "endLine": 685,
+          "startByte": 53127,
+          "endByte": 53710
+        },
+        "chapterId": "v1-c036",
+        "resolution": "评注位于六月丁火篇章但跨述四月与五月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 734,
+          "endLine": 736,
+          "startByte": 55837,
+          "endByte": 56279
+        },
+        "chapterId": "v1-c038",
+        "resolution": "评注位于八九月丁火篇章但跨述七月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 786,
+          "endLine": 788,
+          "startByte": 58221,
+          "endByte": 58672
+        },
+        "chapterId": "v1-c040",
+        "resolution": "评注位于十一月丁火篇章但以三冬与仲冬语义跨述十月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 1051,
+          "endLine": 1057,
+          "startByte": 73819,
+          "endByte": 74540
+        },
+        "chapterId": "v1-c056",
+        "resolution": "评注位于三月己土篇章但跨述正月与三季，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 1320,
+          "endLine": 1322,
+          "startByte": 90496,
+          "endByte": 91052
+        },
+        "chapterId": "v1-c071",
+        "resolution": "评注位于十二月庚金篇章但跨述春夏秋冬四季，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 1507,
+          "endLine": 1513,
+          "startByte": 102443,
+          "endByte": 103362
+        },
+        "chapterId": "v1-c083",
+        "resolution": "评注位于十二月辛金篇章但跨述正月、七月至冬月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 1708,
+          "endLine": 1714,
+          "startByte": 114942,
+          "endByte": 115702
+        },
+        "chapterId": "v1-c096",
+        "resolution": "评注位于十二月壬水篇章但跨述正月、四月、七月、十月及冬月，保持原位"
+      },
+      {
+        "source": {
+          "startLine": 1880,
+          "endLine": 1888,
+          "startByte": 124908,
+          "endByte": 125794
+        },
+        "chapterId": "v1-c108",
+        "resolution": "评注位于十二月癸水篇章但跨述癸水多个季节，保持原位"
+      }
+    ]
+  },
+  "warnings": [],
+  "knownExceptions": [],
+  "review": {
+    "importedAt": "2026-07-29",
+    "importer": "Codex primary agent",
+    "independentReviewer": "Codex independent content audit agent",
+    "reviewedAt": "2026-07-29",
+    "conclusion": "passed independent full review of all 108 chapters",
+    "checks": {
+      "chaptersReviewed": 108,
+      "monthPositionsReviewed": 120,
+      "exampleTablesReviewed": 188,
+      "commentaryBlocksReviewed": 28,
+      "crossScopeCommentary": 11,
+      "nonCrossScopeCommentary": 17,
+      "omissions": 0,
+      "duplications": 0,
+      "orderingErrors": 0,
+      "silentRewrites": 0,
+      "unknownAnomalies": 0
+    }
+  }
+}

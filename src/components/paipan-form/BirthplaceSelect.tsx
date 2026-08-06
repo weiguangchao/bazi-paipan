@@ -1,9 +1,8 @@
-// 出生省市级联选择：两个 Combobox（Popover + Command），数据直接 import CITIES。
+// 出生省市 controlled view：两个 Combobox（Popover + Command），数据直接 import CITIES。
 // 词汇遵循 CONTEXT.md（出生资料）。省留空 = 不选（按北京时间），市随省联动。
 import { useState } from "react";
 import { Check, ChevronsUpDown, MapPin } from "lucide-react";
 import { CITIES } from "@/data/cities.generated";
-import { resolveSingleCity } from "@/components/paipan-form/birthplace-auto-city";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
@@ -11,18 +10,22 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface BirthplaceSelectProps {
-  defaultProvince?: string;
-  defaultCity?: string;
+  province: string;
+  city: string;
   errors?: { province?: string; city?: string };
-  onChange: (province: string, city: string) => void;
-  onReadyChange?: (ready: boolean) => void;
+  onProvinceChange: (province: string) => void;
+  onCityChange: (city: string) => void;
 }
 
 const provinces = Object.keys(CITIES);
 
-export function BirthplaceSelect({ defaultProvince, defaultCity, errors, onChange, onReadyChange }: BirthplaceSelectProps) {
-  const [province, setProvince] = useState(defaultProvince ?? "");
-  const [city, setCity] = useState(defaultCity ?? "");
+export function BirthplaceSelect({
+  province,
+  city,
+  errors,
+  onProvinceChange,
+  onCityChange,
+}: BirthplaceSelectProps) {
   const [provOpen, setProvOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
 
@@ -30,28 +33,13 @@ export function BirthplaceSelect({ defaultProvince, defaultCity, errors, onChang
   const cityDisabled = !province;
 
   function selectProvince(value: string) {
-    setProvince(value);
-    // 选省后按新省的唯一城市判断决定城市：恰好一个城市则自动携带，否则留空（等效清空）。
-    // 规则对首次选与切换省一致，不区分直辖市（grilling 决议：阈值=城市数等于 1）。
-    const autoCity = resolveSingleCity(value);
-    setCity(autoCity);
     setProvOpen(false);
-    onReadyChange?.(true);
-    onChange(value, autoCity);
+    onProvinceChange(value);
   }
 
   function selectCity(value: string) {
-    setCity(value);
     setCityOpen(false);
-    onChange(province, value);
-  }
-
-  function selectNone() {
-    setProvince("");
-    setCity("");
-    setProvOpen(false);
-    onReadyChange?.(true);
-    onChange("", "");
+    onCityChange(value);
   }
 
   return (
@@ -84,7 +72,10 @@ export function BirthplaceSelect({ defaultProvince, defaultCity, errors, onChang
               <CommandList>
                 <CommandEmpty>未找到省份</CommandEmpty>
                 <CommandGroup>
-                  <CommandItem value="不选（按北京时间）" onSelect={selectNone}>
+                  <CommandItem
+                    value="不选（按北京时间）"
+                    onSelect={() => selectProvince("")}
+                  >
                     <Check className={cn("mr-2 size-4", province === "" ? "opacity-100" : "opacity-0")} />
                     不选（按北京时间）
                   </CommandItem>

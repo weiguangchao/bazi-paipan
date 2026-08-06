@@ -58,6 +58,126 @@ describe("依赖方向守卫", () => {
     expect(findDependencyViolations(source, "src/domain/paipan/mingpan.ts")).toEqual([]);
   });
 
+  it("仅允许天文 facade import 私有寿星核心", () => {
+    const source =
+      'import { equationOfTimeDays } from "@/domain/time/shouxing/solar-core";';
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/paipan.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "private-shouxing-core" }),
+    ]);
+  });
+
+  it("拒绝生产层 import 测试 oracle", () => {
+    const source =
+      'import { fixture } from "../../../test/oracles/independent-astronomy";';
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "test-oracle" }),
+    ]);
+  });
+
+  it("拒绝生产层 import 任意测试 fixture", () => {
+    const source =
+      'import { fixture } from "../../../test/fixtures/astronomy";';
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "test-artifact" }),
+    ]);
+  });
+
+  it("只允许 mingpan 入口定位真太阳时 Jie", () => {
+    const source =
+      'import { locateJie } from "@/domain/time/jie-chronology";';
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/paipan.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "true-solar-conversion-boundary" }),
+    ]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/mingpan.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/dayun.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "true-solar-conversion-boundary" }),
+    ]);
+  });
+
+  it("只允许 mingpan import 内部 paipan seam", () => {
+    const source = 'import { paipan } from "@/domain/paipan/paipan";';
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/mingpan.ts"),
+    ).toEqual([]);
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/adapter.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "internal-paipan-seam" }),
+    ]);
+  });
+
+  it.each([
+    '@/domain/paipan/paipan.ts',
+    '@/domain/paipan/paipan.js',
+    './paipan.ts',
+  ])("带扩展名时仍拒绝其他生产模块 import 内部 paipan seam：%s", (specifier) => {
+    const source = `import { paipan } from "${specifier}";`;
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/adapter.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "internal-paipan-seam" }),
+    ]);
+  });
+
+  it("带扩展名时仍只允许 mingpan 定位真太阳时 Jie", () => {
+    const source =
+      'import { locateJie } from "@/domain/time/jie-chronology.ts";';
+    expect(
+      findDependencyViolations(source, "src/domain/paipan/dayun.ts"),
+    ).toEqual([
+      expect.objectContaining({ toLayer: "true-solar-conversion-boundary" }),
+    ]);
+  });
+
+  it("拒绝天文 facade 重新暴露旧钟表时 Jie seam", () => {
+    const source = `
+      import type { BeijingDateTime } from "@/domain/time/date-time";
+      export function jieMoment(): BeijingDateTime {
+        throw new Error("legacy");
+      }
+    `;
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({
+        specifier: "jieMoment",
+        toLayer: "unauthorized-astronomy-facade-export",
+      }),
+    ]);
+  });
+
+  it("拒绝天文 facade 改名重新暴露钟表时 Jie seam", () => {
+    const source = `
+      import type { BeijingDateTime } from "@/domain/time/date-time";
+      export function beijingJieMoment(): BeijingDateTime {
+        throw new Error("legacy");
+      }
+    `;
+    expect(
+      findDependencyViolations(source, "src/domain/time/astronomy.ts"),
+    ).toEqual([
+      expect.objectContaining({
+        specifier: "beijingJieMoment",
+        toLayer: "unauthorized-astronomy-facade-export",
+      }),
+    ]);
+  });
+
   it("允许 utils -> domain（展示适配消费纯核）", () => {
     const source = 'import { characterWuxing } from "@/domain/ganzhi/wuxing";';
     expect(findDependencyViolations(source, "src/utils/wuxing.ts")).toEqual([]);
@@ -79,7 +199,7 @@ describe("依赖方向守卫", () => {
   it("允许 pages -> components / domain / utils，允许 app -> pages", () => {
     expect(
       findDependencyViolations(
-        'import { FormPanel } from "@/components/paipan-form/FormPanel";',
+        'import { BirthDataForm } from "@/components/paipan-form/BirthDataForm";',
         "src/pages/paipan/PaipanPage.tsx",
       ),
     ).toEqual([]);

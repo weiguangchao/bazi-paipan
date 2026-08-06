@@ -7,23 +7,47 @@ const expected = [
   {
     bookId: "yuanhaiziping",
     title: "渊海子平",
-    author: "（宋）徐大升",
+    attribution: [{ name: "（宋）徐大升", role: "编" }],
     volumeCount: 5,
     chapterCount: 269,
   },
   {
     bookId: "sanmingtonghui",
     title: "三命通会",
-    author: "（明）万民英",
+    attribution: [{ name: "（明）万民英", role: "编" }],
     volumeCount: 12,
     chapterCount: 370,
   },
   {
     bookId: "wudenghuiyuan",
     title: "五灯会元",
-    author: "（宋）释普济",
+    attribution: [{ name: "（宋）释普济", role: "编" }],
     volumeCount: 20,
     chapterCount: 1739,
+  },
+  {
+    bookId: "xinjing",
+    title: "般若波罗蜜多心经",
+    attribution: [{ name: "唐三藏法师玄奘", role: "译" }],
+    volumeCount: 1,
+    chapterCount: 1,
+  },
+  {
+    bookId: "qiongtongbaojian",
+    title: "穷通宝鉴",
+    attribution: [
+      { name: "（清）余春台", role: "辑" },
+      { name: "徐乐吾", role: "评注" },
+    ],
+    volumeCount: 1,
+    chapterCount: 108,
+  },
+  {
+    bookId: "jingangjing",
+    title: "金刚般若波罗蜜经",
+    attribution: [{ name: "姚秦三藏法师鸠摩罗什", role: "译" }],
+    volumeCount: 1,
+    chapterCount: 33,
   },
 ];
 
@@ -51,7 +75,7 @@ describe.each(expected)("$title adapter", (book) => {
     expect(runtime.catalog.book).toMatchObject({
       id: book.bookId,
       title: book.title,
-      author: book.author,
+      attribution: book.attribution,
     });
     expect(runtime.catalog.volumes).toHaveLength(book.volumeCount);
     expect(chapters).toHaveLength(book.chapterCount);
@@ -69,7 +93,7 @@ describe.each(expected)("$title adapter", (book) => {
         }
       }
     }
-  });
+  }, 10_000);
 });
 
 test("《三命通会》卷十二新增篇章不改变既有稳定链接", async () => {

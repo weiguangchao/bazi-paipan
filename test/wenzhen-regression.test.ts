@@ -3,7 +3,11 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { findLongitude } from "@/domain/birth/birthplace";
-import { trueSolarTimeOffsetMinutes } from "@/domain/time/solar-time";
+import { toTrueSolarDateTime } from "@/domain/time/astronomy";
+import {
+  beijingDateTime,
+  diffSeconds,
+} from "@/domain/time/date-time";
 
 // 问真对照回归测试集（issue #18）。
 //
@@ -20,12 +24,9 @@ import { trueSolarTimeOffsetMinutes } from "@/domain/time/solar-time";
 //    给出的整分偏移相比，容差 ≤ 2 分。该容差吸收三重误差来源：
 //      a) 问真真太阳时显示取整到分钟 -> ±0.5 分舍入；
 //      b) 问真经度保留 2 位小数 -> ±0.005° ≈ ±0.02 分；
-//      c) 均时差公式差异：问真所用 EoT 公式与本项目 NOAA 简化式在取样日
-//         （2000-06-15）相差约 1.1 分的系统性常数偏移（问真隐含 EoT ≈ −1.6 分，
-//         本项目 NOAA 简化式 −0.4 分、NOAA 高精度式 −0.17 分；此为算法选型差异，
-//         非 bug，属 #14 已定范围）。
-//    去除地理编码差异（用问真经度而非 city-geo 经度代入）后，337 市残差落在
-//    [0.67, 1.65] 分区间，≤ 2 分容差下全量通过。该锚点仍能抓回归性错误
+//      c) 问真未公开的均时差算法与固定寿星高精度算法之间的系统差异。
+//    去除地理编码差异（用问真经度而非 city-geo 经度代入）后，当前 337 市残差落在
+//    [0.65, 1.64] 分区间，≤ 2 分容差下全量通过。该外部锚点仍能抓回归性错误
 //    （符号、数量级、经度方向反了等）。
 //
 // 2. 经度吻合：city-geo 经度 vs 问真经度。issue 提出 <0.01° 的理想容差，但问真
@@ -70,8 +71,9 @@ interface WenzhenData {
 
 const data: WenzhenData = JSON.parse(readFileSync(DATA_FILE, "utf8"));
 
-// 取样时刻：北京时间 2000-06-15 12:00 = UTC 2000-06-15 04:00。
-const SAMPLING_UTC_MS = Date.UTC(2000, 5, 15, 4, 0);
+const SAMPLING_CLOCK_TIME = beijingDateTime({
+  year: 2000, month: 6, day: 15, hour: 12, minute: 0, second: 0,
+});
 // 钟表时 12:00 对应的基准分钟（距 0:00）。wenzhenOffset以此为基准比较。
 const CLOCK_NOON_MIN = 12 * 60;
 
@@ -194,7 +196,11 @@ describe("问真对照回归测试集（数据驱动 338 市）(#18)", () => {
       // ── 真太阳时吻合：用问真经度算actualOffset，与问真整分偏移比 ─────────
       // 去除地理编码差异后，残差只剩 EoT 公式差（常数）+ 取整/经度小数舍入，
       // 容差 ≤ 2 分吸收之。
-      const actualOffset = trueSolarTimeOffsetMinutes(SAMPLING_UTC_MS, c.longitude);
+      const actualOffset =
+        diffSeconds(
+          toTrueSolarDateTime(SAMPLING_CLOCK_TIME, c.longitude),
+          SAMPLING_CLOCK_TIME,
+        ) / 60;
       const wenzhenOffset = parseMinutes(c.trueSolarTime) - CLOCK_NOON_MIN;
       const residual = Math.abs(actualOffset - wenzhenOffset);
       expect(residual).toBeLessThanOrEqual(trueSolarTimeToleranceMinutes);

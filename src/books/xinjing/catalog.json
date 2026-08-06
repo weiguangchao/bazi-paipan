@@ -1,0 +1,33 @@
+{
+  "book": {
+    "id": "xinjing",
+    "order": 4,
+    "title": "般若波罗蜜多心经",
+    "attribution": [
+      {
+        "name": "唐三藏法师玄奘",
+        "role": "译"
+      }
+    ],
+    "description": "唐三藏法师玄奘译本，以全卷一篇阅读经文正文。",
+    "sealLines": [
+      "般若",
+      "心经"
+    ]
+  },
+  "volumes": [
+    {
+      "id": "v1",
+      "title": "全卷",
+      "order": 1,
+      "chapters": [
+        {
+          "id": "v1-c001",
+          "title": "正文",
+          "volumeId": "v1",
+          "order": 1
+        }
+      ]
+    }
+  ]
+}

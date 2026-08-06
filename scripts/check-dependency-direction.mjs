@@ -97,18 +97,23 @@ function collectImportSpecifiers(source, fileName) {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
   const specifiers = [];
 
-  function recordSpecifier(expressionNode) {
+  function recordSpecifier(expressionNode, typeOnly = false) {
     const specifier = moduleSpecifierText(expressionNode);
     if (!specifier) return;
     const position = sourceFile.getLineAndCharacterOfPosition(expressionNode.getStart(sourceFile));
-    specifiers.push({ specifier, line: position.line + 1, column: position.character + 1 });
+    specifiers.push({
+      specifier,
+      typeOnly,
+      line: position.line + 1,
+      column: position.character + 1,
+    });
   }
 
   function visit(node) {
     if (ts.isImportDeclaration(node)) {
-      recordSpecifier(node.moduleSpecifier);
+      recordSpecifier(node.moduleSpecifier, node.importClause?.isTypeOnly === true);
     } else if (ts.isExportDeclaration(node) && node.moduleSpecifier) {
-      recordSpecifier(node.moduleSpecifier);
+      recordSpecifier(node.moduleSpecifier, node.isTypeOnly === true);
     } else if (
       ts.isCallExpression(node)
       && node.expression.kind === ts.SyntaxKind.ImportKeyword
@@ -123,12 +128,162 @@ function collectImportSpecifiers(source, fileName) {
   return specifiers;
 }
 
+const ALLOWED_ASTRONOMY_FACADE_EXPORTS = new Set([
+  "JIE_NAMES",
+  "Jie",
+  "trueSolarJieMoment",
+  "toTrueSolarDateTime",
+]);
+
+function unauthorizedAstronomyFacadeExport(source, fileName) {
+  const normalizedFile = String(fileName).replace(/\\/g, "/");
+  if (!normalizedFile.endsWith("src/domain/time/astronomy.ts")) return null;
+  const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  let unauthorized = null;
+  const isExported = (node) =>
+    node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
+
+  function record(node, name) {
+    if (unauthorized !== null || ALLOWED_ASTRONOMY_FACADE_EXPORTS.has(name)) return;
+    const start = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+    unauthorized = {
+      specifier: name,
+      line: start.line + 1,
+      column: start.character + 1,
+    };
+  }
+
+  function visit(node) {
+    if (
+      ts.isFunctionDeclaration(node)
+      && isExported(node)
+      && node.name
+    ) {
+      record(node.name, node.name.text);
+    } else if (ts.isVariableStatement(node) && isExported(node)) {
+      for (const declaration of node.declarationList.declarations) {
+        if (ts.isIdentifier(declaration.name)) {
+          record(declaration.name, declaration.name.text);
+        }
+      }
+    } else if (
+      (ts.isTypeAliasDeclaration(node)
+        || ts.isInterfaceDeclaration(node)
+        || ts.isClassDeclaration(node)
+        || ts.isEnumDeclaration(node))
+      && isExported(node)
+      && node.name
+    ) {
+      record(node.name, node.name.text);
+    } else if (ts.isExportDeclaration(node) && node.exportClause
+      && ts.isNamedExports(node.exportClause)) {
+      for (const element of node.exportClause.elements) {
+        record(element.name, element.name.text);
+      }
+    } else if (ts.isExportDeclaration(node) && !node.exportClause) {
+      record(node, "export *");
+    } else if (ts.isExportAssignment(node)) {
+      record(node, "default");
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return unauthorized;
+}
+
 export function findDependencyViolations(source, fileName = "fixture.ts") {
   const fromLayer = fromLayerOfPath(fileName);
   if (!fromLayer) return [];
   const allowed = ALLOWED_DEPENDENCIES[fromLayer];
   const violations = [];
-  for (const { specifier, line, column } of collectImportSpecifiers(source, fileName)) {
+  const unauthorizedAstronomyExport = unauthorizedAstronomyFacadeExport(source, fileName);
+  if (unauthorizedAstronomyExport) {
+    violations.push({
+      fromLayer,
+      toLayer: "unauthorized-astronomy-facade-export",
+      allowed: [...ALLOWED_ASTRONOMY_FACADE_EXPORTS],
+      ...unauthorizedAstronomyExport,
+    });
+  }
+  for (const {
+    specifier,
+    typeOnly,
+    line,
+    column,
+  } of collectImportSpecifiers(source, fileName)) {
+    const normalizedFile = String(fileName).replace(/\\/g, "/");
+    const extension = path.extname(specifier);
+    const seamSpecifier = SOURCE_EXTENSIONS.has(extension)
+      ? specifier.slice(0, -extension.length)
+      : specifier;
+    const importsJieChronology =
+      seamSpecifier.endsWith("/domain/time/jie-chronology")
+      || seamSpecifier.endsWith("../time/jie-chronology")
+      || seamSpecifier.endsWith("./jie-chronology");
+    const isMingpanModule =
+      normalizedFile.endsWith("/src/domain/paipan/mingpan.ts")
+      || normalizedFile === "src/domain/paipan/mingpan.ts";
+    if (importsJieChronology && !typeOnly && !isMingpanModule) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "true-solar-conversion-boundary",
+        allowed: ["src/domain/paipan/mingpan.ts"],
+        line,
+        column,
+      });
+      continue;
+    }
+    const importsInternalPaipan =
+      seamSpecifier.endsWith("/domain/paipan/paipan")
+      || seamSpecifier.endsWith("../paipan/paipan")
+      || seamSpecifier.endsWith("./paipan");
+    if (importsInternalPaipan && !isMingpanModule) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "internal-paipan-seam",
+        allowed: ["src/domain/paipan/mingpan.ts"],
+        line,
+        column,
+      });
+      continue;
+    }
+    const importsPrivateShouxingCore =
+      specifier.includes("/domain/time/shouxing/")
+      || specifier.includes("../time/shouxing/")
+      || specifier.startsWith("./shouxing/");
+    if (
+      importsPrivateShouxingCore
+      && !normalizedFile.endsWith("/src/domain/time/astronomy.ts")
+      && normalizedFile !== "src/domain/time/astronomy.ts"
+    ) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: "private-shouxing-core",
+        allowed: ["src/domain/time/astronomy.ts facade"],
+        line,
+        column,
+      });
+      continue;
+    }
+    if (
+      specifier.includes("test/")
+      || specifier.includes("/test/")
+      || specifier.includes("/oracles/")
+    ) {
+      violations.push({
+        specifier,
+        fromLayer,
+        toLayer: specifier.includes("oracle") ? "test-oracle" : "test-artifact",
+        allowed: [...allowed],
+        line,
+        column,
+      });
+      continue;
+    }
     const toLayer = targetLayerOfSpecifier(specifier, fileName);
     if (!toLayer) continue;
     if (!allowed.has(toLayer)) {

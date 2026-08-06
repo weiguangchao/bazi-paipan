@@ -15,8 +15,6 @@ function liuyue(index: number): LiuyuezhuOut {
   return {
     ganzhi: "甲子",
     startJie: `节${index + 1}`,
-    startUtcMs: index,
-    endUtcMs: index + 1,
     startMonth: index + 1,
     startDay: 1,
     tianganShishen: "比肩",

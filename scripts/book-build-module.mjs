@@ -137,7 +137,7 @@ export function deriveBookBuild({ catalog, audit = {}, chapterContents }) {
       bookId,
       order: catalog.book.order,
       title: catalog.book.title,
-      author: catalog.book.author,
+      attribution: catalog.book.attribution,
       description: catalog.book.description,
       volumeCount: volumes.length,
       chapterCount: chapterIds.size,

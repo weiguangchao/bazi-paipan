@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check:book-adapters && vite build",
+    "build": "npm run check:book-adapters && vite build --manifest && node scripts/check-main-bundle.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
+    "test": "vitest run && npm run check:astronomy-performance && npm run check:ascii-identifiers && npm run check:identifier-vocabulary && npm run check:dependency-direction",
     "test:e2e": "playwright test",
     "generate:book-adapters": "node scripts/generate-book-adapters.mjs",
     "check:book-adapters": "node scripts/generate-book-adapters.mjs --check",
@@ -18,6 +18,7 @@
     "check:ascii-identifiers": "node scripts/check-ascii-identifiers.mjs",
     "check:identifier-vocabulary": "node scripts/check-identifier-vocabulary.mjs",
     "check:dependency-direction": "node scripts/check-dependency-direction.mjs",
+    "check:astronomy-performance": "tsx scripts/check-astronomy-performance.ts",
     "scrape:wenzhen": "tsx scripts/scrape-wenzhen.ts",
     "build:cities": "node scripts/build-public-data.cjs"
   },

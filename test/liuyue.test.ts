@@ -1,5 +1,33 @@
 import { describe, expect, it } from "vitest";
 import { liuyue } from "@/domain/paipan/liuyue";
+import { trueSolarDateTime } from "@/domain/time/date-time";
+import { jieIntervals, locateJie } from "@/domain/time/jie-chronology";
+
+function moment(
+  year: number,
+  month: number,
+  day: number,
+  hour = 0,
+  minute = 0,
+  second = 0,
+  millisecond = 0,
+) {
+  return trueSolarDateTime({
+    year, month, day, hour, minute, second, millisecond,
+  });
+}
+
+function generateLiuyue(
+  year: number,
+  currentTime: ReturnType<typeof moment>,
+  longitude?: number,
+) {
+  return liuyue(
+    year,
+    jieIntervals(year, longitude),
+    locateJie(currentTime, longitude).interval,
+  );
+}
 
 describe("流月 - 五虎遁与十二柱顺序", () => {
   it.each([
@@ -14,11 +42,11 @@ describe("流月 - 五虎遁与十二柱顺序", () => {
     [2032, "壬子", "壬寅"],
     [2033, "癸丑", "甲寅"],
   ])("%i %s 年从 %s 起", (year, _liunianzhu, firstLiuyuezhu) => {
-    expect(liuyue(year, 0)[0]!.ganzhi).toBe(firstLiuyuezhu);
+    expect(generateLiuyue(year, moment(year, 1, 1))[0]!.ganzhi).toBe(firstLiuyuezhu);
   });
 
   it("甲年依次产出寅月至丑月十二个完整流月柱", () => {
-    const result = liuyue(2024, 0);
+    const result = generateLiuyue(2024, moment(2024, 1, 1));
 
     expect(result).toHaveLength(12);
     expect(result.map((item) => item.ganzhi)).toEqual([
@@ -34,36 +62,64 @@ describe("流月 - 五虎遁与十二柱顺序", () => {
 
 describe("流月 - 交节区间", () => {
   it("最后一个丑月从下一公历年小寒起，持续至下一年立春前", () => {
-    const result = liuyue(2024, 0);
+    const result = generateLiuyue(2024, moment(2024, 1, 1));
     const lastLiuyuezhu = result[11]!;
 
-    expect(new Date(lastLiuyuezhu.startUtcMs).toISOString()).toBe("2025-01-05T02:32:46.573Z");
+    expect(lastLiuyuezhu.startTime).toMatchObject({
+      year: 2025, month: 1, day: 5, hour: 10, minute: 32, second: 46,
+      millisecond: 573,
+    });
     expect({ month: lastLiuyuezhu.startMonth, day: lastLiuyuezhu.startDay }).toEqual({ month: 1, day: 5 });
-    expect(new Date(lastLiuyuezhu.endUtcMs).toISOString()).toBe("2025-02-03T14:10:28.427Z");
+    expect(lastLiuyuezhu.endTime).toMatchObject({
+      year: 2025, month: 2, day: 3, hour: 22, minute: 10, second: 28,
+      millisecond: 427,
+    });
   });
 
-  it("准确交节瞬间由寅月切换到卯月", () => {
-    const transitionUtcMs = Date.UTC(2024, 2, 5, 2, 22, 44, 982);
-
-    expect(liuyue(2024, transitionUtcMs - 1).find((item) => item.isCurrent)?.ganzhi).toBe("丙寅");
-    expect(liuyue(2024, transitionUtcMs).find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
-    expect(liuyue(2024, transitionUtcMs + 1).find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
+  it("交节前一毫秒、当毫秒与后一毫秒由寅月切换到卯月", () => {
+    expect(generateLiuyue(2024, moment(2024, 3, 5, 10, 22, 44, 981))
+      .find((item) => item.isCurrent)?.ganzhi).toBe("丙寅");
+    expect(generateLiuyue(2024, moment(2024, 3, 5, 10, 22, 44, 982))
+      .find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
+    expect(generateLiuyue(2024, moment(2024, 3, 5, 10, 22, 44, 983))
+      .find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
   });
 
-  it("立春交节采用真实 UTC 时刻，卡片日期按北京时间显示", () => {
-    const firstLiuyuezhu = liuyue(2024, 0)[0]!;
+  it("立春交节使用毫秒级默认真太阳时值对象", () => {
+    const firstLiuyuezhu = generateLiuyue(2024, moment(2024, 1, 1))[0]!;
 
-    expect(new Date(firstLiuyuezhu.startUtcMs).toISOString()).toBe("2024-02-04T08:27:06.834Z");
+    expect(firstLiuyuezhu.startTime).toMatchObject({
+      year: 2024, month: 2, day: 4, hour: 16, minute: 27, second: 6,
+      millisecond: 834,
+    });
     expect({ month: firstLiuyuezhu.startMonth, day: firstLiuyuezhu.startDay }).toEqual({
       month: 2,
       day: 4,
     });
   });
 
-  it("公历年初至立春前的当前流月标在上一流年的丑月", () => {
-    const january = Date.UTC(2025, 0, 20);
+  it("喀什交节跨公历日时展示同一真太阳时边界的月日", () => {
+    const longitude = 75.996391;
+    const result = generateLiuyue(
+      1950,
+      moment(1950, 7, 7, 22, 12, 32, 512),
+      longitude,
+    );
+    const xiaoshu = result.find((item) => item.startJie === "小暑")!;
 
-    expect(liuyue(2024, january).find((item) => item.isCurrent)?.ganzhi).toBe("丁丑");
-    expect(liuyue(2025, january).some((item) => item.isCurrent)).toBe(false);
+    expect(xiaoshu.startTime).toMatchObject({
+      year: 1950, month: 7, day: 7, hour: 22, minute: 12, second: 32,
+      millisecond: 512,
+    });
+    expect({ month: xiaoshu.startMonth, day: xiaoshu.startDay })
+      .toEqual({ month: 7, day: 7 });
+    expect(xiaoshu.isCurrent).toBe(true);
+  });
+
+  it("公历年初至立春前的当前流月标在上一流年的丑月", () => {
+    const january = moment(2025, 1, 20);
+
+    expect(generateLiuyue(2024, january).find((item) => item.isCurrent)?.ganzhi).toBe("丁丑");
+    expect(generateLiuyue(2025, january).some((item) => item.isCurrent)).toBe(false);
   });
 });

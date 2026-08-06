@@ -1,19 +1,27 @@
 # AGENTS.md
 
+- 不保留向后兼容性 — 直接移除废弃路径，而非添加兼容层、回退方案或迁移代码。
+- 选择最简单的实现 — 满足当前需求即可，避免推测性的抽象、配置和间接层。
+- 分层构建系统 — 从最小可用版本开始，在已有功能之上逐步扩展，绝不用半成品复杂度替换可运行的产品。
+- 保持组件模块化 — 关注点清晰分离。
+- 优先使用成熟库 — 当它们能降低整体复杂度或提升可靠性时，不要无明确理由地重新实现通用功能。
+- 优先复用项目已有依赖 — 在自行实现或添加新包之前，先检查现有库的文档和类型定义，不要假设它缺少某个能力。
+- 做长期架构决策 — 不接受仅临时可用、计划后续替换的权宜方案。
+
 ## Project structure
 
 ```text
 .
 ├── AGENTS.md          # agent 工作流规则（本文件）
-├── CONTEXT.md         # 命理术语表与规范 token
+├── CONTEXT.md
 ├── index.html         # Vite 入口
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 ├── content/           # 命理古籍原文与分章内容
 ├── docs/
-│   ├── adr/           # 架构决策记录
-│   └── agents/        # agent 工作流细则
+│   ├── adr/
+│   └── agents/
 ├── src/
 │   ├── domain/        # 命理核心：birth / ganzhi / paipan / time
 │   ├── components/    # React 组件：paipan-form / paipan-result / ui

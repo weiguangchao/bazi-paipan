@@ -1,16 +1,21 @@
-// 排盘页面：单页布局 → FormPanel + ResultPanel。
-// App 读写 URL 参数（useSearchParams），URL 只恢复表单默认值，不自动排盘。
-// 提交成功后 App 通过 setSearchParams 更新 URL（单一写入点）。
-import { useEffect } from "react";
+// 排盘页面：单页布局 → BirthDataForm + 命盘结果。
+// 页面只组合初始 URL 草稿、成功 submission、当前时刻、命盘与命盘链接。
 import { useSearchParams } from "react-router-dom";
-import type { Mingpan } from "@/domain/paipan/mingpan";
-import { fromUrlParams, toUrlParams } from "@/pages/paipan/url-params";
-import { usePaipanForm } from "@/pages/paipan/use-paipan-form";
-import { FormPanel } from "@/components/paipan-form/FormPanel";
+import { useState } from "react";
+import { mingpan, type Mingpan } from "@/domain/paipan/mingpan";
+import {
+  initialInputFromUrlParams,
+  toUrlParams,
+} from "@/pages/paipan/url-params";
+import {
+  BirthDataForm,
+  type BirthDataSubmission,
+} from "@/components/paipan-form/BirthDataForm";
 import { PersonalInfo } from "@/components/paipan-result/PersonalInfo";
 import { SizhuTable } from "@/components/paipan-result/SizhuTable";
 import { GanzhiRelations } from "@/components/paipan-result/GanzhiRelations";
 import { DayunPanel } from "@/components/paipan-result/DayunPanel";
+import { getCurrentBeijingDateTime } from "@/utils/beijing-time";
 
 function ResultContent({ data }: { data: Mingpan }) {
   return (
@@ -40,37 +45,26 @@ function ResultContent({ data }: { data: Mingpan }) {
 
 export function PaipanPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const defaultValues = fromUrlParams(searchParams);
-  const form = usePaipanForm(defaultValues);
+  const [initialInput] = useState(() =>
+    initialInputFromUrlParams(searchParams),
+  );
+  const [result, setResult] = useState<Mingpan | null>(null);
 
-  // Sync result to URL after successful submission
-  const result = form.result;
-  const submittedInput = form.submittedInput;
-  useEffect(() => {
-    if (result && submittedInput) {
-      setSearchParams(toUrlParams(submittedInput), { replace: true });
-    }
-  }, [result, submittedInput, setSearchParams]);
+  function submitBirthData(submission: BirthDataSubmission) {
+    const currentTime = getCurrentBeijingDateTime();
+    const nextResult = mingpan(submission.profile, currentTime);
+    setResult(nextResult);
+    setSearchParams(toUrlParams(submission.snapshot), { replace: true });
+  }
 
   return (
     <div className="mx-auto flex max-w-6xl gap-6 p-6 max-md:flex-col max-md:p-3">
       <aside className="flex-none max-md:w-full md:w-80">
         <div className="rounded-xl border border-border bg-card p-6">
           <h1 className="mb-5 text-xl font-semibold text-accent">命盘工作台</h1>
-          <FormPanel
-            values={form.values}
-            errors={form.errors}
-            generalError={form.generalError}
-            submitting={form.submitting}
-            selectedDate={form.selectedDate}
-            dateOpen={form.dateOpen}
-            dateLimit={form.dateLimit}
-            onSubmit={form.handleSubmit}
-            onDateChange={form.handleDateChange}
-            onTimeChange={form.handleTimeChange}
-            onGenderChange={form.handleGenderChange}
-            onBirthplaceChange={form.handleBirthplaceChange}
-            onDateOpenChange={form.setDateOpen}
+          <BirthDataForm
+            initialInput={initialInput}
+            onSubmit={submitBirthData}
           />
         </div>
       </aside>

@@ -1,0 +1,679 @@
+{
+  "book": {
+    "id": "qiongtongbaojian",
+    "order": 5,
+    "title": "穷通宝鉴",
+    "attribution": [
+      {
+        "name": "（清）余春台",
+        "role": "辑"
+      },
+      {
+        "name": "徐乐吾",
+        "role": "评注"
+      }
+    ],
+    "description": "余春台辑、徐乐吾评注本，按十天干与四时月份查阅调候取用论述、评注及命例。",
+    "sealLines": [
+      "穷通",
+      "宝鉴"
+    ]
+  },
+  "volumes": [
+    {
+      "id": "v1",
+      "title": "全卷",
+      "order": 1,
+      "chapters": [
+        {
+          "id": "v1-c001",
+          "title": "序言",
+          "volumeId": "v1",
+          "order": 1
+        },
+        {
+          "id": "v1-c002",
+          "title": "五行总论",
+          "volumeId": "v1",
+          "order": 2
+        },
+        {
+          "id": "v1-c003",
+          "title": "论木",
+          "volumeId": "v1",
+          "order": 3
+        },
+        {
+          "id": "v1-c004",
+          "title": "三春甲木总论",
+          "volumeId": "v1",
+          "order": 4
+        },
+        {
+          "id": "v1-c005",
+          "title": "三春甲木",
+          "volumeId": "v1",
+          "order": 5
+        },
+        {
+          "id": "v1-c006",
+          "title": "三夏甲木",
+          "volumeId": "v1",
+          "order": 6
+        },
+        {
+          "id": "v1-c007",
+          "title": "三秋甲木总论",
+          "volumeId": "v1",
+          "order": 7
+        },
+        {
+          "id": "v1-c008",
+          "title": "三秋甲木",
+          "volumeId": "v1",
+          "order": 8
+        },
+        {
+          "id": "v1-c009",
+          "title": "三冬甲木",
+          "volumeId": "v1",
+          "order": 9
+        },
+        {
+          "id": "v1-c010",
+          "title": "三春乙木总论",
+          "volumeId": "v1",
+          "order": 10
+        },
+        {
+          "id": "v1-c011",
+          "title": "三春乙木",
+          "volumeId": "v1",
+          "order": 11
+        },
+        {
+          "id": "v1-c012",
+          "title": "三夏乙木总论",
+          "volumeId": "v1",
+          "order": 12
+        },
+        {
+          "id": "v1-c013",
+          "title": "三夏乙木",
+          "volumeId": "v1",
+          "order": 13
+        },
+        {
+          "id": "v1-c014",
+          "title": "三秋乙木",
+          "volumeId": "v1",
+          "order": 14
+        },
+        {
+          "id": "v1-c015",
+          "title": "三冬乙木",
+          "volumeId": "v1",
+          "order": 15
+        },
+        {
+          "id": "v1-c016",
+          "title": "论丙火",
+          "volumeId": "v1",
+          "order": 16
+        },
+        {
+          "id": "v1-c017",
+          "title": "三春丙火",
+          "volumeId": "v1",
+          "order": 17
+        },
+        {
+          "id": "v1-c018",
+          "title": "二月丙火",
+          "volumeId": "v1",
+          "order": 18
+        },
+        {
+          "id": "v1-c019",
+          "title": "三月丙火",
+          "volumeId": "v1",
+          "order": 19
+        },
+        {
+          "id": "v1-c020",
+          "title": "三夏丙火",
+          "volumeId": "v1",
+          "order": 20
+        },
+        {
+          "id": "v1-c021",
+          "title": "四月丙火",
+          "volumeId": "v1",
+          "order": 21
+        },
+        {
+          "id": "v1-c022",
+          "title": "五月丙火",
+          "volumeId": "v1",
+          "order": 22
+        },
+        {
+          "id": "v1-c023",
+          "title": "六月丙火",
+          "volumeId": "v1",
+          "order": 23
+        },
+        {
+          "id": "v1-c024",
+          "title": "七月丙火",
+          "volumeId": "v1",
+          "order": 24
+        },
+        {
+          "id": "v1-c025",
+          "title": "八月丙火",
+          "volumeId": "v1",
+          "order": 25
+        },
+        {
+          "id": "v1-c026",
+          "title": "九月丙火",
+          "volumeId": "v1",
+          "order": 26
+        },
+        {
+          "id": "v1-c027",
+          "title": "十月丙火",
+          "volumeId": "v1",
+          "order": 27
+        },
+        {
+          "id": "v1-c028",
+          "title": "十一月丙火",
+          "volumeId": "v1",
+          "order": 28
+        },
+        {
+          "id": "v1-c029",
+          "title": "十二月丙火",
+          "volumeId": "v1",
+          "order": 29
+        },
+        {
+          "id": "v1-c030",
+          "title": "论丁火",
+          "volumeId": "v1",
+          "order": 30
+        },
+        {
+          "id": "v1-c031",
+          "title": "三春丁火",
+          "volumeId": "v1",
+          "order": 31
+        },
+        {
+          "id": "v1-c032",
+          "title": "二月丁火",
+          "volumeId": "v1",
+          "order": 32
+        },
+        {
+          "id": "v1-c033",
+          "title": "三月丁火",
+          "volumeId": "v1",
+          "order": 33
+        },
+        {
+          "id": "v1-c034",
+          "title": "四月丁火",
+          "volumeId": "v1",
+          "order": 34
+        },
+        {
+          "id": "v1-c035",
+          "title": "五月丁火",
+          "volumeId": "v1",
+          "order": 35
+        },
+        {
+          "id": "v1-c036",
+          "title": "六月丁火",
+          "volumeId": "v1",
+          "order": 36
+        },
+        {
+          "id": "v1-c037",
+          "title": "七月丁火",
+          "volumeId": "v1",
+          "order": 37
+        },
+        {
+          "id": "v1-c038",
+          "title": "八九月丁火",
+          "volumeId": "v1",
+          "order": 38
+        },
+        {
+          "id": "v1-c039",
+          "title": "十月丁火",
+          "volumeId": "v1",
+          "order": 39
+        },
+        {
+          "id": "v1-c040",
+          "title": "十一月丁火",
+          "volumeId": "v1",
+          "order": 40
+        },
+        {
+          "id": "v1-c041",
+          "title": "论土",
+          "volumeId": "v1",
+          "order": 41
+        },
+        {
+          "id": "v1-c042",
+          "title": "论戊土",
+          "volumeId": "v1",
+          "order": 42
+        },
+        {
+          "id": "v1-c043",
+          "title": "三春戊土",
+          "volumeId": "v1",
+          "order": 43
+        },
+        {
+          "id": "v1-c044",
+          "title": "正二月戊土",
+          "volumeId": "v1",
+          "order": 44
+        },
+        {
+          "id": "v1-c045",
+          "title": "三月戊土",
+          "volumeId": "v1",
+          "order": 45
+        },
+        {
+          "id": "v1-c046",
+          "title": "四月戊土",
+          "volumeId": "v1",
+          "order": 46
+        },
+        {
+          "id": "v1-c047",
+          "title": "五月戊土",
+          "volumeId": "v1",
+          "order": 47
+        },
+        {
+          "id": "v1-c048",
+          "title": "六月戊土",
+          "volumeId": "v1",
+          "order": 48
+        },
+        {
+          "id": "v1-c049",
+          "title": "七月戊土",
+          "volumeId": "v1",
+          "order": 49
+        },
+        {
+          "id": "v1-c050",
+          "title": "八月戊土",
+          "volumeId": "v1",
+          "order": 50
+        },
+        {
+          "id": "v1-c051",
+          "title": "九月戊土",
+          "volumeId": "v1",
+          "order": 51
+        },
+        {
+          "id": "v1-c052",
+          "title": "十月戊土",
+          "volumeId": "v1",
+          "order": 52
+        },
+        {
+          "id": "v1-c053",
+          "title": "十一二月",
+          "volumeId": "v1",
+          "order": 53
+        },
+        {
+          "id": "v1-c054",
+          "title": "论己土",
+          "volumeId": "v1",
+          "order": 54
+        },
+        {
+          "id": "v1-c055",
+          "title": "二月己土",
+          "volumeId": "v1",
+          "order": 55
+        },
+        {
+          "id": "v1-c056",
+          "title": "三月己土",
+          "volumeId": "v1",
+          "order": 56
+        },
+        {
+          "id": "v1-c057",
+          "title": "三夏己土",
+          "volumeId": "v1",
+          "order": 57
+        },
+        {
+          "id": "v1-c058",
+          "title": "三秋己土",
+          "volumeId": "v1",
+          "order": 58
+        },
+        {
+          "id": "v1-c059",
+          "title": "三冬己土",
+          "volumeId": "v1",
+          "order": 59
+        },
+        {
+          "id": "v1-c060",
+          "title": "论金",
+          "volumeId": "v1",
+          "order": 60
+        },
+        {
+          "id": "v1-c061",
+          "title": "二月庚金",
+          "volumeId": "v1",
+          "order": 61
+        },
+        {
+          "id": "v1-c062",
+          "title": "三月庚金",
+          "volumeId": "v1",
+          "order": 62
+        },
+        {
+          "id": "v1-c063",
+          "title": "四月庚金",
+          "volumeId": "v1",
+          "order": 63
+        },
+        {
+          "id": "v1-c064",
+          "title": "五月庚金",
+          "volumeId": "v1",
+          "order": 64
+        },
+        {
+          "id": "v1-c065",
+          "title": "六月庚金",
+          "volumeId": "v1",
+          "order": 65
+        },
+        {
+          "id": "v1-c066",
+          "title": "七月庚金",
+          "volumeId": "v1",
+          "order": 66
+        },
+        {
+          "id": "v1-c067",
+          "title": "八月庚金",
+          "volumeId": "v1",
+          "order": 67
+        },
+        {
+          "id": "v1-c068",
+          "title": "九月庚金",
+          "volumeId": "v1",
+          "order": 68
+        },
+        {
+          "id": "v1-c069",
+          "title": "十月庚金",
+          "volumeId": "v1",
+          "order": 69
+        },
+        {
+          "id": "v1-c070",
+          "title": "十一月庚金",
+          "volumeId": "v1",
+          "order": 70
+        },
+        {
+          "id": "v1-c071",
+          "title": "十二月庚金",
+          "volumeId": "v1",
+          "order": 71
+        },
+        {
+          "id": "v1-c072",
+          "title": "论辛金",
+          "volumeId": "v1",
+          "order": 72
+        },
+        {
+          "id": "v1-c073",
+          "title": "二月辛金",
+          "volumeId": "v1",
+          "order": 73
+        },
+        {
+          "id": "v1-c074",
+          "title": "三月辛金",
+          "volumeId": "v1",
+          "order": 74
+        },
+        {
+          "id": "v1-c075",
+          "title": "四月辛金",
+          "volumeId": "v1",
+          "order": 75
+        },
+        {
+          "id": "v1-c076",
+          "title": "五月辛金",
+          "volumeId": "v1",
+          "order": 76
+        },
+        {
+          "id": "v1-c077",
+          "title": "六月辛金",
+          "volumeId": "v1",
+          "order": 77
+        },
+        {
+          "id": "v1-c078",
+          "title": "七月辛金",
+          "volumeId": "v1",
+          "order": 78
+        },
+        {
+          "id": "v1-c079",
+          "title": "八月辛金",
+          "volumeId": "v1",
+          "order": 79
+        },
+        {
+          "id": "v1-c080",
+          "title": "九月辛金",
+          "volumeId": "v1",
+          "order": 80
+        },
+        {
+          "id": "v1-c081",
+          "title": "十月辛金",
+          "volumeId": "v1",
+          "order": 81
+        },
+        {
+          "id": "v1-c082",
+          "title": "十一月辛金",
+          "volumeId": "v1",
+          "order": 82
+        },
+        {
+          "id": "v1-c083",
+          "title": "十二月辛金",
+          "volumeId": "v1",
+          "order": 83
+        },
+        {
+          "id": "v1-c084",
+          "title": "论水",
+          "volumeId": "v1",
+          "order": 84
+        },
+        {
+          "id": "v1-c085",
+          "title": "论壬水",
+          "volumeId": "v1",
+          "order": 85
+        },
+        {
+          "id": "v1-c086",
+          "title": "二月壬水",
+          "volumeId": "v1",
+          "order": 86
+        },
+        {
+          "id": "v1-c087",
+          "title": "三月壬水",
+          "volumeId": "v1",
+          "order": 87
+        },
+        {
+          "id": "v1-c088",
+          "title": "四月壬水",
+          "volumeId": "v1",
+          "order": 88
+        },
+        {
+          "id": "v1-c089",
+          "title": "五月壬水",
+          "volumeId": "v1",
+          "order": 89
+        },
+        {
+          "id": "v1-c090",
+          "title": "六月壬水",
+          "volumeId": "v1",
+          "order": 90
+        },
+        {
+          "id": "v1-c091",
+          "title": "七月壬水",
+          "volumeId": "v1",
+          "order": 91
+        },
+        {
+          "id": "v1-c092",
+          "title": "八月壬水",
+          "volumeId": "v1",
+          "order": 92
+        },
+        {
+          "id": "v1-c093",
+          "title": "九月壬水",
+          "volumeId": "v1",
+          "order": 93
+        },
+        {
+          "id": "v1-c094",
+          "title": "十月壬水",
+          "volumeId": "v1",
+          "order": 94
+        },
+        {
+          "id": "v1-c095",
+          "title": "十一月壬水",
+          "volumeId": "v1",
+          "order": 95
+        },
+        {
+          "id": "v1-c096",
+          "title": "十二月壬水",
+          "volumeId": "v1",
+          "order": 96
+        },
+        {
+          "id": "v1-c097",
+          "title": "论癸水",
+          "volumeId": "v1",
+          "order": 97
+        },
+        {
+          "id": "v1-c098",
+          "title": "二月癸水",
+          "volumeId": "v1",
+          "order": 98
+        },
+        {
+          "id": "v1-c099",
+          "title": "三月癸水",
+          "volumeId": "v1",
+          "order": 99
+        },
+        {
+          "id": "v1-c100",
+          "title": "四月癸水",
+          "volumeId": "v1",
+          "order": 100
+        },
+        {
+          "id": "v1-c101",
+          "title": "五月癸水",
+          "volumeId": "v1",
+          "order": 101
+        },
+        {
+          "id": "v1-c102",
+          "title": "六月癸水",
+          "volumeId": "v1",
+          "order": 102
+        },
+        {
+          "id": "v1-c103",
+          "title": "七月癸水",
+          "volumeId": "v1",
+          "order": 103
+        },
+        {
+          "id": "v1-c104",
+          "title": "八月癸水",
+          "volumeId": "v1",
+          "order": 104
+        },
+        {
+          "id": "v1-c105",
+          "title": "九月癸水",
+          "volumeId": "v1",
+          "order": 105
+        },
+        {
+          "id": "v1-c106",
+          "title": "十月癸水",
+          "volumeId": "v1",
+          "order": 106
+        },
+        {
+          "id": "v1-c107",
+          "title": "十一月癸水",
+          "volumeId": "v1",
+          "order": 107
+        },
+        {
+          "id": "v1-c108",
+          "title": "十二月癸水",
+          "volumeId": "v1",
+          "order": 108
+        }
+      ]
+    }
+  ]
+}
