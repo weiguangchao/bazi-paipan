@@ -131,13 +131,10 @@ function liunianZhu(
     ganzhi: item.ganzhi,
     ...zhuShishen(item.ganzhi, dayMaster),
     isCurrentYear: item.year === currentClockTime.year,
-    liuyue: liuyue(item.year, intervals, currentInterval).map((liuyuezhu) => {
-      const { startTime: _startTime, endTime: _endTime, ...visible } = liuyuezhu;
-      return {
-        ...visible,
-        ...zhuShishen(liuyuezhu.ganzhi, dayMaster),
-      };
-    }),
+    liuyue: liuyue(item.year, intervals, currentInterval).map((liuyuezhu) => ({
+      ...liuyuezhu,
+      ...zhuShishen(liuyuezhu.ganzhi, dayMaster),
+    })),
   };
 }
 

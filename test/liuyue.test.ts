@@ -61,18 +61,26 @@ describe("流月 - 五虎遁与十二柱顺序", () => {
 });
 
 describe("流月 - 交节区间", () => {
-  it("最后一个丑月从下一公历年小寒起，持续至下一年立春前", () => {
+  it("只输出命盘消费的交节投影，不泄漏完整交节时刻", () => {
+    const firstLiuyuezhu = generateLiuyue(2024, moment(2024, 1, 1))[0]!;
+
+    expect(firstLiuyuezhu).toMatchObject({
+      startJie: "立春",
+      startMonth: 2,
+      startDay: 4,
+    });
+    expect(firstLiuyuezhu).not.toHaveProperty("startTime");
+    expect(firstLiuyuezhu).not.toHaveProperty("endTime");
+  });
+
+  it("最后一个丑月从下一公历年小寒起", () => {
     const result = generateLiuyue(2024, moment(2024, 1, 1));
     const lastLiuyuezhu = result[11]!;
 
-    expect(lastLiuyuezhu.startTime).toMatchObject({
-      year: 2025, month: 1, day: 5, hour: 10, minute: 32, second: 46,
-      millisecond: 573,
-    });
-    expect({ month: lastLiuyuezhu.startMonth, day: lastLiuyuezhu.startDay }).toEqual({ month: 1, day: 5 });
-    expect(lastLiuyuezhu.endTime).toMatchObject({
-      year: 2025, month: 2, day: 3, hour: 22, minute: 10, second: 28,
-      millisecond: 427,
+    expect(lastLiuyuezhu).toMatchObject({
+      startJie: "小寒",
+      startMonth: 1,
+      startDay: 5,
     });
   });
 
@@ -85,19 +93,6 @@ describe("流月 - 交节区间", () => {
       .find((item) => item.isCurrent)?.ganzhi).toBe("丁卯");
   });
 
-  it("立春交节使用毫秒级默认真太阳时值对象", () => {
-    const firstLiuyuezhu = generateLiuyue(2024, moment(2024, 1, 1))[0]!;
-
-    expect(firstLiuyuezhu.startTime).toMatchObject({
-      year: 2024, month: 2, day: 4, hour: 16, minute: 27, second: 6,
-      millisecond: 834,
-    });
-    expect({ month: firstLiuyuezhu.startMonth, day: firstLiuyuezhu.startDay }).toEqual({
-      month: 2,
-      day: 4,
-    });
-  });
-
   it("喀什交节跨公历日时展示同一真太阳时边界的月日", () => {
     const longitude = 75.996391;
     const result = generateLiuyue(
@@ -107,10 +102,6 @@ describe("流月 - 交节区间", () => {
     );
     const xiaoshu = result.find((item) => item.startJie === "小暑")!;
 
-    expect(xiaoshu.startTime).toMatchObject({
-      year: 1950, month: 7, day: 7, hour: 22, minute: 12, second: 32,
-      millisecond: 512,
-    });
     expect({ month: xiaoshu.startMonth, day: xiaoshu.startDay })
       .toEqual({ month: 7, day: 7 });
     expect(xiaoshu.isCurrent).toBe(true);

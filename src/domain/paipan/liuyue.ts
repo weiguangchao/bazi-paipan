@@ -10,7 +10,6 @@ import {
   type Ganzhi,
 } from "@/domain/ganzhi/ganzhi";
 import { liunianzhu } from "@/domain/paipan/liunian";
-import type { TrueSolarDateTime } from "@/domain/time/date-time";
 import type {
   JieInterval,
   JieOccurrence,
@@ -19,8 +18,6 @@ import type {
 export interface Liuyuezhu {
   ganzhi: Ganzhi;
   startJie: JieOccurrence["jie"];
-  startTime: TrueSolarDateTime;
-  endTime: TrueSolarDateTime;
   startMonth: number;
   startDay: number;
   isCurrent: boolean;
@@ -42,7 +39,6 @@ export function liuyue(
 
   return intervals.map((interval, index) => {
     const startTime = interval.start.moment;
-    const endTime = interval.end.moment;
 
     return {
       ganzhi: ganzhiFromCharacters(
@@ -50,8 +46,6 @@ export function liuyue(
         dizhi[(2 + index) % dizhi.length]!,
       ),
       startJie: interval.start.jie,
-      startTime,
-      endTime,
       startMonth: startTime.month,
       startDay: startTime.day,
       isCurrent:
