@@ -47,8 +47,6 @@
 
 单上下文（single-context）布局：`CONTEXT.md` 与 `docs/adr/` 位于仓库根。详见 `docs/agents/domain.md`。
 
-修改手写可执行代码前必须先读 `CONTEXT.md`。通用概念使用英文，命理概念使用其中定义的完整规范 token；禁止引入别名或拆分拼音。确需新增命理术语时，先更新 `CONTEXT.md`，再用于代码命名。
-
 ## Git commit
 
 - subject：`<type>: <description>`
